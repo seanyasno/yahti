@@ -38,7 +38,7 @@ type Props = {}
 
 export const ActivitySelection: React.FC<Props> = (props) => {
     const title = 'צריך לבחור פעילות';
-    const subtitle = 'אבל לבחור רק משהו אחד כפרה עליך';
+    const subtitle = 'אבל לבחור רק משהו אחד חיימשלי';
     const buttonTitle = 'היידה נמשיך';
     const buttonTitleDisabled = 'איך נמשיך אם לא בחרת';
 
