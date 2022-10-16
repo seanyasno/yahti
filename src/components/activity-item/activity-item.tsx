@@ -5,7 +5,7 @@ import {Card, Typography} from '@mui/material';
 
 export const Container = styled(Card)`
   border-radius: 1em;
-  padding: 20px;
+  padding: 16px 20px;
 `;
 
 type Props = {
@@ -17,7 +17,7 @@ export const ActivityItem: React.FC<Props> = (props) => {
 
     return (
         <Container elevation={0}>
-            <Typography variant={'subtitle1'} fontWeight={600}>{activity.title}</Typography>
+            <Typography variant={'h6'} fontWeight={600}>{activity.title}</Typography>
             <Typography variant={'body2'}>{activity.title}</Typography>
         </Container>
     );
