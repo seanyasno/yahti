@@ -2,6 +2,7 @@ import React from 'react';
 import {Button, Divider, Grid, Typography} from '@mui/material';
 import {ActivityType} from '@abstraction/enums';
 import styled from '@emotion/styled';
+import {theme} from '@styles/theme/theme';
 
 export const EmojiButton = styled(Button)`
   border-radius: 50%;
@@ -39,6 +40,9 @@ export const ActivitySelection: React.FC<Props> = (props) => {
     const title = 'צריך לבחור פעילות';
     const subtitle = 'אבל לבחור רק משהו אחד כפרה עליך';
     const buttonTitle = 'היידה נמשיך';
+    const buttonTitleDisabled = 'איך נמשיך אם לא בחרת';
+
+    const [selectedActivity, setSelectedActivity] = React.useState<ActivityType | null>(null);
 
     return (
         <Grid container maxWidth={'sm'} justifyContent={'center'}>
@@ -58,14 +62,20 @@ export const ActivitySelection: React.FC<Props> = (props) => {
                             xs={4}
                             key={index}
                             textAlign={'center'}>
-                            <EmojiButton variant={'contained'}>{emojiByActivityType[activityType]}</EmojiButton>
+                            <EmojiButton
+                                variant={'contained'}
+                                onClick={() => setSelectedActivity(currentActivity => currentActivity === activityType ? null : activityType)}
+                                sx={{border: selectedActivity === activityType ? `1px solid ${theme.palette.secondary.main}`  : 'none'}}
+                            >
+                                {emojiByActivityType[activityType]}
+                            </EmojiButton>
                             <Typography mt={'8px'} fontWeight={500}>{activityType}</Typography>
                         </Grid>
                     ))
                 }
             </Grid>
 
-            <ContinueButton variant={'contained'} color={'secondary'}>{buttonTitle}</ContinueButton>
+            <ContinueButton disabled={!selectedActivity} variant={'contained'} color={'secondary'}>{selectedActivity ? buttonTitle : buttonTitleDisabled}</ContinueButton>
         </Grid>
     );
 };
