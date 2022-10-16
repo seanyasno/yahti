@@ -1,12 +1,14 @@
 import type {NextPage} from 'next';
-import {Container, Paper, Stack} from '@mui/material';
+import {Container, Paper, Stack, Typography} from '@mui/material';
 import {activitiesMock} from '@mocks/index';
 import {ActivityItem} from '@components/activity-item/activity-item';
 
 const Home: NextPage = () => {
+    const title = 'יואואוו שלום';
+
     return (
         <Container maxWidth={'sm'}>
-            <h1>hi</h1>
+            <Typography variant={'h3'} fontWeight={600}>{title}</Typography>
 
             <Stack
                 direction={'column'}

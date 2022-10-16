@@ -2,12 +2,12 @@ import {Activity} from '@abstraction/index';
 
 export const activitiesMock: Activity[] = [
     {
-        title: 'Learn React',
+        title: 'להכין פיצה',
     },
     {
-        title: 'Learn TypeScript',
+        title: 'לראות הייטק של ארץ נהדרת',
     },
     {
-        title: '1st Anniversary',
+        title: 'לאכול בקפה גן סיפור',
     }
 ];
