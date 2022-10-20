@@ -1,39 +1,10 @@
 import React, {useCallback, useContext} from 'react';
-import {Button, Divider, Grid, Typography} from '@mui/material';
-import {ActivityType} from '@abstraction/enums';
-import styled from '@emotion/styled';
-import {theme} from '@styles/theme/theme';
-import {ActivityCreationContext} from '@contexts/activity-creation-context/activity-creation-context';
-
-export const EmojiButton = styled(Button)`
-  border-radius: 50%;
-  aspect-ratio: 1/1;
-  font-size: 2rem;
-  min-width: 80px;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-`;
-
-export const ContinueButton = styled(Button)`
-  padding: 12px 80px;
-  font-size: 1.2rem;
-  border-radius: 1em;
-  position: absolute;
-  bottom: 20px;
-`;
-
-export const emojiByActivityType: { [key: string]: string } = {
-    [ActivityType.HOME]: '🏠',
-    [ActivityType.RESTAURANT]: '🍽️',
-    [ActivityType.TRIP]: '🚌',
-    [ActivityType.SHOPPING]: '🛍️',
-    [ActivityType.SPORT]: '🏃‍♂️',
-    [ActivityType.LOVING]: '❤️',
-    [ActivityType.GAMING]: '🎮',
-    [ActivityType.ESCAPE_ROOM]: '🔓',
-    [ActivityType.OTHER]: '🤷‍♂️',
-};
+import {Divider, Grid, Typography} from '@mui/material';
+import {ActivityType} from '@abstraction/index';
+import {EmojiButton, ContinueButton} from './styles';
+import {theme} from '@styles/index';
+import {ActivityCreationContext} from '@contexts/index';
+import {emojiByActivityType} from '@constants/index';
 
 type Props = {
     next?: () => void;
