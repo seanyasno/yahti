@@ -41,9 +41,6 @@ const Home: NextPage = () => {
                 spacing={2}
             >
                 {
-                    activitiesMock.map((activity, index) => <ActivityItem activity={activity} key={index}/>)
-                }
-                {
                     activities.map((activity, index) => <ActivityItem activity={activity} key={index}/>)
                 }
             </Stack>
