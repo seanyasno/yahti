@@ -34,6 +34,7 @@ export const ActivityPage: NextPage<Props> = (props) => {
 
     const doneButtonTitle = 'יאללה נסמן שעשינו?';
     const linkTitle = 'קישור לאתר';
+    const noLinkTitle = 'כפרה עליך אין כאן קישור';
     const descriptionTitle = 'קצת תיאור על ההרפתקה שלנו';
 
     return (
@@ -89,7 +90,7 @@ export const ActivityPage: NextPage<Props> = (props) => {
                 {/*}}/>*/}
 
                 <Stack direction={'row'} spacing={1} alignItems={'center'}>
-                    <Typography variant={'body2'}>{linkTitle}</Typography>
+                    <Typography variant={'body2'}>{link ? linkTitle : noLinkTitle}</Typography>
                     <Button
                         variant={'text'}
                         color={'secondary'}
