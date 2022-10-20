@@ -10,6 +10,7 @@ import {emojiByActivityType} from '@constants/index';
 import {openUrlInNewTab} from '@utils/index';
 import {IoIosArrowBack} from 'react-icons/io';
 import {IoCheckmarkDoneCircleOutline, IoCheckmarkDoneCircleSharp} from 'react-icons/io5';
+import {useRouter} from 'next/router';
 
 export const Card = styled.div`
   background-color: #fff;
@@ -23,6 +24,12 @@ type Props = {
 }
 
 export const ActivityPage: NextPage<Props> = (props) => {
+    const router = useRouter();
+
+    if (!props.activity) {
+        return <div>loading...</div>;
+    }
+
     const {title, link, type, done, description} = props.activity;
 
     const doneButtonTitle = 'יאללה נסמן שעשינו?';
@@ -39,7 +46,10 @@ export const ActivityPage: NextPage<Props> = (props) => {
                 padding: '20px',
             }}>
             <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'} mb={'16px'}>
-                <BackButton color={'secondary'} sx={{maxWidth: 'fit-content', marginBottom: '0 !important'}}>
+                <BackButton
+                    color={'secondary'}
+                    onClick={() => router.push('/')}
+                    sx={{maxWidth: 'fit-content', marginBottom: '0 !important'}}>
                     <IoIosArrowBack size={20}/>
                 </BackButton>
 

@@ -1,5 +1,5 @@
 import type {NextPage} from 'next';
-import {Container, Stack, Typography, Fab, Tabs, Tab} from '@mui/material';
+import {Container, Stack, Typography, Fab, Tabs, Tab, Box} from '@mui/material';
 import {activitiesMock} from '@mocks/index';
 import {ActivityItem} from '@components/index';
 import {MdAdd} from 'react-icons/md';
@@ -8,6 +8,7 @@ import {useQuery} from '@tanstack/react-query';
 import {collection, getDocs} from '@firebase/firestore';
 import {db} from '@config/index';
 import {Activity} from '@abstraction/types';
+import Link from 'next/link';
 
 const Home: NextPage = () => {
     const router = useRouter();
@@ -15,7 +16,10 @@ const Home: NextPage = () => {
         queryKey: ['activities'],
         queryFn: async () => {
             const querySnapshot = await getDocs(collection(db, "activities"));
-            return querySnapshot.docs.map((doc) => doc.data()) as Activity[];
+            return querySnapshot.docs.map((doc) => ({
+                activity: doc.data(),
+                id: doc.id,
+            })) as {activity: Activity, id: string}[];
         },
     });
 
@@ -41,7 +45,11 @@ const Home: NextPage = () => {
                 spacing={2}
             >
                 {
-                    activities.map((activity, index) => <ActivityItem activity={activity} key={index}/>)
+                    activities.map(({activity, id}, index) =>
+                        <Box onClick={() => router.push(`/activity/${id}`)} key={index}>
+                            <ActivityItem activity={activity}/>
+                        </Box>
+                    )
                 }
             </Stack>
 
