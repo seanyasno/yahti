@@ -47,8 +47,6 @@ export const ActivitySelection: React.FC<Props> = (props) => {
     const buttonTitle = 'היידה נמשיך';
     const buttonTitleDisabled = 'איך נמשיך אם לא בחרת';
 
-    // const [selectedType, setType] = React.useState<ActivityType | null>(activity?.type);
-
     const onTypeSelected = useCallback((type: ActivityType) => {
         if (activity?.type === type) {
             console.log('');

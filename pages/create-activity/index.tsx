@@ -1,21 +1,11 @@
 import React, {useCallback, useState} from 'react';
 import {NextPage} from 'next';
 import {ActivitySelection, ActivityForm} from '@components/index';
-import {Box, Button, IconButton} from '@mui/material';
-import styled from '@emotion/styled';
 import {IoIosArrowBack} from 'react-icons/io';
-import {theme} from '@styles/index';
+import {Container, BackButton} from '@styles/create-activity/create-activity-styles';
 import {useRouter} from 'next/router';
 import {ActivityCreationProvider} from '@contexts/index';
 
-export const BackButton = styled(IconButton)` 
-  background-color: ${theme.palette.primary.main};
-  border-radius: 12px;
-  padding: 12px;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-  transform: rotate(180deg);
-  margin-bottom: 12px;
-`;
 
 const CreateActivityPage: NextPage = () => {
     const router = useRouter();
@@ -35,13 +25,13 @@ const CreateActivityPage: NextPage = () => {
 
     return (
         <ActivityCreationProvider>
-            <Box sx={{margin: '20px 20px 40px 20px'}}>
+            <Container>
                 <BackButton color={'secondary'} onClick={onBack}>
                     <IoIosArrowBack size={20}/>
                 </BackButton>
 
                 {pages[currentPage]}
-            </Box>
+            </Container>
         </ActivityCreationProvider>
     );
 }

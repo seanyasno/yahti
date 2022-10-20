@@ -5,7 +5,7 @@ import {ActivityItem} from '@components/index';
 import {MdAdd} from 'react-icons/md';
 import {useRouter} from 'next/router';
 import {useQuery} from '@tanstack/react-query';
-import {collection, doc, getDoc, getDocs} from '@firebase/firestore';
+import {collection, getDocs} from '@firebase/firestore';
 import {db} from '@config/index';
 import {Activity} from '@abstraction/types';
 
