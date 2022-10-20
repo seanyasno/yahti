@@ -1,7 +1,7 @@
-import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
-import {ActivityCreationContext} from '@contexts/index';
-import {Input, InputAdornment, Typography} from '@mui/material';
 import {UploadPhotoContainer, UploadPhotoButton, CreateButton, CreateButtonContainer, StyledDivider} from './styles';
+import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
+import {Input, InputAdornment, Typography} from '@mui/material';
+import {ActivityCreationContext} from '@contexts/index';
 import {useRouter} from 'next/router';
 
 export const ActivityForm = () => {
