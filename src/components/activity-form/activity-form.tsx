@@ -1,22 +1,8 @@
 import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {ActivityCreationContext} from '@contexts/index';
-import {Box, Button, Divider, Input, InputAdornment, Typography} from '@mui/material';
-import styled from '@emotion/styled';
+import {Input, InputAdornment, Typography} from '@mui/material';
+import {UploadPhotoContainer, UploadPhotoButton, CreateButton, CreateButtonContainer, StyledDivider} from './styles';
 import {useRouter} from 'next/router';
-
-export const CreateButton = styled(Button)`
-  padding: 12px 80px;
-  font-size: 1.2rem;
-  border-radius: 1em;
-  position: absolute;
-  bottom: 20px;
-`;
-
-export const CreateButtonContainer = styled(Box)`
-  width: 100%;
-  justify-content: center;
-  display: flex;
-`;
 
 export const ActivityForm = () => {
     const router = useRouter();
@@ -60,7 +46,7 @@ export const ActivityForm = () => {
         return () => {
             setCreate(false);
         };
-    }, [create, onSuccess, setCreate]);
+    }, [create, onSuccess, router, setCreate]);
 
     return (
         <React.Fragment>
@@ -75,28 +61,14 @@ export const ActivityForm = () => {
                 multiline
                 onChange={event => setTitle(event.target.value)}/>
 
-            <Divider sx={{
-                margin: '10px 0',
-            }}/>
+            <StyledDivider/>
 
-            <Box sx={{
-                display: 'flex',
-                alignItems: 'center',
-                columnGap: '4px',
-            }}>
+            <UploadPhotoContainer>
                 <Typography>{addPhotoTitle}</Typography>
-                <Button
-                    variant={'text'}
-                    color={'secondary'}
-                    sx={{
-                        textTransform: 'none',
-                        padding: 0,
-                        fontSize: '16px',
-                        fontWeight: '700',
-                    }}>
+                <UploadPhotoButton variant={'text'} color={'secondary'}>
                     {addPhotoButtonTitle}
-                </Button>
-            </Box>
+                </UploadPhotoButton>
+            </UploadPhotoContainer>
 
             {/*<Box sx={{*/}
             {/*    minHeight: '250px',*/}
@@ -107,9 +79,7 @@ export const ActivityForm = () => {
             {/*    marginTop: '10px',*/}
             {/*}}/>*/}
 
-            <Divider sx={{
-                margin: '10px 0',
-            }}/>
+            <StyledDivider/>
 
             <Input
                 inputRef={linkInputRef}
@@ -118,9 +88,7 @@ export const ActivityForm = () => {
                 placeholder={linkInputPlaceholder}
                 multiline/>
 
-            <Divider sx={{
-                margin: '10px 0',
-            }}/>
+            <StyledDivider/>
 
             <Input
                 inputRef={descriptionInputRef}
