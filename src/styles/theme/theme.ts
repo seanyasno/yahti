@@ -33,6 +33,24 @@ export const theme = createTheme({
                     position: 'fixed',
                 }
             }
+        },
+        MuiInput: {
+            defaultProps: {
+                disableUnderline: true,
+                fullWidth: true,
+            },
+            styleOverrides: {
+                root: {
+                    // alignItems: 'baseline',
+                }
+            }
+        },
+        MuiInputAdornment: {
+            styleOverrides: {
+                root: {
+                    // alignItems: 'flex-end',
+                }
+            }
         }
     }
 });

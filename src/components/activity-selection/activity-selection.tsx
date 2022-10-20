@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useCallback, useContext} from 'react';
 import {Button, Divider, Grid, Typography} from '@mui/material';
 import {ActivityType} from '@abstraction/enums';
 import styled from '@emotion/styled';
 import {theme} from '@styles/theme/theme';
+import {ActivityCreationContext} from '@contexts/activity-creation-context/activity-creation-context';
 
 export const EmojiButton = styled(Button)`
   border-radius: 50%;
@@ -34,15 +35,28 @@ export const emojiByActivityType: { [key: string]: string } = {
     [ActivityType.OTHER]: '🤷‍♂️',
 };
 
-type Props = {}
+type Props = {
+    next?: () => void;
+}
 
 export const ActivitySelection: React.FC<Props> = (props) => {
+    const {next} = props;
+    const {activity, setActivity} = useContext(ActivityCreationContext);
     const title = 'צריך לבחור פעילות';
     const subtitle = 'אבל לבחור רק משהו אחד חיימשלי';
     const buttonTitle = 'היידה נמשיך';
     const buttonTitleDisabled = 'איך נמשיך אם לא בחרת';
 
-    const [selectedActivity, setSelectedActivity] = React.useState<ActivityType | null>(null);
+    // const [selectedType, setType] = React.useState<ActivityType | null>(activity?.type);
+
+    const onTypeSelected = useCallback((type: ActivityType) => {
+        if (activity?.type === type) {
+            console.log('');
+            setActivity({type: null});
+        } else {
+            setActivity({type});
+        }
+    }, [activity?.type, setActivity]);
 
     return (
         <Grid container maxWidth={'sm'} justifyContent={'center'}>
@@ -51,7 +65,7 @@ export const ActivitySelection: React.FC<Props> = (props) => {
 
             <Divider sx={{
                 width: '80%',
-                margin: '30px 0'
+                margin: '20px 0'
             }}/>
 
             <Grid container rowSpacing={2} display={'flex'}>
@@ -64,8 +78,8 @@ export const ActivitySelection: React.FC<Props> = (props) => {
                             textAlign={'center'}>
                             <EmojiButton
                                 variant={'contained'}
-                                onClick={() => setSelectedActivity(currentActivity => currentActivity === activityType ? null : activityType)}
-                                sx={{border: selectedActivity === activityType ? `1px solid ${theme.palette.secondary.main}`  : 'none'}}
+                                onClick={() => onTypeSelected(activityType)}
+                                sx={{border: activity?.type === activityType ? `1px solid ${theme.palette.secondary.main}` : 'none'}}
                             >
                                 {emojiByActivityType[activityType]}
                             </EmojiButton>
@@ -75,7 +89,14 @@ export const ActivitySelection: React.FC<Props> = (props) => {
                 }
             </Grid>
 
-            <ContinueButton disabled={!selectedActivity} variant={'contained'} color={'secondary'}>{selectedActivity ? buttonTitle : buttonTitleDisabled}</ContinueButton>
+            <ContinueButton
+                disabled={!activity?.type}
+                variant={'contained'}
+                color={'secondary'}
+                onClick={next}
+            >
+                {activity?.type ? buttonTitle : buttonTitleDisabled}
+            </ContinueButton>
         </Grid>
     );
 };

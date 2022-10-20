@@ -1,11 +1,12 @@
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import {NextPage} from 'next';
-import {ActivitySelection} from '@components/index';
+import {ActivitySelection, ActivityForm} from '@components/index';
 import {Box, Button, IconButton} from '@mui/material';
 import styled from '@emotion/styled';
 import {IoIosArrowBack} from 'react-icons/io';
 import {theme} from '@styles/index';
 import {useRouter} from 'next/router';
+import {ActivityCreationProvider} from '@contexts/index';
 
 export const BackButton = styled(IconButton)` 
   background-color: ${theme.palette.primary.main};
@@ -18,16 +19,30 @@ export const BackButton = styled(IconButton)`
 
 const CreateActivityPage: NextPage = () => {
     const router = useRouter();
+    const pages = [
+        <ActivitySelection key={'selection'} next={() => setCurrentPage(currentPage => currentPage + 1)}/>,
+        <ActivityForm key={'form'}/>
+    ];
+    const [currentPage, setCurrentPage] = useState(0);
 
-    const onBack = () => router.replace('/');
+    const onBack = useCallback(async () => {
+        if (currentPage === 0) {
+            await router.replace('/');
+        } else {
+            setCurrentPage(currentPage => currentPage - 1);
+        }
+    }, [currentPage, router]);
 
     return (
-        <Box sx={{margin: '20px 20px 40px 20px'}}>
-            <BackButton color={'secondary'} onClick={onBack}>
-                <IoIosArrowBack size={20}/>
-            </BackButton>
-            <ActivitySelection/>
-        </Box>
+        <ActivityCreationProvider>
+            <Box sx={{margin: '20px 20px 40px 20px'}}>
+                <BackButton color={'secondary'} onClick={onBack}>
+                    <IoIosArrowBack size={20}/>
+                </BackButton>
+
+                {pages[currentPage]}
+            </Box>
+        </ActivityCreationProvider>
     );
 }
 

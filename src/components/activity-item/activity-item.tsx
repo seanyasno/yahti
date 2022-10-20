@@ -18,7 +18,7 @@ export const ActivityItem: React.FC<Props> = (props) => {
     return (
         <Container elevation={0}>
             <Typography variant={'h6'} fontWeight={600}>{activity.title}</Typography>
-            <Typography variant={'body2'}>{activity.title}</Typography>
+            <Typography variant={'body2'}>{activity.description}</Typography>
         </Container>
     );
 };
