@@ -37,6 +37,7 @@ export const ActivityPage: NextPage<Props> = (props) => {
     const noLinkTitle = 'כפרה עליך אין כאן קישור';
     const descriptionTitle = 'קצת תיאור על ההרפתקה שלנו';
 
+
     return (
         <Container
             maxWidth={'sm'}
