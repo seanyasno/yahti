@@ -2,7 +2,7 @@ import React from 'react';
 import {GetStaticPaths, GetStaticProps, NextPage} from 'next';
 import {Activity} from '@abstraction/index';
 import {doc, getDoc} from '@firebase/firestore';
-import {db} from '../../src/config';
+import {db} from '@config/index';
 import styled from '@emotion/styled';
 import {Button, Container, Divider, IconButton, Stack, Typography} from '@mui/material';
 import {ActivityType, BackButton} from '@styles/index';
