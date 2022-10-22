@@ -1,5 +1,5 @@
 import React from 'react';
-import {GetStaticPaths, GetStaticProps, NextPage} from 'next';
+import {GetServerSideProps, GetStaticPaths, GetStaticProps, NextPage} from 'next';
 import {Activity} from '@abstraction/index';
 import {doc, getDoc} from '@firebase/firestore';
 import {db} from '@config/index';
@@ -129,13 +129,7 @@ export const ActivityPage: NextPage<Props> = (props) => {
 
 export const getStaticPaths: GetStaticPaths = () => {
     return {
-        paths: [
-            {
-                params: {
-                    activityId: 'MPnQiuEgn9vZG4Kb2SGc',
-                }
-            }
-        ],
+        paths: [],
         fallback: true,
     };
 };
@@ -143,11 +137,6 @@ export const getStaticPaths: GetStaticPaths = () => {
 export const getStaticProps: GetStaticProps = async ({params}) => {
     try {
         const activityId = params.activityId as string;
-
-        /*
-        const docRef = doc(db, "cities", "SF");
-const docSnap = await getDoc(docRef);
-         */
 
         const docRef = doc(db, 'activities', activityId);
         const docSnap = await getDoc(docRef);
