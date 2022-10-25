@@ -103,25 +103,24 @@ export const ActivityForm = () => {
             {/*    marginTop: '10px',*/}
             {/*}}/>*/}
 
-            <Box sx={{
-                minHeight: '300px',
-                display: 'flex',
-                position: 'relative',
-            }}>
-                {
-                    parsedImage && (
-                        <Image
-                            alt={'activity image'}
-                            src={parsedImage}
-                            layout={'fill'}
-                            objectFit={'cover'}
-                            style={{
-                                borderRadius: '1em',
-                            }}
-                        />
-                    )
-                }
-            </Box>
+            {parsedImage && (
+                <Box sx={{
+                    minHeight: '300px',
+                    display: 'flex',
+                    position: 'relative',
+                }}>
+                    <Image
+                        alt={'activity image'}
+                        src={parsedImage}
+                        layout={'fill'}
+                        objectFit={'cover'}
+                        style={{
+                            borderRadius: '1em',
+                        }}
+                    />
+
+                </Box>
+            )}
 
             <StyledDivider/>
 
