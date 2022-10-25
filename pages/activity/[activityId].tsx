@@ -1,5 +1,5 @@
 import React from 'react';
-import {GetServerSideProps, GetStaticPaths, GetStaticProps, NextPage} from 'next';
+import {GetStaticPaths, GetStaticProps, NextPage} from 'next';
 import {Activity} from '@abstraction/index';
 import {doc, getDoc} from '@firebase/firestore';
 import {db} from '@config/index';
@@ -17,6 +17,7 @@ export const Card = styled.div`
   padding: 26px 20px;
   border-radius: 1em;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  margin-bottom: 20px;
 `;
 
 type Props = {
@@ -42,10 +43,10 @@ export const ActivityPage: NextPage<Props> = (props) => {
         <Container
             maxWidth={'sm'}
             sx={{
-                height: '100vh',
+                height: '-webkit-fill-available',
                 display: 'flex',
                 flexDirection: 'column',
-                padding: '20px',
+                padding: '20px 20px 0 20px',
             }}>
             <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'} mb={'16px'}>
                 <BackButton

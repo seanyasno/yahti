@@ -1,14 +1,17 @@
 import {UploadPhotoContainer, UploadPhotoButton, CreateButton, CreateButtonContainer, StyledDivider} from './styles';
-import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
-import {Input, InputAdornment, Typography} from '@mui/material';
+import React, {ChangeEvent, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import {Box, Input, InputAdornment, Typography} from '@mui/material';
 import {ActivityCreationContext} from '@contexts/index';
+import {parseImageToString} from '@utils/index';
 import {useRouter} from 'next/router';
+import Image from 'next/image';
 
 export const ActivityForm = () => {
     const router = useRouter();
     const {setActivity, onSuccess} = useContext(ActivityCreationContext);
     const [title, setTitle] = useState('');
     const [create, setCreate] = useState(false);
+    const [parsedImage, setParsedImage] = useState<string | null>(null);
     const linkInputRef = useRef<HTMLInputElement>(null);
     const descriptionInputRef = useRef<HTMLInputElement>(null);
 
@@ -35,6 +38,19 @@ export const ActivityForm = () => {
         setCreate(true);
     }, [setActivity, title, onSuccess]);
 
+    const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+        if (!event.target.files) {
+            return;
+        }
+
+        try {
+            const file = event.target.files[0];
+            setParsedImage(await parseImageToString(file));
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     useEffect(() => {
         (async () => {
             if (create) {
@@ -47,6 +63,8 @@ export const ActivityForm = () => {
             setCreate(false);
         };
     }, [create, onSuccess, router, setCreate]);
+
+    const props = {component: 'label'};
 
     return (
         <React.Fragment>
@@ -65,8 +83,14 @@ export const ActivityForm = () => {
 
             <UploadPhotoContainer>
                 <Typography>{addPhotoTitle}</Typography>
-                <UploadPhotoButton variant={'text'} color={'secondary'}>
+                <UploadPhotoButton {...props} variant={'text'} color={'secondary'}>
                     {addPhotoButtonTitle}
+                    <input
+                        type="file"
+                        accept="image/png,image/jpeg"
+                        hidden
+                        onChange={handleFileUpload}
+                    />
                 </UploadPhotoButton>
             </UploadPhotoContainer>
 
@@ -78,6 +102,26 @@ export const ActivityForm = () => {
             {/*    boxShadow: 'rgba(0, 0, 0, 0.25) 0px 25px 50px -12px',*/}
             {/*    marginTop: '10px',*/}
             {/*}}/>*/}
+
+            <Box sx={{
+                minHeight: '300px',
+                display: 'flex',
+                position: 'relative',
+            }}>
+                {
+                    parsedImage && (
+                        <Image
+                            alt={'activity image'}
+                            src={parsedImage}
+                            layout={'fill'}
+                            objectFit={'cover'}
+                            style={{
+                                borderRadius: '1em',
+                            }}
+                        />
+                    )
+                }
+            </Box>
 
             <StyledDivider/>
 
