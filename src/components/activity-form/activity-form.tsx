@@ -35,10 +35,9 @@ export const ActivityForm = () => {
             link: linkInputRef.current?.value,
             description: descriptionInputRef.current?.value,
             done: false,
-            images: imageFile ? [imageFile] : [],
         });
         setCreate(true);
-    }, [imageFile, setActivity, title]);
+    }, [setActivity, title]);
 
     const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
         if (!event.target.files) {
@@ -57,7 +56,7 @@ export const ActivityForm = () => {
     useEffect(() => {
         (async () => {
             if (create) {
-                await onSuccess();
+                await onSuccess([imageFile]);
                 router.replace('/');
             }
         })();

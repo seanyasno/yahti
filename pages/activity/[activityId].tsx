@@ -2,15 +2,17 @@ import React, {useEffect} from 'react';
 import {GetStaticPaths, GetStaticProps, NextPage} from 'next';
 import {Activity} from '@abstraction/index';
 import {doc, getDoc} from '@firebase/firestore';
-import {db} from '@config/index';
+import {db, storage} from '@config/index';
 import styled from '@emotion/styled';
-import {Button, Container, Divider, IconButton, Stack, Typography} from '@mui/material';
+import {Box, Button, Container, Divider, IconButton, Stack, Typography} from '@mui/material';
 import {ActivityType, BackButton} from '@styles/index';
 import {emojiByActivityType} from '@constants/index';
 import {openUrlInNewTab} from '@utils/index';
 import {IoIosArrowBack} from 'react-icons/io';
 import {IoCheckmarkDoneCircleOutline, IoCheckmarkDoneCircleSharp} from 'react-icons/io5';
 import {useRouter} from 'next/router';
+import {getDownloadURL, ref} from '@firebase/storage';
+import Image from 'next/image';
 
 export const Card = styled.div`
   background-color: #fff;
@@ -23,6 +25,7 @@ export const Card = styled.div`
 type Props = {
     activity: Activity;
     id: string;
+    imagesUrls: string[];
 }
 
 export const ActivityPage: NextPage<Props> = (props) => {
@@ -38,7 +41,6 @@ export const ActivityPage: NextPage<Props> = (props) => {
     const linkTitle = 'קישור לאתר';
     const noLinkTitle = 'כפרה עליך אין כאן קישור';
     const descriptionTitle = 'קצת תיאור על ההרפתקה שלנו';
-
 
     return (
         <Container
@@ -83,14 +85,25 @@ export const ActivityPage: NextPage<Props> = (props) => {
                     </ActivityType>
                 </Stack>
 
-                {/*<Box sx={{*/}
-                {/*    minHeight: '250px',*/}
-                {/*    width: '100%',*/}
-                {/*    backgroundColor: '#0A99EA',*/}
-                {/*    borderRadius: '1em',*/}
-                {/*    boxShadow: 'rgba(0, 0, 0, 0.25) 0px 25px 50px -12px',*/}
-                {/*    marginTop: '10px',*/}
-                {/*}}/>*/}
+                {props.imagesUrls && props.imagesUrls.length > 0 && (
+                    <Box sx={{
+                        minHeight: '300px',
+                        display: 'flex',
+                        position: 'relative',
+                        margin: '16px 0',
+                    }}>
+                        <Image
+                            alt={'activity image'}
+                            src={props.imagesUrls[0]}
+                            layout={'fill'}
+                            objectFit={'cover'}
+                            style={{
+                                borderRadius: '1em',
+                            }}
+                        />
+
+                    </Box>
+                )}
 
                 <Stack direction={'row'} spacing={1} alignItems={'center'}>
                     <Typography variant={'body2'}>{link ? linkTitle : noLinkTitle}</Typography>
@@ -142,10 +155,21 @@ export const getStaticProps: GetStaticProps = async ({params}) => {
         const docRef = doc(db, 'activities', activityId);
         const docSnap = await getDoc(docRef);
 
+        const activity: Activity = docSnap.data() as Activity;
+        const imagesUrls: string[] = [];
+
+        if (activity.imagesPaths) {
+            for (let imagePath of activity.imagesPaths) {
+                const url = await getDownloadURL(ref(storage, imagePath));
+                imagesUrls.push(url);
+            }
+        }
+
         return {
             props: {
-                activity: docSnap.data(),
+                activity,
                 id: activityId,
+                imagesUrls,
             },
         };
     } catch (error) {
