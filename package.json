@@ -18,6 +18,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.6.0",
+    "react-spinners": "^0.13.6",
     "stylis": "^4.1.2",
     "stylis-plugin-rtl": "^2.1.1",
     "uuid": "^9.0.0"

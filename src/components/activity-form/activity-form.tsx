@@ -5,6 +5,7 @@ import {ActivityCreationContext} from '@contexts/index';
 import {parseImageToString} from '@utils/index';
 import {useRouter} from 'next/router';
 import Image from 'next/image';
+import ScaleLoader from 'react-spinners/ScaleLoader';
 
 export const ActivityForm = () => {
     const router = useRouter();
@@ -64,7 +65,7 @@ export const ActivityForm = () => {
         return () => {
             setCreate(false);
         };
-    }, [create, onSuccess, router, setCreate]);
+    }, [create, imageFile, onSuccess, router, setCreate]);
 
     const props = {component: 'label'};
 
@@ -73,6 +74,7 @@ export const ActivityForm = () => {
             <Typography variant={'h4'} fontWeight={600} mb={'16px'}>{title}</Typography>
 
             <Input
+                disabled={create}
                 startAdornment={
                     <InputAdornment position={'start'} sx={{}}>
                         <Typography>{titleInputAdornment}</Typography>
@@ -85,9 +87,10 @@ export const ActivityForm = () => {
 
             <UploadPhotoContainer>
                 <Typography>{addPhotoTitle}</Typography>
-                <UploadPhotoButton {...props} variant={'text'} color={'secondary'}>
+                <UploadPhotoButton {...props} disabled={create} variant={'text'} color={'secondary'}>
                     {addPhotoButtonTitle}
                     <input
+                        disabled={create}
                         type="file"
                         accept="image/png,image/jpeg"
                         hidden
@@ -95,15 +98,6 @@ export const ActivityForm = () => {
                     />
                 </UploadPhotoButton>
             </UploadPhotoContainer>
-
-            {/*<Box sx={{*/}
-            {/*    minHeight: '250px',*/}
-            {/*    width: '100%',*/}
-            {/*    backgroundColor: '#0A99EA',*/}
-            {/*    borderRadius: '1em',*/}
-            {/*    boxShadow: 'rgba(0, 0, 0, 0.25) 0px 25px 50px -12px',*/}
-            {/*    marginTop: '10px',*/}
-            {/*}}/>*/}
 
             {parsedImage && (
                 <Box sx={{
@@ -127,6 +121,7 @@ export const ActivityForm = () => {
             <StyledDivider/>
 
             <Input
+                disabled={create}
                 inputRef={linkInputRef}
                 inputMode={'url'}
                 type={'url'}
@@ -136,6 +131,7 @@ export const ActivityForm = () => {
             <StyledDivider/>
 
             <Input
+                disabled={create}
                 inputRef={descriptionInputRef}
                 placeholder={descriptionInputPlaceholder}
                 multiline/>
@@ -145,7 +141,10 @@ export const ActivityForm = () => {
                     variant={'contained'}
                     color={'secondary'}
                     onClick={onCreate}>
-                    {createButtonTitle}
+                    {create ?
+                        <ScaleLoader
+                            color={'#fff'}
+                        /> : createButtonTitle}
                 </CreateButton>
             </CreateButtonContainer>
         </React.Fragment>
