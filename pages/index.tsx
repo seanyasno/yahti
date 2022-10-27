@@ -46,8 +46,8 @@ const Home: NextPage = () => {
             >
                 {
                     activities.map(({activity, id}, index) =>
-                        <Box onClick={() => router.push(`/activity/${id}`)} key={index}>
-                            <ActivityItem activity={activity}/>
+                        <Box sx={{zIndex: 1}} onClick={() => router.push(`/activity/${id}`)} key={index}>
+                            <ActivityItem id={id} activity={activity}/>
                         </Box>
                     )
                 }

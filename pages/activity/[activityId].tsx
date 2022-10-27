@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {GetStaticPaths, GetStaticProps, NextPage} from 'next';
 import {Activity} from '@abstraction/index';
 import {doc, getDoc} from '@firebase/firestore';
@@ -22,6 +22,7 @@ export const Card = styled.div`
 
 type Props = {
     activity: Activity;
+    id: string;
 }
 
 export const ActivityPage: NextPage<Props> = (props) => {
@@ -111,19 +112,18 @@ export const ActivityPage: NextPage<Props> = (props) => {
                 <Typography variant={'body2'}>{description}</Typography>
             </Card>
 
-            <Button
-                variant={'contained'}
-                color={'secondary'}
-                sx={{
-                    padding: '12px 80px',
-                    fontSize: '1.2rem',
-                    borderRadius: '1em',
-                    width: '100%',
-                    marginTop: 'auto',
-                }}
-            >
-                {doneButtonTitle}
-            </Button>
+            {/*<Button*/}
+            {/*    variant={'contained'}*/}
+            {/*    color={'secondary'}*/}
+            {/*    sx={{*/}
+            {/*        padding: '12px 80px',*/}
+            {/*        fontSize: '1.2rem',*/}
+            {/*        borderRadius: '1em',*/}
+            {/*        width: '100%',*/}
+            {/*        marginTop: 'auto',*/}
+            {/*    }}*/}
+            {/*    {doneButtonTitle}*/}
+            {/*</Button>*/}
         </Container>
     );
 };
@@ -145,6 +145,7 @@ export const getStaticProps: GetStaticProps = async ({params}) => {
         return {
             props: {
                 activity: docSnap.data(),
+                id: activityId,
             },
         };
     } catch (error) {

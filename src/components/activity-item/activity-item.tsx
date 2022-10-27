@@ -1,12 +1,16 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {Activity} from '@abstraction/types';
 import styled from '@emotion/styled';
 import {Box, Card, IconButton, Stack, Typography} from '@mui/material';
 import {emojiByActivityType} from '@constants/index';
 import {GoLinkExternal} from 'react-icons/go';
 import {openUrlInNewTab} from '@utils/index';
-import {IoCheckmarkDoneCircleOutline} from 'react-icons/io5';
+import {IoCheckmarkDoneCircleOutline, IoCheckmarkDoneCircleSharp} from 'react-icons/io5';
 import {ActivityType} from '@styles/index';
+import {doc, setDoc} from '@firebase/firestore';
+import {db} from '@config/index';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {useToggleActivity} from '@hooks/use-toggle-activity/use-toggle-activity';
 
 export const Container = styled(Card)`
   border-radius: 1em;
@@ -14,11 +18,22 @@ export const Container = styled(Card)`
 `;
 
 type Props = {
+    id: string;
     activity: Activity;
 }
 
 export const ActivityItem: React.FC<Props> = (props) => {
-    const {activity} = props;
+    const {activity, id} = props;
+    const {toggleActivity} = useToggleActivity(activity, id);
+
+    const onDoneClick = useCallback(async (event) => {
+        event.stopPropagation();
+        try {
+            await toggleActivity();
+        } catch (error) {
+            console.log(error);
+        }
+    }, [toggleActivity]);
 
     return (
         <Container elevation={0}>
@@ -32,8 +47,13 @@ export const ActivityItem: React.FC<Props> = (props) => {
             >
 
                 <Box sx={{display: 'flex', alignItems: 'center', columnGap: '8px'}}>
-                    <IconButton sx={{padding: 0}}>
-                        <IoCheckmarkDoneCircleOutline size={'32px'}/>
+                    <IconButton sx={{
+                        padding: 0, color: activity.done ? '#2a9d8f' : '',
+                        zIndex: 100,
+                    }} onClick={onDoneClick}>
+                        {activity.done ?
+                            <IoCheckmarkDoneCircleSharp size={'32px'}/> :
+                            <IoCheckmarkDoneCircleOutline size={'32px'}/>}
                     </IconButton>
 
                     <ActivityType>
