@@ -11,6 +11,7 @@ export const ActivityForm = () => {
     const {setActivity, onSuccess} = useContext(ActivityCreationContext);
     const [title, setTitle] = useState('');
     const [create, setCreate] = useState(false);
+    const [imageFile, setImageFile] = useState<File>();
     const [parsedImage, setParsedImage] = useState<string | null>(null);
     const linkInputRef = useRef<HTMLInputElement>(null);
     const descriptionInputRef = useRef<HTMLInputElement>(null);
@@ -34,9 +35,10 @@ export const ActivityForm = () => {
             link: linkInputRef.current?.value,
             description: descriptionInputRef.current?.value,
             done: false,
+            images: imageFile ? [imageFile] : [],
         });
         setCreate(true);
-    }, [setActivity, title, onSuccess]);
+    }, [imageFile, setActivity, title]);
 
     const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
         if (!event.target.files) {
@@ -45,6 +47,7 @@ export const ActivityForm = () => {
 
         try {
             const file = event.target.files[0];
+            setImageFile(file);
             setParsedImage(await parseImageToString(file));
         } catch (error) {
             console.error(error);
