@@ -3,9 +3,7 @@ import {GetStaticPaths, GetStaticProps, NextPage} from 'next';
 import {Activity} from '@abstraction/index';
 import {doc, getDoc} from '@firebase/firestore';
 import {auth, db, storage} from '@config/index';
-import styled from '@emotion/styled';
-import {Box, Button, Container, Divider, IconButton, Stack, Typography} from '@mui/material';
-import {ActivityType, BackButton} from '@styles/index';
+import {Divider, IconButton, Stack, Typography} from '@mui/material';
 import {emojiByActivityType} from '@constants/index';
 import {openUrlInNewTab} from '@utils/index';
 import {IoIosArrowBack} from 'react-icons/io';
@@ -14,14 +12,7 @@ import {useRouter} from 'next/router';
 import {getDownloadURL, ref} from '@firebase/storage';
 import Image from 'next/image';
 import {useAuthState} from 'react-firebase-hooks/auth';
-
-export const Card = styled.div`
-  background-color: #fff;
-  padding: 26px 20px;
-  border-radius: 1em;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  margin-bottom: 20px;
-`;
+import {DoneButton, StyledBackButton, UrlButton, StyledActivityType, StyledContainer, ImageContainer, Card} from '@styles/activity-page/activity-page-styles';
 
 type Props = {
     activity: Activity;
@@ -51,21 +42,14 @@ export const ActivityPage: NextPage<Props> = (props) => {
     const descriptionTitle = 'קצת תיאור על ההרפתקה שלנו';
 
     return (
-        <Container
-            maxWidth={'sm'}
-            sx={{
-                height: '-webkit-fill-available',
-                display: 'flex',
-                flexDirection: 'column',
-                padding: '20px 20px 0 20px',
-            }}>
+        <StyledContainer maxWidth={'sm'}>
             <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'} mb={'16px'}>
-                <BackButton
+                <StyledBackButton
                     color={'secondary'}
                     onClick={() => router.push('/')}
-                    sx={{maxWidth: 'fit-content', marginBottom: '0 !important'}}>
+                    sx={{}}>
                     <IoIosArrowBack size={20}/>
-                </BackButton>
+                </StyledBackButton>
 
                 <IconButton sx={{
                     padding: 0,
@@ -83,69 +67,50 @@ export const ActivityPage: NextPage<Props> = (props) => {
             <Card>
                 <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
                     <Typography fontWeight={700} variant={'h5'}>{title}</Typography>
-                    <ActivityType
-                        sx={{
-                            width: '40px !important',
-                            height: '40px !important',
-                            fontSize: '22px !important',
-                        }}>
+                    <StyledActivityType>
                         {emojiByActivityType[type]}
-                    </ActivityType>
+                    </StyledActivityType>
                 </Stack>
 
                 {props.imagesUrls && props.imagesUrls.length > 0 && (
-                    <Box sx={{
-                        minHeight: '300px',
-                        display: 'flex',
-                        position: 'relative',
-                        margin: '16px 0',
-                    }}>
+                    <ImageContainer>
                         <Image
                             alt={'activity image'}
                             src={props.imagesUrls[0]}
                             layout={'fill'}
                             objectFit={'cover'}
-                            style={{
-                                borderRadius: '1em',
-                            }}
+                            priority
+                            style={{borderRadius: '1em'}}
                         />
 
-                    </Box>
+                    </ImageContainer>
                 )}
 
                 <Stack direction={'row'} spacing={1} alignItems={'center'}>
                     <Typography variant={'body2'}>{link ? linkTitle : noLinkTitle}</Typography>
-                    <Button
+                    <UrlButton
                         variant={'text'}
                         color={'secondary'}
-                        onClick={() => openUrlInNewTab(link)}
-                        sx={{
-                            padding: 0,
-                            fontWeight: 300,
-                        }}>
+                        onClick={() => openUrlInNewTab(link)}>
                         {link}
-                    </Button>
+                    </UrlButton>
                 </Stack>
+                {description && (
+                    <React.Fragment>
+                        <Divider sx={{margin: '10px 0'}}/>
 
-                <Divider sx={{margin: '10px 0'}}/>
-
-                <Typography variant={'subtitle1'} fontWeight={600}>{descriptionTitle}</Typography>
-                <Typography variant={'body2'}>{description}</Typography>
+                        <Typography variant={'subtitle1'} fontWeight={600}>{descriptionTitle}</Typography>
+                        <Typography variant={'body2'}>{description}</Typography>
+                    </React.Fragment>
+                )}
             </Card>
 
-            {/*<Button*/}
-            {/*    variant={'contained'}*/}
-            {/*    color={'secondary'}*/}
-            {/*    sx={{*/}
-            {/*        padding: '12px 80px',*/}
-            {/*        fontSize: '1.2rem',*/}
-            {/*        borderRadius: '1em',*/}
-            {/*        width: '100%',*/}
-            {/*        marginTop: 'auto',*/}
-            {/*    }}*/}
-            {/*    {doneButtonTitle}*/}
-            {/*</Button>*/}
-        </Container>
+            <DoneButton
+                variant={'contained'}
+                color={'secondary'}>
+                {doneButtonTitle}
+            </DoneButton>
+        </StyledContainer>
     );
 };
 
