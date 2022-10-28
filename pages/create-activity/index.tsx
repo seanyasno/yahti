@@ -1,11 +1,12 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {NextPage} from 'next';
 import {ActivitySelection, ActivityForm} from '@components/index';
 import {IoIosArrowBack} from 'react-icons/io';
 import {Container, BackButton} from '@styles/create-activity/create-activity-styles';
 import {useRouter} from 'next/router';
 import {ActivityCreationProvider} from '@contexts/index';
-
+import {useAuthState} from 'react-firebase-hooks/auth';
+import {auth} from '@config/index';
 
 const CreateActivityPage: NextPage = () => {
     const router = useRouter();
@@ -14,6 +15,7 @@ const CreateActivityPage: NextPage = () => {
         <ActivityForm key={'form'}/>
     ];
     const [currentPage, setCurrentPage] = useState(0);
+    const [user, loading, error] = useAuthState(auth);
 
     const onBack = useCallback(async () => {
         if (currentPage === 0) {
@@ -22,6 +24,12 @@ const CreateActivityPage: NextPage = () => {
             setCurrentPage(currentPage => currentPage - 1);
         }
     }, [currentPage, router]);
+
+    useEffect(() => {
+        if (!loading && !user) {
+            router.replace('/login');
+        }
+    }, [loading, router, user]);
 
     return (
         <ActivityCreationProvider>

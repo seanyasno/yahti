@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {GetStaticPaths, GetStaticProps, NextPage} from 'next';
 import {Activity} from '@abstraction/index';
 import {doc, getDoc} from '@firebase/firestore';
-import {db, storage} from '@config/index';
+import {auth, db, storage} from '@config/index';
 import styled from '@emotion/styled';
 import {Box, Button, Container, Divider, IconButton, Stack, Typography} from '@mui/material';
 import {ActivityType, BackButton} from '@styles/index';
@@ -13,6 +13,7 @@ import {IoCheckmarkDoneCircleOutline, IoCheckmarkDoneCircleSharp} from 'react-ic
 import {useRouter} from 'next/router';
 import {getDownloadURL, ref} from '@firebase/storage';
 import Image from 'next/image';
+import {useAuthState} from 'react-firebase-hooks/auth';
 
 export const Card = styled.div`
   background-color: #fff;
@@ -30,6 +31,13 @@ type Props = {
 
 export const ActivityPage: NextPage<Props> = (props) => {
     const router = useRouter();
+    const [user, loading, error] = useAuthState(auth);
+
+    useEffect(() => {
+        if (!loading && !user) {
+            router.replace('/login');
+        }
+    }, [loading, router, user]);
 
     if (!props.activity) {
         return <div>loading...</div>;

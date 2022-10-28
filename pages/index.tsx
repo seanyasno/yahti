@@ -5,11 +5,13 @@ import {MdAdd} from 'react-icons/md';
 import {useRouter} from 'next/router';
 import {useQuery} from '@tanstack/react-query';
 import {collection, getDocs} from '@firebase/firestore';
-import {db} from '@config/index';
+import {auth, db} from '@config/index';
 import {Activity} from '@abstraction/types';
 import styled from '@emotion/styled';
 import {theme} from '@styles/index';
-import {useMemo, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
+import {User} from '@firebase/auth';
+import {useAuthState} from 'react-firebase-hooks/auth';
 
 export const StyledTabs = styled(Tabs)`
   margin: 0 0 20px 0;
@@ -33,7 +35,7 @@ export const StyledTab = styled(Tab)`
   }
 `;
 
-const Home: NextPage = () => {
+const HomePage: NextPage = () => {
     const router = useRouter();
     const [currentTab, setCurrentTab] = useState(0);
     const {data: activities = []} = useQuery({
@@ -48,10 +50,17 @@ const Home: NextPage = () => {
     });
     const doneActivities = useMemo(() => activities.filter(({activity}) => activity.done), [activities]);
     const notDoneActivities = useMemo(() => activities.filter(({activity}) => !activity.done), [activities]);
+    const [user, loading, error] = useAuthState(auth);
 
     const title = 'יואואוו שלום';
 
     const onAddActivity = () => router.push('/create-activity');
+
+    useEffect(() => {
+        if (!loading && !user) {
+            router.replace('/login');
+        }
+    }, [loading, router, user]);
 
     return (
         <Container maxWidth={'sm'} sx={{padding: '30px 20px'}}>
@@ -90,4 +99,4 @@ const Home: NextPage = () => {
     );
 };
 
-export default Home;
+export default HomePage;

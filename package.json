@@ -14,9 +14,12 @@
     "@mui/material": "^5.10.9",
     "@tanstack/react-query": "^4.12.0",
     "firebase": "^9.12.1",
+    "is-promise": "^4.0.0",
+    "lodash": "^4.17.21",
     "next": "12.3.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-firebase-hooks": "^5.0.3",
     "react-icons": "^4.6.0",
     "react-spinners": "^0.13.6",
     "stylis": "^4.1.2",
@@ -24,6 +27,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.186",
     "@types/node": "18.11.0",
     "@types/react": "18.0.21",
     "@types/react-dom": "18.0.6",
