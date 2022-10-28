@@ -24,6 +24,7 @@ import {
 import {StyledIconButton} from '@styles/create-activity/create-activity-styles';
 import {GrEdit} from 'react-icons/gr';
 import {useMutation} from '@tanstack/react-query';
+import {LoadingScreen} from '@components/loading-screen/loading-screen';
 
 type Props = {
     activity: Activity;
@@ -52,7 +53,7 @@ export const ActivityPage: NextPage<Props> = (props) => {
     }, [loading, router, user]);
 
     if (!activity) {
-        return <div>loading...</div>;
+        return <LoadingScreen/>;
     }
 
     const {title, link, type, done, description} = activity;

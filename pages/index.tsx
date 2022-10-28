@@ -1,6 +1,6 @@
 import type {NextPage} from 'next';
 import {Container, Stack, Typography, Fab, Tabs, Tab, Box} from '@mui/material';
-import {ActivityItem} from '@components/index';
+import {ActivityItem, LoadingScreen} from '@components/index';
 import {MdAdd} from 'react-icons/md';
 import {useRouter} from 'next/router';
 import {useQuery} from '@tanstack/react-query';
@@ -10,7 +10,6 @@ import {Activity} from '@abstraction/types';
 import styled from '@emotion/styled';
 import {theme} from '@styles/index';
 import {useEffect, useMemo, useState} from 'react';
-import {User} from '@firebase/auth';
 import {useAuthState} from 'react-firebase-hooks/auth';
 
 export const StyledTabs = styled(Tabs)`
@@ -38,7 +37,7 @@ export const StyledTab = styled(Tab)`
 const HomePage: NextPage = () => {
     const router = useRouter();
     const [currentTab, setCurrentTab] = useState(0);
-    const {data: activities = []} = useQuery({
+    const {data: activities = [], isLoading: loadingActivities} = useQuery({
         queryKey: ['activities'],
         queryFn: async () => {
             const querySnapshot = await getDocs(collection(db, 'activities'));
@@ -61,6 +60,10 @@ const HomePage: NextPage = () => {
             router.replace('/login');
         }
     }, [loading, router, user]);
+
+    if (loading || loadingActivities) {
+        return <LoadingScreen/>;
+    }
 
     return (
         <Container maxWidth={'sm'} sx={{padding: '30px 20px'}}>
