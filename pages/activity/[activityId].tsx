@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {GetStaticPaths, GetStaticProps, NextPage} from 'next';
 import {Activity} from '@abstraction/index';
-import {doc, getDoc} from '@firebase/firestore';
+import {doc, getDoc, setDoc} from '@firebase/firestore';
 import {auth, db, storage} from '@config/index';
 import {Divider, IconButton, Stack, Typography} from '@mui/material';
 import {emojiByActivityType} from '@constants/index';
@@ -23,6 +23,7 @@ import {
 } from '@styles/activity-page/activity-page-styles';
 import {StyledIconButton} from '@styles/create-activity/create-activity-styles';
 import {GrEdit} from 'react-icons/gr';
+import {useMutation} from '@tanstack/react-query';
 
 type Props = {
     activity: Activity;
@@ -31,8 +32,18 @@ type Props = {
 }
 
 export const ActivityPage: NextPage<Props> = (props) => {
+    const {id, imagesUrls} = props;
+    let {activity} = props;
     const router = useRouter();
     const [user, loading, error] = useAuthState(auth);
+    const {mutateAsync: toggleActivity} = useMutation({
+        mutationFn: async () => {
+            await setDoc(doc(db, 'activities', id), {
+                done: !activity.done,
+            }, {merge: true});
+            activity.done = !activity.done;
+        }
+    })
 
     useEffect(() => {
         if (!loading && !user) {
@@ -40,11 +51,11 @@ export const ActivityPage: NextPage<Props> = (props) => {
         }
     }, [loading, router, user]);
 
-    if (!props.activity) {
+    if (!activity) {
         return <div>loading...</div>;
     }
 
-    const {title, link, type, done, description} = props.activity;
+    const {title, link, type, done, description} = activity;
 
     const doneButtonTitle = 'יאללה נסמן שעשינו?';
     const linkTitle = 'קישור לאתר';
@@ -69,7 +80,9 @@ export const ActivityPage: NextPage<Props> = (props) => {
             <Card>
                 <Stack direction={'row'} justifyContent={'space-between'} alignItems={'start'}>
                     <Typography fontWeight={700} variant={'h5'}>
-                        <IconButton sx={{
+                        <IconButton
+                            onClick={() => toggleActivity()}
+                            sx={{
                             padding: 0,
                             color: done ? '#2a9d8f' : '',
                         }}>
@@ -86,11 +99,11 @@ export const ActivityPage: NextPage<Props> = (props) => {
 
                 </Stack>
 
-                {props.imagesUrls && props.imagesUrls.length > 0 && (
+                {imagesUrls && imagesUrls.length > 0 && (
                     <ImageContainer>
                         <Image
                             alt={'activity image'}
-                            src={props.imagesUrls[0]}
+                            src={imagesUrls[0]}
                             layout={'fill'}
                             objectFit={'cover'}
                             priority
@@ -125,11 +138,14 @@ export const ActivityPage: NextPage<Props> = (props) => {
                 )}
             </Card>
 
-            <DoneButton
-                variant={'contained'}
-                color={'secondary'}>
-                {doneButtonTitle}
-            </DoneButton>
+            {!done && (
+                <DoneButton
+                    variant={'contained'}
+                    color={'secondary'}
+                    onClick={() => toggleActivity()}>
+                    {doneButtonTitle}
+                </DoneButton>
+            )}
         </StyledContainer>
     );
 };
