@@ -12,7 +12,17 @@ import {useRouter} from 'next/router';
 import {getDownloadURL, ref} from '@firebase/storage';
 import Image from 'next/image';
 import {useAuthState} from 'react-firebase-hooks/auth';
-import {DoneButton, StyledBackButton, UrlButton, StyledActivityType, StyledContainer, ImageContainer, Card} from '@styles/activity-page/activity-page-styles';
+import {
+    DoneButton,
+    StyledBackButton,
+    UrlButton,
+    StyledActivityType,
+    StyledContainer,
+    ImageContainer,
+    Card
+} from '@styles/activity-page/activity-page-styles';
+import {StyledIconButton} from '@styles/create-activity/create-activity-styles';
+import {GrEdit} from 'react-icons/gr';
 
 type Props = {
     activity: Activity;
@@ -51,25 +61,29 @@ export const ActivityPage: NextPage<Props> = (props) => {
                     <IoIosArrowBack size={20}/>
                 </StyledBackButton>
 
-                <IconButton sx={{
-                    padding: 0,
-                    color: done ? '#2a9d8f' : '',
-                }}>
-                    {
-                        done ?
-                            <IoCheckmarkDoneCircleSharp size={'40px'}/> :
-                            <IoCheckmarkDoneCircleOutline size={'40px'}/>
-                    }
-                </IconButton>
+                <StyledBackButton>
+                    <GrEdit size={20} style={{transform: 'rotate(180deg)'}}/>
+                </StyledBackButton>
             </Stack>
 
-
             <Card>
-                <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
-                    <Typography fontWeight={700} variant={'h5'}>{title}</Typography>
-                    <StyledActivityType>
-                        {emojiByActivityType[type]}
-                    </StyledActivityType>
+                <Stack direction={'row'} justifyContent={'space-between'} alignItems={'start'}>
+                    <Typography fontWeight={700} variant={'h5'}>
+                        <IconButton sx={{
+                            padding: 0,
+                            color: done ? '#2a9d8f' : '',
+                        }}>
+                            {
+                                done ?
+                                    <IoCheckmarkDoneCircleSharp size={'48px'}/> :
+                                    <IoCheckmarkDoneCircleOutline size={'48px'}/>
+                            }
+                        </IconButton>
+                        {'  '}
+                        {title}
+                    </Typography>
+
+
                 </Stack>
 
                 {props.imagesUrls && props.imagesUrls.length > 0 && (
@@ -86,14 +100,20 @@ export const ActivityPage: NextPage<Props> = (props) => {
                     </ImageContainer>
                 )}
 
-                <Stack direction={'row'} spacing={1} alignItems={'center'}>
-                    <Typography variant={'body2'}>{link ? linkTitle : noLinkTitle}</Typography>
-                    <UrlButton
-                        variant={'text'}
-                        color={'secondary'}
-                        onClick={() => openUrlInNewTab(link)}>
-                        {link}
-                    </UrlButton>
+                <Stack direction={'row'} spacing={1} alignItems={'center'} justifyContent={'space-between'}>
+                    <Stack direction={'row'} spacing={0.5} alignItems={'center'}>
+                        <Typography variant={'body2'}>{link ? linkTitle : noLinkTitle}</Typography>
+                        <UrlButton
+                            variant={'text'}
+                            color={'secondary'}
+                            onClick={() => openUrlInNewTab(link)}>
+                            {link}
+                        </UrlButton>
+                    </Stack>
+
+                    <StyledActivityType>
+                        {emojiByActivityType[type]}
+                    </StyledActivityType>
                 </Stack>
                 {description && (
                     <React.Fragment>

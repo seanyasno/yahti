@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {NextPage} from 'next';
 import {ActivitySelection, ActivityForm} from '@components/index';
 import {IoIosArrowBack} from 'react-icons/io';
-import {Container, BackButton} from '@styles/create-activity/create-activity-styles';
+import {Container, StyledIconButton} from '@styles/create-activity/create-activity-styles';
 import {useRouter} from 'next/router';
 import {ActivityCreationProvider} from '@contexts/index';
 import {useAuthState} from 'react-firebase-hooks/auth';
@@ -34,9 +34,9 @@ const CreateActivityPage: NextPage = () => {
     return (
         <ActivityCreationProvider>
             <Container>
-                <BackButton color={'secondary'} onClick={onBack}>
+                <StyledIconButton color={'secondary'} onClick={onBack}>
                     <IoIosArrowBack size={20}/>
-                </BackButton>
+                </StyledIconButton>
 
                 {pages[currentPage]}
             </Container>

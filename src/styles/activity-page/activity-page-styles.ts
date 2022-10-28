@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import {Button, Container} from '@mui/material';
-import {BackButton, ActivityType} from '@styles/index';
+import {StyledIconButton, ActivityType} from '@styles/index';
 
 export const StyledContainer = styled(Container)`
   height: -webkit-fill-available;
@@ -17,7 +17,7 @@ export const Card = styled.div`
   margin-bottom: 20px;
 `;
 
-export const StyledBackButton = styled(BackButton)`
+export const StyledBackButton = styled(StyledIconButton)`
   max-width: fit-content;
   margin-bottom: 0 !important;
 `;

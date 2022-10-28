@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import {IconButton} from '@mui/material';
 import {theme} from '../theme/theme';
 
-export const BackButton = styled(IconButton)` 
+export const StyledIconButton = styled(IconButton)` 
   background-color: ${theme.palette.primary.main};
   border-radius: 12px;
   padding: 12px;
