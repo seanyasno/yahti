@@ -83,19 +83,19 @@ const HomePage: NextPage = () => {
                 spacing={2}
             >
                 {currentTab === 0 && notDoneActivities.map(({activity, id}, index) =>
-                    <Box sx={{zIndex: 1}} onClick={() => router.push(`/activity/${id}`)} key={index}>
+                    <Box onClick={() => router.push(`/activity/${id}`)} key={index}>
                         <ActivityItem id={id} activity={activity}/>
                     </Box>
                 )}
 
                 {currentTab === 1 && doneActivities.map(({activity, id}, index) =>
-                    <Box sx={{zIndex: 1}} onClick={() => router.push(`/activity/${id}`)} key={index}>
+                    <Box onClick={() => router.push(`/activity/${id}`)} key={index}>
                         <ActivityItem id={id} activity={activity}/>
                     </Box>
                 )}
             </Stack>
 
-            <Fab color={'secondary'} aria-label="add" onClick={onAddActivity}>
+            <Fab color={'secondary'} aria-label={'add'} onClick={onAddActivity}>
                 <MdAdd size={26}/>
             </Fab>
         </Container>

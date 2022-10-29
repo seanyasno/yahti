@@ -7,9 +7,6 @@ import {GoLinkExternal} from 'react-icons/go';
 import {openUrlInNewTab} from '@utils/index';
 import {IoCheckmarkDoneCircleOutline, IoCheckmarkDoneCircleSharp} from 'react-icons/io5';
 import {ActivityType} from '@styles/index';
-import {doc, setDoc} from '@firebase/firestore';
-import {db} from '@config/index';
-import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {useToggleActivity} from '@hooks/use-toggle-activity/use-toggle-activity';
 
 export const Container = styled(Card)`

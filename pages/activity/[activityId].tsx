@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {GetStaticPaths, GetStaticProps, NextPage} from 'next';
 import {Activity} from '@abstraction/index';
 import {doc, getDoc, setDoc} from '@firebase/firestore';
@@ -25,6 +25,8 @@ import {StyledIconButton} from '@styles/create-activity/create-activity-styles';
 import {GrEdit} from 'react-icons/gr';
 import {useMutation} from '@tanstack/react-query';
 import {LoadingScreen} from '@components/loading-screen/loading-screen';
+import {MdDeleteForever} from 'react-icons/md';
+import {DeleteActivityDialog} from '@components/delete-activity-dialog/delete-activity-dialog';
 
 type Props = {
     activity: Activity;
@@ -37,6 +39,7 @@ export const ActivityPage: NextPage<Props> = (props) => {
     let {activity} = props;
     const router = useRouter();
     const [user, loading, error] = useAuthState(auth);
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const {mutateAsync: toggleActivity} = useMutation({
         mutationFn: async () => {
             await setDoc(doc(db, 'activities', id), {
@@ -73,9 +76,14 @@ export const ActivityPage: NextPage<Props> = (props) => {
                     <IoIosArrowBack size={20}/>
                 </StyledBackButton>
 
-                <StyledBackButton>
-                    <GrEdit size={20} style={{transform: 'rotate(180deg)'}}/>
-                </StyledBackButton>
+                <Stack direction={'row'} alignItems={'center'} columnGap={'8px'}>
+                    <StyledBackButton onClick={() => setOpenDeleteDialog(true)}>
+                        <MdDeleteForever color={'#EF233B'} size={20} style={{transform: 'rotate(180deg)'}}/>
+                    </StyledBackButton>
+                    <StyledBackButton>
+                        <GrEdit size={20} style={{transform: 'rotate(180deg)'}}/>
+                    </StyledBackButton>
+                </Stack>
             </Stack>
 
             <Card>
@@ -147,6 +155,13 @@ export const ActivityPage: NextPage<Props> = (props) => {
                     {doneButtonTitle}
                 </DoneButton>
             )}
+
+            <DeleteActivityDialog
+                open={openDeleteDialog}
+                activity={activity}
+                activityId={id}
+                onClose={() => setOpenDeleteDialog(false)}
+            />
         </StyledContainer>
     );
 };
