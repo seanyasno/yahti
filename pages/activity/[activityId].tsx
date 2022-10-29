@@ -3,7 +3,7 @@ import {GetStaticPaths, GetStaticProps, NextPage} from 'next';
 import {Activity} from '@abstraction/index';
 import {doc, getDoc, setDoc} from '@firebase/firestore';
 import {auth, db, storage} from '@config/index';
-import {Divider, IconButton, Stack, Typography} from '@mui/material';
+import {Dialog, DialogContent, Divider, IconButton, Stack, Typography} from '@mui/material';
 import {emojiByActivityType} from '@constants/index';
 import {openUrlInNewTab} from '@utils/index';
 import {IoIosArrowBack} from 'react-icons/io';
@@ -15,7 +15,6 @@ import {useAuthState} from 'react-firebase-hooks/auth';
 import {
     DoneButton,
     StyledBackButton,
-    UrlButton,
     StyledActivityType,
     StyledContainer,
     ImageContainer,
@@ -23,9 +22,8 @@ import {
 } from '@styles/activity-page/activity-page-styles';
 import {GrEdit} from 'react-icons/gr';
 import {useMutation} from '@tanstack/react-query';
-import {LoadingScreen} from '@components/loading-screen/loading-screen';
+import {LoadingScreen, DeleteActivityDialog} from '@components/index';
 import {MdDeleteForever} from 'react-icons/md';
-import {DeleteActivityDialog} from '@components/delete-activity-dialog/delete-activity-dialog';
 import {GoLinkExternal} from 'react-icons/go';
 
 type Props = {
@@ -38,6 +36,7 @@ export const ActivityPage: NextPage<Props> = (props) => {
     const {id, imagesUrls} = props;
     let {activity} = props;
     const router = useRouter();
+    const [openFullImageDialog, setOpenFullImageDialog] = useState(false);
     const [user, loading, error] = useAuthState(auth);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const {mutateAsync: toggleActivity} = useMutation({
@@ -108,7 +107,7 @@ export const ActivityPage: NextPage<Props> = (props) => {
                 </Stack>
 
                 {imagesUrls && imagesUrls.length > 0 && (
-                    <ImageContainer>
+                    <ImageContainer onClick={() => setOpenFullImageDialog(true)}>
                         <Image
                             alt={'activity image'}
                             src={imagesUrls[0]}
@@ -160,6 +159,18 @@ export const ActivityPage: NextPage<Props> = (props) => {
                 activityId={id}
                 onClose={() => setOpenDeleteDialog(false)}
             />
+
+            <Dialog open={openFullImageDialog} onClose={() => setOpenFullImageDialog(false)} fullScreen sx={{
+                padding: '30px',
+            }}>
+                <DialogContent>
+                    <Image src={imagesUrls?.[0]}
+                           layout={'fill'}
+                           objectFit={'cover'}
+                           priority
+                    alt={''}/>
+                </DialogContent>
+            </Dialog>
         </StyledContainer>
     );
 };
