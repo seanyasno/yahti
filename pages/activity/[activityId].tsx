@@ -21,12 +21,12 @@ import {
     ImageContainer,
     Card
 } from '@styles/activity-page/activity-page-styles';
-import {StyledIconButton} from '@styles/create-activity/create-activity-styles';
 import {GrEdit} from 'react-icons/gr';
 import {useMutation} from '@tanstack/react-query';
 import {LoadingScreen} from '@components/loading-screen/loading-screen';
 import {MdDeleteForever} from 'react-icons/md';
 import {DeleteActivityDialog} from '@components/delete-activity-dialog/delete-activity-dialog';
+import {GoLinkExternal} from 'react-icons/go';
 
 type Props = {
     activity: Activity;
@@ -122,19 +122,14 @@ export const ActivityPage: NextPage<Props> = (props) => {
                 )}
 
                 <Stack direction={'row'} spacing={1} alignItems={'center'} justifyContent={'space-between'}>
-                    <Stack direction={'row'} spacing={0.5} alignItems={'center'}>
-                        {link && (
-                            <React.Fragment>
-                                <Typography variant={'body2'}>{linkTitle}</Typography>
-                                <UrlButton
-                                    variant={'text'}
-                                    color={'secondary'}
-                                    onClick={() => openUrlInNewTab(link)}>
-                                    {link}
-                                </UrlButton>
-                            </React.Fragment>
-                        )}
-                    </Stack>
+                    {link && (
+                        <Stack direction={'row'} spacing={0.5} alignItems={'center'}>
+                            <Typography variant={'body2'}>{linkTitle}</Typography>
+                            <IconButton sx={{padding: 0}} onClick={() => openUrlInNewTab(activity.link)}>
+                                <GoLinkExternal size={'20px'}/>
+                            </IconButton>
+                        </Stack>
+                    )}
 
                     <StyledActivityType>
                         {emojiByActivityType[type]}
