@@ -47,7 +47,7 @@ export const ActivityPage: NextPage<Props> = (props) => {
             }, {merge: true});
             activity.done = !activity.done;
         }
-    })
+    });
 
     useEffect(() => {
         if (!loading && !user) {
@@ -63,7 +63,6 @@ export const ActivityPage: NextPage<Props> = (props) => {
 
     const doneButtonTitle = 'יאללה נסמן שעשינו?';
     const linkTitle = 'קישור לאתר';
-    const noLinkTitle = 'כפרה עליך אין כאן קישור';
     const descriptionTitle = 'קצת תיאור על ההרפתקה שלנו';
 
     return (
@@ -92,9 +91,9 @@ export const ActivityPage: NextPage<Props> = (props) => {
                         <IconButton
                             onClick={() => toggleActivity()}
                             sx={{
-                            padding: 0,
-                            color: done ? '#2a9d8f' : '',
-                        }}>
+                                padding: 0,
+                                color: done ? '#2a9d8f' : '',
+                            }}>
                             {
                                 done ?
                                     <IoCheckmarkDoneCircleSharp size={'48px'}/> :
@@ -124,13 +123,17 @@ export const ActivityPage: NextPage<Props> = (props) => {
 
                 <Stack direction={'row'} spacing={1} alignItems={'center'} justifyContent={'space-between'}>
                     <Stack direction={'row'} spacing={0.5} alignItems={'center'}>
-                        <Typography variant={'body2'}>{link ? linkTitle : noLinkTitle}</Typography>
-                        <UrlButton
-                            variant={'text'}
-                            color={'secondary'}
-                            onClick={() => openUrlInNewTab(link)}>
-                            {link}
-                        </UrlButton>
+                        {link && (
+                            <React.Fragment>
+                                <Typography variant={'body2'}>{linkTitle}</Typography>
+                                <UrlButton
+                                    variant={'text'}
+                                    color={'secondary'}
+                                    onClick={() => openUrlInNewTab(link)}>
+                                    {link}
+                                </UrlButton>
+                            </React.Fragment>
+                        )}
                     </Stack>
 
                     <StyledActivityType>
