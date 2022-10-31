@@ -7,7 +7,12 @@ const MyDocument = () => {
     return (
         <Html dir={'rtl'}>
             <Head>
+                <link rel="manifest" href="/manifest.json" />
+                <link rel="apple-touch-icon" href="/icon.png"/>
+                <meta name="theme-color" content="#F1F1F1" />
+
                 <title>יאחתי</title>
+
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link
                     rel="preconnect"
