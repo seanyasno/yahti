@@ -5,6 +5,7 @@ import React, {
     useReducer,
 } from 'react';
 import { Activity } from '@abstraction/index';
+import { isEmpty } from 'lodash';
 import { createActivity } from '@requests/index';
 import { storage } from '@config/index';
 import { ref, uploadBytes } from '@firebase/storage';
@@ -32,7 +33,9 @@ export const ActivityCreationProvider: React.FC<PropsWithChildren> = (
             try {
                 const imagesPaths: string[] = [];
 
-                for (let image of imageFiles) {
+                for (const image of imageFiles.filter(
+                    (file) => !isEmpty(file)
+                )) {
                     const imageRef = ref(
                         storage,
                         `images/${v4()}---${image.name}`
@@ -41,7 +44,6 @@ export const ActivityCreationProvider: React.FC<PropsWithChildren> = (
                     imagesPaths.push(snapshot.ref.fullPath);
                 }
 
-                console.log(imagesPaths);
                 await createActivity({ ...activity, imagesPaths });
             } catch (error) {
                 console.error(error);
