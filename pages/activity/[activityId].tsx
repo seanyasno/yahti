@@ -1,51 +1,65 @@
-import React, {useEffect, useState} from 'react';
-import {GetStaticPaths, GetStaticProps, NextPage} from 'next';
-import {Activity} from '@abstraction/index';
-import {doc, getDoc, setDoc} from '@firebase/firestore';
-import {auth, db, storage} from '@config/index';
-import {Dialog, DialogContent, Divider, IconButton, Stack, Typography} from '@mui/material';
-import {emojiByActivityType} from '@constants/index';
-import {openUrlInNewTab} from '@utils/index';
-import {IoIosArrowBack} from 'react-icons/io';
-import {IoCheckmarkDoneCircleOutline, IoCheckmarkDoneCircleSharp} from 'react-icons/io5';
-import {useRouter} from 'next/router';
-import {getDownloadURL, ref} from '@firebase/storage';
+import React, { useEffect, useState } from 'react';
+import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import { Activity } from '@abstraction/index';
+import { doc, getDoc, setDoc } from '@firebase/firestore';
+import { auth, db, storage } from '@config/index';
+import {
+    Dialog,
+    DialogContent,
+    Divider,
+    IconButton,
+    Stack,
+    Typography,
+} from '@mui/material';
+import { emojiByActivityType } from '@constants/index';
+import { openUrlInNewTab } from '@utils/index';
+import { IoIosArrowBack } from 'react-icons/io';
+import {
+    IoCheckmarkDoneCircleOutline,
+    IoCheckmarkDoneCircleSharp,
+} from 'react-icons/io5';
+import { useRouter } from 'next/router';
+import { getDownloadURL, ref } from '@firebase/storage';
 import Image from 'next/image';
-import {useAuthState} from 'react-firebase-hooks/auth';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import {
     DoneButton,
     StyledBackButton,
     StyledActivityType,
     StyledContainer,
     ImageContainer,
-    Card
+    Card,
 } from '@styles/activity-page/activity-page-styles';
-import {GrEdit} from 'react-icons/gr';
-import {useMutation} from '@tanstack/react-query';
-import {LoadingScreen, DeleteActivityDialog} from '@components/index';
-import {MdDeleteForever} from 'react-icons/md';
-import {GoLinkExternal} from 'react-icons/go';
+import { GrEdit } from 'react-icons/gr';
+import { useMutation } from '@tanstack/react-query';
+import { LoadingScreen, DeleteActivityDialog } from '@components/index';
+import { MdDeleteForever } from 'react-icons/md';
+import { GoLinkExternal } from 'react-icons/go';
 
 type Props = {
     activity: Activity;
     id: string;
     imagesUrls: string[];
-}
+};
 
 export const ActivityPage: NextPage<Props> = (props) => {
-    const {id, imagesUrls} = props;
-    let {activity} = props;
+    const { id, imagesUrls } = props;
+    let { activity } = props;
     const router = useRouter();
     const [openFullImageDialog, setOpenFullImageDialog] = useState(false);
     const [user, loading, error] = useAuthState(auth);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-    const {mutateAsync: toggleActivity} = useMutation({
+    const { mutateAsync: toggleActivity } = useMutation({
         mutationFn: async () => {
-            await setDoc(doc(db, 'activities', id), {
-                done: !activity.done,
-            }, {merge: true});
+            await setDoc(
+                doc(db, 'activities', id),
+                {
+                    done: !activity.done,
+                },
+                { merge: true }
+            );
             activity.done = !activity.done;
-        }
+        },
     });
 
     useEffect(() => {
@@ -55,10 +69,10 @@ export const ActivityPage: NextPage<Props> = (props) => {
     }, [loading, router, user]);
 
     if (!activity) {
-        return <LoadingScreen/>;
+        return <LoadingScreen />;
     }
 
-    const {title, link, type, done, description} = activity;
+    const { title, link, type, done, description } = activity;
 
     const doneButtonTitle = 'יאללה נסמן שעשינו?';
     const linkTitle = 'קישור לאתר';
@@ -66,66 +80,101 @@ export const ActivityPage: NextPage<Props> = (props) => {
 
     return (
         <StyledContainer maxWidth={'sm'}>
-            <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'} mb={'16px'}>
+            <Stack
+                direction={'row'}
+                justifyContent={'space-between'}
+                alignItems={'center'}
+                mb={'16px'}
+            >
                 <StyledBackButton
                     color={'secondary'}
                     onClick={() => router.push('/')}
-                    sx={{}}>
-                    <IoIosArrowBack size={20}/>
+                    sx={{}}
+                >
+                    <IoIosArrowBack size={20} />
                 </StyledBackButton>
 
-                <Stack direction={'row'} alignItems={'center'} columnGap={'8px'}>
+                <Stack
+                    direction={'row'}
+                    alignItems={'center'}
+                    columnGap={'8px'}
+                >
                     <StyledBackButton onClick={() => setOpenDeleteDialog(true)}>
-                        <MdDeleteForever color={'#EF233B'} size={20} style={{transform: 'rotate(180deg)'}}/>
+                        <MdDeleteForever
+                            color={'#EF233B'}
+                            size={20}
+                            style={{ transform: 'rotate(180deg)' }}
+                        />
                     </StyledBackButton>
                     <StyledBackButton>
-                        <GrEdit size={20} style={{transform: 'rotate(180deg)'}}/>
+                        <GrEdit
+                            size={20}
+                            style={{ transform: 'rotate(180deg)' }}
+                        />
                     </StyledBackButton>
                 </Stack>
             </Stack>
 
             <Card>
-                <Stack direction={'row'} justifyContent={'space-between'} alignItems={'start'}>
+                <Stack
+                    direction={'row'}
+                    justifyContent={'space-between'}
+                    alignItems={'start'}
+                >
                     <Typography fontWeight={700} variant={'h5'}>
                         <IconButton
                             onClick={() => toggleActivity()}
                             sx={{
                                 padding: 0,
                                 color: done ? '#2a9d8f' : '',
-                            }}>
-                            {
-                                done ?
-                                    <IoCheckmarkDoneCircleSharp size={'48px'}/> :
-                                    <IoCheckmarkDoneCircleOutline size={'48px'}/>
-                            }
+                            }}
+                        >
+                            {done ? (
+                                <IoCheckmarkDoneCircleSharp size={'48px'} />
+                            ) : (
+                                <IoCheckmarkDoneCircleOutline size={'48px'} />
+                            )}
                         </IconButton>
                         {'  '}
                         {title}
                     </Typography>
-
-
                 </Stack>
 
                 {imagesUrls && imagesUrls.length > 0 && (
-                    <ImageContainer onClick={() => setOpenFullImageDialog(true)}>
+                    <ImageContainer
+                        onClick={() => setOpenFullImageDialog(true)}
+                    >
                         <Image
                             alt={'activity image'}
                             src={imagesUrls[0]}
                             layout={'fill'}
                             objectFit={'cover'}
                             priority
-                            style={{borderRadius: '1em'}}
+                            style={{ borderRadius: '1em' }}
                         />
-
                     </ImageContainer>
                 )}
 
-                <Stack direction={'row'} spacing={1} alignItems={'center'} justifyContent={'space-between'}>
+                <Stack
+                    direction={'row'}
+                    spacing={1}
+                    alignItems={'center'}
+                    justifyContent={'space-between'}
+                >
                     {link && (
-                        <Stack direction={'row'} spacing={0.5} alignItems={'center'}>
-                            <Typography variant={'body2'}>{linkTitle}</Typography>
-                            <IconButton sx={{padding: 0}} onClick={() => openUrlInNewTab(activity.link)}>
-                                <GoLinkExternal size={'20px'}/>
+                        <Stack
+                            direction={'row'}
+                            spacing={0.5}
+                            alignItems={'center'}
+                        >
+                            <Typography variant={'body2'}>
+                                {linkTitle}
+                            </Typography>
+                            <IconButton
+                                sx={{ padding: 0 }}
+                                onClick={() => openUrlInNewTab(activity.link)}
+                            >
+                                <GoLinkExternal size={'20px'} />
                             </IconButton>
                         </Stack>
                     )}
@@ -136,9 +185,11 @@ export const ActivityPage: NextPage<Props> = (props) => {
                 </Stack>
                 {description && (
                     <React.Fragment>
-                        <Divider sx={{margin: '10px 0'}}/>
+                        <Divider sx={{ margin: '10px 0' }} />
 
-                        <Typography variant={'subtitle1'} fontWeight={600}>{descriptionTitle}</Typography>
+                        <Typography variant={'subtitle1'} fontWeight={600}>
+                            {descriptionTitle}
+                        </Typography>
                         <Typography variant={'body2'}>{description}</Typography>
                     </React.Fragment>
                 )}
@@ -148,7 +199,8 @@ export const ActivityPage: NextPage<Props> = (props) => {
                 <DoneButton
                     variant={'contained'}
                     color={'secondary'}
-                    onClick={() => toggleActivity()}>
+                    onClick={() => toggleActivity()}
+                >
                     {doneButtonTitle}
                 </DoneButton>
             )}
@@ -160,15 +212,22 @@ export const ActivityPage: NextPage<Props> = (props) => {
                 onClose={() => setOpenDeleteDialog(false)}
             />
 
-            <Dialog open={openFullImageDialog} onClose={() => setOpenFullImageDialog(false)} fullScreen sx={{
-                padding: '30px',
-            }}>
+            <Dialog
+                open={openFullImageDialog}
+                onClose={() => setOpenFullImageDialog(false)}
+                fullScreen
+                sx={{
+                    padding: '30px',
+                }}
+            >
                 <DialogContent>
-                    <Image src={imagesUrls?.[0]}
-                           layout={'fill'}
-                           objectFit={'cover'}
-                           priority
-                    alt={''}/>
+                    <Image
+                        src={imagesUrls?.[0]}
+                        layout={'fill'}
+                        objectFit={'cover'}
+                        priority
+                        alt={''}
+                    />
                 </DialogContent>
             </Dialog>
         </StyledContainer>
@@ -182,7 +241,7 @@ export const getStaticPaths: GetStaticPaths = () => {
     };
 };
 
-export const getStaticProps: GetStaticProps = async ({params}) => {
+export const getStaticProps: GetStaticProps = async ({ params }) => {
     try {
         const activityId = params.activityId as string;
 

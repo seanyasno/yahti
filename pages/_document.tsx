@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 import { Head, Html, Main, NextScript } from 'next/document';
@@ -8,7 +7,7 @@ const MyDocument = () => {
         <Html dir={'rtl'}>
             <Head>
                 <link rel="manifest" href="/manifest.json" />
-                <link rel="apple-touch-icon" href="/icon.png"/>
+                <link rel="apple-touch-icon" href="/icon.png" />
                 <meta name="theme-color" content="#F1F1F1" />
 
                 <title>יאחתי</title>
@@ -25,8 +24,8 @@ const MyDocument = () => {
                 />
             </Head>
             <body>
-            <Main />
-            <NextScript />
+                <Main />
+                <NextScript />
             </body>
         </Html>
     );

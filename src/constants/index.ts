@@ -1,4 +1,4 @@
-import {ActivityType} from '@abstraction/index';
+import { ActivityType } from '@abstraction/index';
 
 export const emojiByActivityType: { [key: string]: string } = {
     [ActivityType.HOME]: '🏠',

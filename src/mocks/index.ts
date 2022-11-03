@@ -1,4 +1,4 @@
-import {Activity} from '@abstraction/index';
+import { Activity } from '@abstraction/index';
 
 export const activitiesMock: Activity[] = [
     {
@@ -9,5 +9,5 @@ export const activitiesMock: Activity[] = [
     },
     {
         title: 'לאכול בקפה גן סיפור',
-    }
+    },
 ];

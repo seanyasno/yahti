@@ -1,4 +1,4 @@
-import {createTheme} from '@mui/material';
+import { createTheme } from '@mui/material';
 
 export const theme = createTheme({
     direction: 'rtl',
@@ -18,7 +18,7 @@ export const theme = createTheme({
         text: {
             primary: '#181818',
             secondary: '#fff',
-        }
+        },
     },
     components: {
         MuiFab: {
@@ -31,8 +31,8 @@ export const theme = createTheme({
                     bottom: 20,
                     left: 'auto',
                     position: 'fixed',
-                }
-            }
+                },
+            },
         },
         MuiInput: {
             defaultProps: {
@@ -42,15 +42,15 @@ export const theme = createTheme({
             styleOverrides: {
                 root: {
                     // alignItems: 'baseline',
-                }
-            }
+                },
+            },
         },
         MuiInputAdornment: {
             styleOverrides: {
                 root: {
                     // alignItems: 'flex-end',
-                }
-            }
-        }
-    }
+                },
+            },
+        },
+    },
 });

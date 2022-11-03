@@ -1,6 +1,6 @@
-import {Activity} from '@abstraction/index';
-import {addDoc, collection} from '@firebase/firestore';
-import {db} from '@config/index';
+import { Activity } from '@abstraction/index';
+import { addDoc, collection } from '@firebase/firestore';
+import { db } from '@config/index';
 
 export const createActivity = async (newActivity: Activity) => {
     try {
@@ -8,4 +8,4 @@ export const createActivity = async (newActivity: Activity) => {
     } catch (error) {
         console.error(error);
     }
-}
+};

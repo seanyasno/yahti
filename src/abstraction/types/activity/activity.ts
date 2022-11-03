@@ -1,4 +1,4 @@
-import {ActivityType} from '@abstraction/index';
+import { ActivityType } from '@abstraction/index';
 
 export type Activity = {
     title: string;
@@ -7,4 +7,4 @@ export type Activity = {
     done?: boolean;
     type?: ActivityType;
     imagesPaths?: string[];
-}
+};

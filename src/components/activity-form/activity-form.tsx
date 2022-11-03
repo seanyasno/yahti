@@ -1,15 +1,28 @@
-import {UploadPhotoContainer, UploadPhotoButton, CreateButton, CreateButtonContainer, StyledDivider} from './styles';
-import React, {ChangeEvent, useCallback, useContext, useEffect, useRef, useState} from 'react';
-import {Box, Input, InputAdornment, Typography} from '@mui/material';
-import {ActivityCreationContext} from '@contexts/index';
-import {parseImageToString} from '@utils/index';
-import {useRouter} from 'next/router';
+import {
+    UploadPhotoContainer,
+    UploadPhotoButton,
+    CreateButton,
+    CreateButtonContainer,
+    StyledDivider,
+} from './styles';
+import React, {
+    ChangeEvent,
+    useCallback,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
+import { Box, Input, InputAdornment, Typography } from '@mui/material';
+import { ActivityCreationContext } from '@contexts/index';
+import { parseImageToString } from '@utils/index';
+import { useRouter } from 'next/router';
 import Image from 'next/image';
 import ScaleLoader from 'react-spinners/ScaleLoader';
 
 export const ActivityForm = () => {
     const router = useRouter();
-    const {setActivity, onSuccess} = useContext(ActivityCreationContext);
+    const { setActivity, onSuccess } = useContext(ActivityCreationContext);
     const [title, setTitle] = useState('');
     const [create, setCreate] = useState(false);
     const [imageFile, setImageFile] = useState<File>();
@@ -67,11 +80,13 @@ export const ActivityForm = () => {
         };
     }, [create, imageFile, onSuccess, router, setCreate]);
 
-    const props = {component: 'label'};
+    const props = { component: 'label' };
 
     return (
         <React.Fragment>
-            <Typography variant={'h4'} fontWeight={600} mb={'16px'}>{title}</Typography>
+            <Typography variant={'h4'} fontWeight={600} mb={'16px'}>
+                {title}
+            </Typography>
 
             <Input
                 disabled={create}
@@ -81,13 +96,19 @@ export const ActivityForm = () => {
                     </InputAdornment>
                 }
                 multiline
-                onChange={event => setTitle(event.target.value)}/>
+                onChange={(event) => setTitle(event.target.value)}
+            />
 
-            <StyledDivider/>
+            <StyledDivider />
 
             <UploadPhotoContainer>
                 <Typography>{addPhotoTitle}</Typography>
-                <UploadPhotoButton {...props} disabled={create} variant={'text'} color={'secondary'}>
+                <UploadPhotoButton
+                    {...props}
+                    disabled={create}
+                    variant={'text'}
+                    color={'secondary'}
+                >
                     {addPhotoButtonTitle}
                     <input
                         disabled={create}
@@ -100,11 +121,13 @@ export const ActivityForm = () => {
             </UploadPhotoContainer>
 
             {parsedImage && (
-                <Box sx={{
-                    minHeight: '300px',
-                    display: 'flex',
-                    position: 'relative',
-                }}>
+                <Box
+                    sx={{
+                        minHeight: '300px',
+                        display: 'flex',
+                        position: 'relative',
+                    }}
+                >
                     <Image
                         alt={'activity image'}
                         src={parsedImage}
@@ -114,11 +137,10 @@ export const ActivityForm = () => {
                             borderRadius: '1em',
                         }}
                     />
-
                 </Box>
             )}
 
-            <StyledDivider/>
+            <StyledDivider />
 
             <Input
                 disabled={create}
@@ -126,25 +148,29 @@ export const ActivityForm = () => {
                 inputMode={'url'}
                 type={'url'}
                 placeholder={linkInputPlaceholder}
-                multiline/>
+                multiline
+            />
 
-            <StyledDivider/>
+            <StyledDivider />
 
             <Input
                 disabled={create}
                 inputRef={descriptionInputRef}
                 placeholder={descriptionInputPlaceholder}
-                multiline/>
+                multiline
+            />
 
             <CreateButtonContainer>
                 <CreateButton
                     variant={'contained'}
                     color={'secondary'}
-                    onClick={onCreate}>
-                    {create ?
-                        <ScaleLoader
-                            color={'#fff'}
-                        /> : createButtonTitle}
+                    onClick={onCreate}
+                >
+                    {create ? (
+                        <ScaleLoader color={'#fff'} />
+                    ) : (
+                        createButtonTitle
+                    )}
                 </CreateButton>
             </CreateButtonContainer>
         </React.Fragment>
