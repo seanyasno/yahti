@@ -32,7 +32,7 @@ export const ActivityItem: React.FC<Props> = (props) => {
             try {
                 await toggleActivity();
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         },
         [toggleActivity]

@@ -19,6 +19,7 @@ import styled from '@emotion/styled';
 import { theme } from '@styles/index';
 import { useEffect, useMemo, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import React from 'react';
 
 export const StyledTabs = styled(Tabs)`
     margin: 0 0 20px 0;

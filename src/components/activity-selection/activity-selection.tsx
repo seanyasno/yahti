@@ -21,7 +21,6 @@ export const ActivitySelection: React.FC<Props> = (props) => {
     const onTypeSelected = useCallback(
         (type: ActivityType) => {
             if (activity?.type === type) {
-                console.log('');
                 setActivity({ type: null });
             } else {
                 setActivity({ type });

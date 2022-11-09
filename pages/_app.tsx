@@ -36,13 +36,22 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     //     console.log(permission);
     // });
 
-    const setUpMessaging = async () => {
-        const messaging = getMessaging(app);
-    };
-
-    useEffect(() => {
-        // setUpMessaging();
-    }, []);
+    // const setUpMessaging = async () => {
+    //     try {
+    //         const messaging = getMessaging(app);
+    //         const token = await getToken(messaging, {
+    //             vapidKey:
+    //                 'BBb2YcgCC2p0WSIjdfw4av-YDo3yGwOvvDZgpPSJPIh5GTKOmzC4hxbTmxQX51G4LiBWQcCV5iATiAzLYcX0VMM',
+    //         });
+    //         console.log(token);
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // };
+    //
+    // useEffect(() => {
+    //     setUpMessaging();
+    // }, []);
 
     return (
         <QueryClientProvider client={queryClient}>

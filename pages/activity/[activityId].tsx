@@ -44,7 +44,7 @@ type Props = {
 
 export const ActivityPage: NextPage<Props> = (props) => {
     const { id, imagesUrls } = props;
-    let { activity } = props;
+    const { activity } = props;
     const router = useRouter();
     const [openFullImageDialog, setOpenFullImageDialog] = useState(false);
     const [user, loading, error] = useAuthState(auth);
@@ -252,7 +252,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         const imagesUrls: string[] = [];
 
         if (activity.imagesPaths) {
-            for (let imagePath of activity.imagesPaths) {
+            for (const imagePath of activity.imagesPaths) {
                 const url = await getDownloadURL(ref(storage, imagePath));
                 imagesUrls.push(url);
             }
