@@ -9,6 +9,10 @@ const MyDocument = () => {
                 <link rel="manifest" href="/manifest.json" />
                 <link rel="apple-touch-icon" href="/icon.png" />
                 <meta name="theme-color" content="#F1F1F1" />
+                <meta
+                    name="viewport"
+                    content="width=device-width,height=device-height initial-scale=1"
+                />
 
                 <title>יאחתי</title>
 
