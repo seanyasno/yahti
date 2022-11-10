@@ -7,6 +7,7 @@ import {
     Tabs,
     Tab,
     Box,
+    Input,
 } from '@mui/material';
 import { ActivityItem, LoadingScreen } from '@components/index';
 import { MdAdd } from 'react-icons/md';
@@ -20,7 +21,8 @@ import { theme } from '@styles/index';
 import { useEffect, useMemo, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import React from 'react';
-import { useUserDetails } from '@hooks/use-user-details/use-user-details';
+import { useUserDetails } from '@hooks/index';
+import { isEmpty } from 'lodash';
 
 export const StyledTabs = styled(Tabs)`
     margin: 0 0 20px 0;
@@ -47,6 +49,7 @@ export const StyledTab = styled(Tab)`
 const HomePage: NextPage = () => {
     const router = useRouter();
     const [currentTab, setCurrentTab] = useState(0);
+    const [activitySearchText, setActivitySearchText] = useState('');
     const { data: activities = [], isLoading: loadingActivities } = useQuery({
         queryKey: ['activities'],
         queryFn: async () => {
@@ -57,20 +60,34 @@ const HomePage: NextPage = () => {
             })) as { activity: Activity; id: string }[];
         },
     });
+
+    const filteredActivities = useMemo(() => {
+        if (isEmpty(activitySearchText)) {
+            return activities;
+        }
+
+        return activities.filter(({ activity }) =>
+            activity.title
+                .toLowerCase()
+                .includes(activitySearchText.toLowerCase())
+        );
+    }, [activities, activitySearchText]);
+
     const { data: userDetails, isLoading: loadingUserDetails } =
         useUserDetails();
 
     const doneActivities = useMemo(
-        () => activities.filter(({ activity }) => activity.done),
-        [activities]
+        () => filteredActivities.filter(({ activity }) => activity.done),
+        [filteredActivities]
     );
     const notDoneActivities = useMemo(
-        () => activities.filter(({ activity }) => !activity.done),
-        [activities]
+        () => filteredActivities.filter(({ activity }) => !activity.done),
+        [filteredActivities]
     );
     const [user, loading, error] = useAuthState(auth);
 
     const title = 'יואואוו שלום';
+    const searchActivityPlaceholder = 'יאללה נחפש פעילות';
 
     const onAddActivity = () => router.push('/create-activity');
 
@@ -86,9 +103,15 @@ const HomePage: NextPage = () => {
 
     return (
         <Container maxWidth={'sm'} sx={{ padding: '30px 20px' }}>
-            <Typography variant={'h4'} fontWeight={600} mb={'18px'}>
+            <Typography variant={'h4'} fontWeight={600} mb={'8px'}>
                 {title} {userDetails.name}
             </Typography>
+
+            <Input
+                placeholder={searchActivityPlaceholder}
+                sx={{ mb: '12px' }}
+                onChange={(event) => setActivitySearchText(event.target.value)}
+            />
 
             <StyledTabs
                 value={currentTab}
