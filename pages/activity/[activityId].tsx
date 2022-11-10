@@ -214,17 +214,24 @@ export const ActivityPage: NextPage<Props> = (props) => {
 
             <Dialog
                 open={openFullImageDialog}
+                onClick={() => setOpenFullImageDialog(false)}
                 onClose={() => setOpenFullImageDialog(false)}
                 fullScreen
+                PaperProps={{
+                    sx: {
+                        backgroundColor: 'transparent',
+                        boxShadow: 'none',
+                    },
+                }}
                 sx={{
-                    padding: '30px',
+                    padding: '20px',
                 }}
             >
                 <DialogContent>
                     <Image
                         src={imagesUrls?.[0]}
                         layout={'fill'}
-                        objectFit={'cover'}
+                        objectFit={'contain'}
                         priority
                         alt={''}
                     />
