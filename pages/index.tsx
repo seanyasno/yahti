@@ -20,6 +20,7 @@ import { theme } from '@styles/index';
 import { useEffect, useMemo, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import React from 'react';
+import { useUserDetails } from '@hooks/use-user-details/use-user-details';
 
 export const StyledTabs = styled(Tabs)`
     margin: 0 0 20px 0;
@@ -56,6 +57,9 @@ const HomePage: NextPage = () => {
             })) as { activity: Activity; id: string }[];
         },
     });
+    const { data: userDetails, isLoading: loadingUserDetails } =
+        useUserDetails();
+
     const doneActivities = useMemo(
         () => activities.filter(({ activity }) => activity.done),
         [activities]
@@ -76,14 +80,14 @@ const HomePage: NextPage = () => {
         }
     }, [loading, router, user]);
 
-    if (loading || loadingActivities) {
+    if (loading || loadingActivities || loadingUserDetails) {
         return <LoadingScreen />;
     }
 
     return (
         <Container maxWidth={'sm'} sx={{ padding: '30px 20px' }}>
             <Typography variant={'h4'} fontWeight={600} mb={'18px'}>
-                {title}
+                {title} {userDetails.name}
             </Typography>
 
             <StyledTabs

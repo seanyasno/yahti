@@ -10,7 +10,8 @@ export const LoadingScreen: React.FC = () => {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                height: '-webkit-fill-available',
+                height: '100vh',
+                minHeight: '-webkit-fill-available',
             }}
         >
             <HashLoader
