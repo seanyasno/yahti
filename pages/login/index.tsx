@@ -16,7 +16,7 @@ const LoginPage: NextPage = () => {
     const router = useRouter();
     const emailRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
-    const [user, loading, error] = useAuthState(auth);
+    const [user, loading] = useAuthState(auth);
 
     const title = 'יאללה להתחבר';
     const buttonLabel = 'התחבר';

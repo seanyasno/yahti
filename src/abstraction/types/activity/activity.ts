@@ -6,5 +6,6 @@ export type Activity = {
     link?: string;
     done?: boolean;
     type?: ActivityType;
+    types?: ActivityType[];
     imagesPaths?: string[];
 };
