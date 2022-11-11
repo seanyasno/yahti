@@ -72,9 +72,11 @@ export const ActivityItem: React.FC<Props> = (props) => {
                         )}
                     </IconButton>
 
-                    <ActivityType>
-                        {emojiByActivityType[activity.type]}
-                    </ActivityType>
+                    {activity.types?.map((type, index) => (
+                        <ActivityType key={index}>
+                            {emojiByActivityType[type]}
+                        </ActivityType>
+                    ))}
                 </Box>
 
                 {activity.link && (

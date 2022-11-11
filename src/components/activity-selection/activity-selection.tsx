@@ -14,19 +14,30 @@ export const ActivitySelection: React.FC<Props> = (props) => {
     const { next } = props;
     const { activity, setActivity } = useContext(ActivityCreationContext);
     const title = 'צריך לבחור פעילות';
-    const subtitle = 'אבל לבחור רק משהו אחד חיימשלי';
+    const subtitle = 'אבל לבחור רק יותר מאחד חיימשלי';
     const buttonTitle = 'היידה נמשיך';
     const buttonTitleDisabled = 'איך נמשיך אם לא בחרת';
 
     const onTypeSelected = useCallback(
         (type: ActivityType) => {
-            if (activity?.type === type) {
-                setActivity({ type: null });
+            if (activity?.types?.includes(type)) {
+                setActivity({
+                    types: activity.types.filter(
+                        (activityType) => activityType !== type
+                    ),
+                });
             } else {
-                setActivity({ type });
+                setActivity({
+                    types: [...(activity?.types ?? []), type],
+                });
             }
         },
-        [activity?.type, setActivity]
+        [activity?.types, setActivity]
+    );
+
+    const isTypeSelected = useCallback(
+        (type: ActivityType) => activity?.types?.includes(type),
+        [activity?.types]
     );
 
     return (
@@ -56,10 +67,9 @@ export const ActivitySelection: React.FC<Props> = (props) => {
                             variant={'contained'}
                             onClick={() => onTypeSelected(activityType)}
                             sx={{
-                                border:
-                                    activity?.type === activityType
-                                        ? `1px solid ${theme.palette.secondary.main}`
-                                        : 'none',
+                                border: isTypeSelected(activityType)
+                                    ? `1px solid ${theme.palette.secondary.main}`
+                                    : 'none',
                             }}
                         >
                             {emojiByActivityType[activityType]}
@@ -72,12 +82,14 @@ export const ActivitySelection: React.FC<Props> = (props) => {
             </Grid>
 
             <ContinueButton
-                disabled={!activity?.type}
+                disabled={activity?.types?.length === 0}
                 variant={'contained'}
                 color={'secondary'}
                 onClick={next}
             >
-                {activity?.type ? buttonTitle : buttonTitleDisabled}
+                {activity?.types?.length > 0
+                    ? buttonTitle
+                    : buttonTitleDisabled}
             </ContinueButton>
         </Grid>
     );

@@ -68,7 +68,7 @@ export const ActivityPage: NextPage<Props> = (props) => {
         return <LoadingScreen />;
     }
 
-    const { title, link, type, done, description } = activity;
+    const { title, link, types, done, description } = activity;
 
     const doneButtonTitle = 'יאללה נסמן שעשינו?';
     const linkTitle = 'קישור לאתר';
@@ -175,9 +175,18 @@ export const ActivityPage: NextPage<Props> = (props) => {
                         </Stack>
                     )}
 
-                    <StyledActivityType>
-                        {emojiByActivityType[type]}
-                    </StyledActivityType>
+                    <Stack
+                        direction={'row'}
+                        width={'100%'}
+                        justifyContent={'flex-end'}
+                        spacing={2}
+                    >
+                        {types?.map((type, index) => (
+                            <StyledActivityType key={index}>
+                                {emojiByActivityType[type]}
+                            </StyledActivityType>
+                        ))}
+                    </Stack>
                 </Stack>
                 {description && (
                     <React.Fragment>
