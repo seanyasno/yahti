@@ -9,8 +9,6 @@ import {
 } from '@mui/material';
 import { Activity } from '@abstraction/types';
 import { theme } from '@styles/theme/theme';
-import { deleteDoc, doc } from '@firebase/firestore';
-import { db } from '@config/index';
 import { useRouter } from 'next/router';
 import { deleteActivity } from '@requests/firestore-requests/firestore-requests';
 

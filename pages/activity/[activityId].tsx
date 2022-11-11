@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { Activity } from '@abstraction/index';
-import { doc, getDoc, setDoc } from '@firebase/firestore';
-import { auth, db, storage } from '@config/index';
+import { auth, storage } from '@config/index';
 import {
     Dialog,
     DialogContent,
@@ -51,7 +50,7 @@ export const ActivityPage: NextPage<Props> = (props) => {
     const { activity } = props;
     const router = useRouter();
     const [openFullImageDialog, setOpenFullImageDialog] = useState(false);
-    const [user, loading, error] = useAuthState(auth);
+    const [user, loading] = useAuthState(auth);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const { mutateAsync: toggleActivity } = useMutation({
         mutationFn: async () => updateActivity(id, { done: !activity.done }),

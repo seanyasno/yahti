@@ -1,8 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { doc, setDoc } from '@firebase/firestore';
-import { db } from '@config/index';
 import { Activity } from '@abstraction/types';
-import { updateActivity } from '@requests/firestore-requests/firestore-requests';
+import { updateActivity } from '@requests/index';
 
 export const useToggleActivity = (activity: Activity, id: string) => {
     const queryClient = useQueryClient();
