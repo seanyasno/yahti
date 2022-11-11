@@ -12,6 +12,7 @@ import { theme } from '@styles/theme/theme';
 import { deleteDoc, doc } from '@firebase/firestore';
 import { db } from '@config/index';
 import { useRouter } from 'next/router';
+import { deleteActivity } from '@requests/firestore-requests/firestore-requests';
 
 type Props = {
     open: boolean;
@@ -25,7 +26,7 @@ export const DeleteActivityDialog: React.FC<Props> = (props) => {
     const router = useRouter();
 
     const onDelete = useCallback(async () => {
-        await deleteDoc(doc(db, 'activities', activityId));
+        await deleteActivity(activityId);
         onClose();
         router.replace('/');
     }, [activityId, onClose, router]);

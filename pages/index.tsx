@@ -23,6 +23,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import React from 'react';
 import { useUserDetails } from '@hooks/index';
 import { isEmpty } from 'lodash';
+import { fetchActivities } from '@requests/firestore-requests/firestore-requests';
 
 export const StyledTabs = styled(Tabs)`
     margin: 0 0 20px 0;
@@ -52,13 +53,7 @@ const HomePage: NextPage = () => {
     const [activitySearchText, setActivitySearchText] = useState('');
     const { data: activities = [], isLoading: loadingActivities } = useQuery({
         queryKey: ['activities'],
-        queryFn: async () => {
-            const querySnapshot = await getDocs(collection(db, 'activities'));
-            return querySnapshot.docs.map((doc) => ({
-                activity: doc.data(),
-                id: doc.id,
-            })) as { activity: Activity; id: string }[];
-        },
+        queryFn: async () => fetchActivities(),
     });
 
     const filteredActivities = useMemo(() => {

@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { doc, setDoc } from '@firebase/firestore';
 import { db } from '@config/index';
 import { Activity } from '@abstraction/types';
+import { updateActivity } from '@requests/firestore-requests/firestore-requests';
 
 export const useToggleActivity = (activity: Activity, id: string) => {
     const queryClient = useQueryClient();
@@ -13,13 +14,7 @@ export const useToggleActivity = (activity: Activity, id: string) => {
     } = useMutation({
         mutationKey: ['activity', id],
         mutationFn: async () => {
-            await setDoc(
-                doc(db, 'activities', id),
-                {
-                    done: !activity.done,
-                },
-                { merge: true }
-            );
+            await updateActivity(id, { done: !activity.done });
             queryClient.setQueryData(
                 ['activities'],
                 (oldData: { activity: Activity; id: string }[]) => {
