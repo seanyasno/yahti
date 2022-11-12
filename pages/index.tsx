@@ -4,6 +4,7 @@ import React from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 
+import { BsFillFilterCircleFill } from 'react-icons/bs';
 import { MdAdd } from 'react-icons/md';
 
 import { auth } from '@config/index';
@@ -12,6 +13,7 @@ import {
     Box,
     Container,
     Fab,
+    IconButton,
     Input,
     Stack,
     Tab,
@@ -104,11 +106,20 @@ const HomePage: NextPage = () => {
                 {title} {userDetails.name}
             </Typography>
 
-            <Input
-                placeholder={searchActivityPlaceholder}
-                sx={{ mb: '12px' }}
-                onChange={(event) => setActivitySearchText(event.target.value)}
-            />
+            <Stack direction={'row'} mb={'12px'}>
+                <Input
+                    placeholder={searchActivityPlaceholder}
+                    onChange={(event) =>
+                        setActivitySearchText(event.target.value)
+                    }
+                />
+
+                <IconButton sx={{ padding: 0 }}>
+                    <BsFillFilterCircleFill
+                        color={theme.palette.secondary.main}
+                    />
+                </IconButton>
+            </Stack>
 
             <StyledTabs
                 value={currentTab}
