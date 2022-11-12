@@ -130,6 +130,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
                 id: activityId,
                 imagesUrls,
             },
+            revalidate: 1,
         };
     } catch (error) {
         console.error(error);

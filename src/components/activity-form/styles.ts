@@ -5,8 +5,9 @@ export const CreateButton = styled(Button)`
     padding: 12px 80px;
     font-size: 1.2rem;
     border-radius: 1em;
-    position: absolute;
-    bottom: 20px;
+    margin-top: 40px;
+    //position: absolute;
+    //bottom: 20px;
 `;
 
 export const CreateButtonContainer = styled(Box)`
