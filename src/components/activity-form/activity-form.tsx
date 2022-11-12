@@ -5,31 +5,31 @@ import {
     CreateButtonContainer,
     StyledDivider,
 } from './styles';
-import React, {
-    ChangeEvent,
-    useCallback,
-    useContext,
-    useEffect,
-    useRef,
-    useState,
-} from 'react';
+import React, { ChangeEvent, useCallback, useState } from 'react';
 import { Box, Input, InputAdornment, Typography } from '@mui/material';
-import { ActivityCreationContext } from '@contexts/index';
 import { parseImageToString } from '@utils/index';
-import { useRouter } from 'next/router';
 import Image from 'next/image';
-import ScaleLoader from 'react-spinners/ScaleLoader';
+import { isEmpty } from 'lodash';
+import { Activity } from '@abstraction/types';
+import { useActivityForm } from '@hooks/use-activity-form/use-activity-form';
 
-export const ActivityForm = () => {
-    const router = useRouter();
-    const { setActivity, onSuccess } = useContext(ActivityCreationContext);
-    const [title, setTitle] = useState('');
-    const [create, setCreate] = useState(false);
+type Props = {
+    initialActivity?: Activity;
+    imagesUrls?: string[];
+    onDone?: (newActivity: Partial<Activity>, imageFiles?: File[]) => void;
+    setChangedImage?: (changedImages: boolean) => void;
+};
+
+export const ActivityForm: React.FC<Props> = (props) => {
+    const { initialActivity, imagesUrls, onDone, setChangedImage } = props;
+    const { activity, handleActivityChange } = useActivityForm(initialActivity);
+
     const [imageFile, setImageFile] = useState<File>();
-    const [parsedImage, setParsedImage] = useState<string | null>(null);
-    const linkInputRef = useRef<HTMLInputElement>(null);
-    const descriptionInputRef = useRef<HTMLInputElement>(null);
+    const [parsedImage, setParsedImage] = useState<string | null>(
+        imagesUrls?.[0]
+    );
 
+    const titlePlaceholder = 'כותרת גדולה';
     const titleInputAdornment = 'קדימה לכתוב:';
     const createButtonTitle = 'יאללה נוסיף';
     const addPhotoTitle = 'מה עם תמונה יפה לאוסף?';
@@ -37,21 +37,9 @@ export const ActivityForm = () => {
     const linkInputPlaceholder = 'קישור לאיזה אתר או משהו אחר';
     const descriptionInputPlaceholder = 'יאחתי אפשר לפרט פה הכל';
 
-    useEffect(() => {
-        if (!title) {
-            setTitle('כותרת גדולה');
-        }
-    }, [title]);
-
-    const onCreate = useCallback(async () => {
-        setActivity({
-            title,
-            link: linkInputRef.current?.value,
-            description: descriptionInputRef.current?.value,
-            done: false,
-        });
-        setCreate(true);
-    }, [setActivity, title]);
+    const handleOnDone = useCallback(() => {
+        onDone?.(activity, [imageFile]);
+    }, [activity, imageFile, onDone]);
 
     const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
         if (!event.target.files) {
@@ -62,41 +50,30 @@ export const ActivityForm = () => {
             const file = event.target.files[0];
             setImageFile(file);
             setParsedImage(await parseImageToString(file));
+            setChangedImage?.(true);
         } catch (error) {
             console.error(error);
         }
     };
 
-    useEffect(() => {
-        (async () => {
-            if (create) {
-                await onSuccess([imageFile]);
-                router.replace('/');
-            }
-        })();
-
-        return () => {
-            setCreate(false);
-        };
-    }, [create, imageFile, onSuccess, router, setCreate]);
-
-    const props = { component: 'label' };
+    const componentProps = { component: 'label' };
 
     return (
         <React.Fragment>
             <Typography variant={'h4'} fontWeight={600} mb={'16px'}>
-                {title}
+                {isEmpty(activity.title) ? titlePlaceholder : activity.title}
             </Typography>
 
             <Input
-                disabled={create}
+                name={'title'}
+                value={activity.title}
+                onChange={handleActivityChange}
+                multiline
                 startAdornment={
                     <InputAdornment position={'start'} sx={{}}>
                         <Typography>{titleInputAdornment}</Typography>
                     </InputAdornment>
                 }
-                multiline
-                onChange={(event) => setTitle(event.target.value)}
             />
 
             <StyledDivider />
@@ -104,14 +81,12 @@ export const ActivityForm = () => {
             <UploadPhotoContainer>
                 <Typography>{addPhotoTitle}</Typography>
                 <UploadPhotoButton
-                    {...props}
-                    disabled={create}
+                    {...componentProps}
                     variant={'text'}
                     color={'secondary'}
                 >
                     {addPhotoButtonTitle}
                     <input
-                        disabled={create}
                         type="file"
                         accept="image/png,image/jpeg"
                         hidden
@@ -143,8 +118,9 @@ export const ActivityForm = () => {
             <StyledDivider />
 
             <Input
-                disabled={create}
-                inputRef={linkInputRef}
+                name={'link'}
+                value={activity.link}
+                onChange={handleActivityChange}
                 inputMode={'url'}
                 type={'url'}
                 placeholder={linkInputPlaceholder}
@@ -154,8 +130,9 @@ export const ActivityForm = () => {
             <StyledDivider />
 
             <Input
-                disabled={create}
-                inputRef={descriptionInputRef}
+                name={'description'}
+                value={activity.description}
+                onChange={handleActivityChange}
                 placeholder={descriptionInputPlaceholder}
                 multiline
             />
@@ -164,13 +141,13 @@ export const ActivityForm = () => {
                 <CreateButton
                     variant={'contained'}
                     color={'secondary'}
-                    onClick={onCreate}
+                    onClick={handleOnDone}
                 >
-                    {create ? (
-                        <ScaleLoader color={'#fff'} />
-                    ) : (
-                        createButtonTitle
-                    )}
+                    {/*{create ? (*/}
+                    {/*    <ScaleLoader color={'#fff'} />*/}
+                    {/*) : (*/}
+                    {createButtonTitle}
+                    {/*)}*/}
                 </CreateButton>
             </CreateButtonContainer>
         </React.Fragment>

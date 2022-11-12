@@ -13,19 +13,25 @@ import { v4 } from 'uuid';
 
 type ContextType = {
     activity: Activity;
+    imagesUrls?: string[];
     setActivity: (activity: Partial<Activity>) => void;
     onSuccess: (imageFiles?: File[]) => Promise<void>;
 };
 
 export const ActivityCreationContext = createContext<ContextType>(null);
 
-export const ActivityCreationProvider: React.FC<PropsWithChildren> = (
+type Props = {
+    initialActivity?: Partial<Activity>;
+    imagesUrls?: string[];
+};
+
+export const ActivityCreationProvider: React.FC<PropsWithChildren<Props>> = (
     props
 ) => {
-    const { children } = props;
+    const { children, initialActivity } = props;
     const [activity, setActivity] = useReducer(
         (state, newState) => ({ ...state, ...newState }),
-        null
+        initialActivity
     );
 
     const onSuccess = useCallback(
@@ -56,6 +62,7 @@ export const ActivityCreationProvider: React.FC<PropsWithChildren> = (
         <ActivityCreationContext.Provider
             value={{
                 activity,
+                imagesUrls: props.imagesUrls,
                 setActivity,
                 onSuccess,
             }}
