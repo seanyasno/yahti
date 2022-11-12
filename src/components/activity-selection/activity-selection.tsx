@@ -1,18 +1,21 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Divider, Grid, Typography } from '@mui/material';
 import { ActivityType } from '@abstraction/index';
 import { EmojiButton, ContinueButton } from './styles';
 import { theme } from '@styles/index';
-import { ActivityCreationContext } from '@contexts/index';
 import { emojiByActivityType } from '@constants/index';
 
 type Props = {
+    initialSelectedTypes?: ActivityType[];
     next?: () => void;
+    onDone?: (selectedTypes: ActivityType[]) => void;
 };
 
 export const ActivitySelection: React.FC<Props> = (props) => {
-    const { next } = props;
-    const { activity, setActivity } = useContext(ActivityCreationContext);
+    const { initialSelectedTypes = [], onDone } = props;
+    const [selectedTypes, setSelectedTypes] =
+        useState<ActivityType[]>(initialSelectedTypes);
+
     const title = 'צריך לבחור פעילות';
     const subtitle = 'אבל לבחור רק יותר מאחד חיימשלי';
     const buttonTitle = 'היידה נמשיך';
@@ -20,25 +23,33 @@ export const ActivitySelection: React.FC<Props> = (props) => {
 
     const onTypeSelected = useCallback(
         (type: ActivityType) => {
-            if (activity?.types?.includes(type)) {
-                setActivity({
-                    types: activity.types.filter(
+            if (selectedTypes.includes(type)) {
+                setSelectedTypes(
+                    selectedTypes.filter(
                         (activityType) => activityType !== type
-                    ),
-                });
+                    )
+                );
             } else {
-                setActivity({
-                    types: [...(activity?.types ?? []), type],
-                });
+                setSelectedTypes([...selectedTypes, type]);
             }
         },
-        [activity?.types, setActivity]
+        [selectedTypes, setSelectedTypes]
     );
 
     const isTypeSelected = useCallback(
-        (type: ActivityType) => activity?.types?.includes(type),
-        [activity?.types]
+        (type: ActivityType) => selectedTypes.includes(type),
+        [selectedTypes]
     );
+
+    const handleOnDone = useCallback(() => {
+        onDone?.(selectedTypes);
+    }, [selectedTypes, onDone]);
+
+    useEffect(() => {
+        if (initialSelectedTypes) {
+            setSelectedTypes(initialSelectedTypes);
+        }
+    }, [initialSelectedTypes]);
 
     return (
         <Grid container maxWidth={'sm'} justifyContent={'center'}>
@@ -82,14 +93,12 @@ export const ActivitySelection: React.FC<Props> = (props) => {
             </Grid>
 
             <ContinueButton
-                disabled={activity?.types?.length === 0}
+                disabled={selectedTypes.length === 0}
                 variant={'contained'}
                 color={'secondary'}
-                onClick={next}
+                onClick={handleOnDone}
             >
-                {activity?.types?.length > 0
-                    ? buttonTitle
-                    : buttonTitleDisabled}
+                {selectedTypes.length > 0 ? buttonTitle : buttonTitleDisabled}
             </ContinueButton>
         </Grid>
     );

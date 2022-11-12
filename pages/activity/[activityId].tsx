@@ -57,6 +57,8 @@ export const ActivityPage: NextPage<Props> = (props) => {
         onSuccess: () => (activity.done = !activity.done),
     });
 
+    const onEdit = () => router.push(`/edit-activity/${id}`);
+
     useEffect(() => {
         if (!loading && !user) {
             router.replace('/login');
@@ -101,7 +103,7 @@ export const ActivityPage: NextPage<Props> = (props) => {
                             style={{ transform: 'rotate(180deg)' }}
                         />
                     </StyledBackButton>
-                    <StyledBackButton>
+                    <StyledBackButton onClick={onEdit}>
                         <GrEdit
                             size={20}
                             style={{ transform: 'rotate(180deg)' }}
