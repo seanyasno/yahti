@@ -1,9 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Divider, Grid, Typography } from '@mui/material';
-import { ActivityType } from '@abstraction/index';
-import { EmojiButton, ContinueButton } from './styles';
-import { theme } from '@styles/index';
+
 import { emojiByActivityType } from '@constants/index';
+import { Divider, Grid, Typography } from '@mui/material';
+
+import { ActivityType } from '@abstraction/index';
+import { theme } from '@styles/index';
+
+import { ContinueButton, EmojiButton } from './styles';
 
 type Props = {
     initialSelectedTypes?: ActivityType[];

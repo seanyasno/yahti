@@ -4,12 +4,14 @@ import React, {
     useCallback,
     useReducer,
 } from 'react';
-import { Activity } from '@abstraction/index';
-import { isEmpty } from 'lodash';
-import { createActivity } from '@requests/index';
+
 import { storage } from '@config/index';
 import { ref, uploadBytes } from '@firebase/storage';
+import { isEmpty } from 'lodash';
 import { v4 } from 'uuid';
+
+import { Activity } from '@abstraction/index';
+import { createActivity } from '@requests/index';
 
 type ContextType = {
     activity: Activity;

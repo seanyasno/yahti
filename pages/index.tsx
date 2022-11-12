@@ -1,27 +1,31 @@
+import { useEffect, useMemo, useState } from 'react';
+import React from 'react';
+
 import type { NextPage } from 'next';
-import {
-    Container,
-    Stack,
-    Typography,
-    Fab,
-    Tabs,
-    Tab,
-    Box,
-    Input,
-} from '@mui/material';
-import { ActivityItem, LoadingScreen } from '@components/index';
-import { MdAdd } from 'react-icons/md';
 import { useRouter } from 'next/router';
-import { useQuery } from '@tanstack/react-query';
+
+import { MdAdd } from 'react-icons/md';
+
 import { auth } from '@config/index';
 import styled from '@emotion/styled';
-import { theme } from '@styles/index';
-import { useEffect, useMemo, useState } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import React from 'react';
-import { useUserDetails } from '@hooks/index';
+import {
+    Box,
+    Container,
+    Fab,
+    Input,
+    Stack,
+    Tab,
+    Tabs,
+    Typography,
+} from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
 import { isEmpty } from 'lodash';
+import { useAuthState } from 'react-firebase-hooks/auth';
+
+import { ActivityItem, LoadingScreen } from '@components/index';
+import { useUserDetails } from '@hooks/index';
 import { fetchActivities } from '@requests/firestore-requests/firestore-requests';
+import { theme } from '@styles/index';
 
 export const StyledTabs = styled(Tabs)`
     margin: 0 0 20px 0;

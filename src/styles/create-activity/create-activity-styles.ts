@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { IconButton } from '@mui/material';
+
 import { theme } from '../theme/theme';
 
 export const StyledIconButton = styled(IconButton)`
