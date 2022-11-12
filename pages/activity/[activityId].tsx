@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { Activity } from '@abstraction/index';
-import { doc, getDoc, setDoc } from '@firebase/firestore';
-import { auth, db, storage } from '@config/index';
+import { auth, storage } from '@config/index';
 import {
     Dialog,
     DialogContent,
@@ -35,6 +34,10 @@ import { useMutation } from '@tanstack/react-query';
 import { LoadingScreen, DeleteActivityDialog } from '@components/index';
 import { MdDeleteForever } from 'react-icons/md';
 import { GoLinkExternal } from 'react-icons/go';
+import {
+    fetchActivityById,
+    updateActivity,
+} from '@requests/firestore-requests/firestore-requests';
 
 type Props = {
     activity: Activity;
@@ -47,19 +50,11 @@ export const ActivityPage: NextPage<Props> = (props) => {
     const { activity } = props;
     const router = useRouter();
     const [openFullImageDialog, setOpenFullImageDialog] = useState(false);
-    const [user, loading, error] = useAuthState(auth);
+    const [user, loading] = useAuthState(auth);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const { mutateAsync: toggleActivity } = useMutation({
-        mutationFn: async () => {
-            await setDoc(
-                doc(db, 'activities', id),
-                {
-                    done: !activity.done,
-                },
-                { merge: true }
-            );
-            activity.done = !activity.done;
-        },
+        mutationFn: async () => updateActivity(id, { done: !activity.done }),
+        onSuccess: () => (activity.done = !activity.done),
     });
 
     useEffect(() => {
@@ -72,7 +67,7 @@ export const ActivityPage: NextPage<Props> = (props) => {
         return <LoadingScreen />;
     }
 
-    const { title, link, type, done, description } = activity;
+    const { title, link, types, done, description } = activity;
 
     const doneButtonTitle = 'יאללה נסמן שעשינו?';
     const linkTitle = 'קישור לאתר';
@@ -179,9 +174,18 @@ export const ActivityPage: NextPage<Props> = (props) => {
                         </Stack>
                     )}
 
-                    <StyledActivityType>
-                        {emojiByActivityType[type]}
-                    </StyledActivityType>
+                    <Stack
+                        direction={'row'}
+                        width={'100%'}
+                        justifyContent={'flex-end'}
+                        spacing={2}
+                    >
+                        {types?.map((type, index) => (
+                            <StyledActivityType key={index}>
+                                {emojiByActivityType[type]}
+                            </StyledActivityType>
+                        ))}
+                    </Stack>
                 </Stack>
                 {description && (
                     <React.Fragment>
@@ -252,10 +256,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     try {
         const activityId = params.activityId as string;
 
-        const docRef = doc(db, 'activities', activityId);
-        const docSnap = await getDoc(docRef);
-
-        const activity: Activity = docSnap.data() as Activity;
+        const activity = await fetchActivityById(activityId);
         const imagesUrls: string[] = [];
 
         if (activity.imagesPaths) {

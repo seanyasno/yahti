@@ -21,7 +21,7 @@ const CreateActivityPage: NextPage = () => {
         <ActivityForm key={'form'} />,
     ];
     const [currentPage, setCurrentPage] = useState(0);
-    const [user, loading, error] = useAuthState(auth);
+    const [user, loading] = useAuthState(auth);
 
     const onBack = useCallback(async () => {
         if (currentPage === 0) {
