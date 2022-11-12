@@ -5,24 +5,32 @@ import {
     CreateButtonContainer,
     StyledDivider,
 } from './styles';
-import React, { ChangeEvent, useCallback, useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { Box, Input, InputAdornment, Typography } from '@mui/material';
 import { parseImageToString } from '@utils/index';
 import Image from 'next/image';
 import { isEmpty } from 'lodash';
 import { Activity } from '@abstraction/types';
-import { useActivityForm } from '@hooks/use-activity-form/use-activity-form';
+import { useActivityForm } from '@hooks/index';
+import { useMutation } from '@tanstack/react-query';
+import ScaleLoader from 'react-spinners/ScaleLoader';
 
 type Props = {
     initialActivity?: Activity;
     imagesUrls?: string[];
-    onDone?: (newActivity: Partial<Activity>, imageFiles?: File[]) => void;
+    onDone?: (
+        newActivity: Partial<Activity>,
+        imageFiles?: File[]
+    ) => Promise<void>;
     setChangedImage?: (changedImages: boolean) => void;
 };
 
 export const ActivityForm: React.FC<Props> = (props) => {
     const { initialActivity, imagesUrls, onDone, setChangedImage } = props;
     const { activity, handleActivityChange } = useActivityForm(initialActivity);
+    const { mutateAsync: handleOnDone, isLoading } = useMutation({
+        mutationFn: async () => onDone(activity, [imageFile]),
+    });
 
     const [imageFile, setImageFile] = useState<File>();
     const [parsedImage, setParsedImage] = useState<string | null>(
@@ -36,10 +44,6 @@ export const ActivityForm: React.FC<Props> = (props) => {
     const addPhotoButtonTitle = 'קדימה ללחוץ עלי';
     const linkInputPlaceholder = 'קישור לאיזה אתר או משהו אחר';
     const descriptionInputPlaceholder = 'יאחתי אפשר לפרט פה הכל';
-
-    const handleOnDone = useCallback(() => {
-        onDone?.(activity, [imageFile]);
-    }, [activity, imageFile, onDone]);
 
     const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
         if (!event.target.files) {
@@ -68,6 +72,7 @@ export const ActivityForm: React.FC<Props> = (props) => {
                 name={'title'}
                 value={activity.title}
                 onChange={handleActivityChange}
+                disabled={isLoading}
                 multiline
                 startAdornment={
                     <InputAdornment position={'start'} sx={{}}>
@@ -90,6 +95,7 @@ export const ActivityForm: React.FC<Props> = (props) => {
                         type="file"
                         accept="image/png,image/jpeg"
                         hidden
+                        disabled={isLoading}
                         onChange={handleFileUpload}
                     />
                 </UploadPhotoButton>
@@ -121,6 +127,7 @@ export const ActivityForm: React.FC<Props> = (props) => {
                 name={'link'}
                 value={activity.link}
                 onChange={handleActivityChange}
+                disabled={isLoading}
                 inputMode={'url'}
                 type={'url'}
                 placeholder={linkInputPlaceholder}
@@ -133,6 +140,7 @@ export const ActivityForm: React.FC<Props> = (props) => {
                 name={'description'}
                 value={activity.description}
                 onChange={handleActivityChange}
+                disabled={isLoading}
                 placeholder={descriptionInputPlaceholder}
                 multiline
             />
@@ -141,13 +149,14 @@ export const ActivityForm: React.FC<Props> = (props) => {
                 <CreateButton
                     variant={'contained'}
                     color={'secondary'}
-                    onClick={handleOnDone}
+                    disabled={isLoading}
+                    onClick={() => handleOnDone()}
                 >
-                    {/*{create ? (*/}
-                    {/*    <ScaleLoader color={'#fff'} />*/}
-                    {/*) : (*/}
-                    {createButtonTitle}
-                    {/*)}*/}
+                    {isLoading ? (
+                        <ScaleLoader color={'#fff'} />
+                    ) : (
+                        createButtonTitle
+                    )}
                 </CreateButton>
             </CreateButtonContainer>
         </React.Fragment>

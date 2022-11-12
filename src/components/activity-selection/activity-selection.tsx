@@ -17,7 +17,7 @@ export const ActivitySelection: React.FC<Props> = (props) => {
         useState<ActivityType[]>(initialSelectedTypes);
 
     const title = 'צריך לבחור פעילות';
-    const subtitle = 'אבל לבחור רק יותר מאחד חיימשלי';
+    const subtitle = 'אפשר לבחור רק יותר מאחד חיימשלי';
     const buttonTitle = 'היידה נמשיך';
     const buttonTitleDisabled = 'איך נמשיך אם לא בחרת';
 
