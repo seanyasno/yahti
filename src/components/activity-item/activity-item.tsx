@@ -1,16 +1,19 @@
 import React, { useCallback } from 'react';
-import { Activity } from '@abstraction/types';
-import styled from '@emotion/styled';
-import { Box, Card, IconButton, Stack, Typography } from '@mui/material';
-import { emojiByActivityType } from '@constants/index';
+
 import { GoLinkExternal } from 'react-icons/go';
-import { openUrlInNewTab } from '@utils/index';
 import {
     IoCheckmarkDoneCircleOutline,
     IoCheckmarkDoneCircleSharp,
 } from 'react-icons/io5';
-import { ActivityType } from '@styles/index';
+
+import { emojiByActivityType } from '@constants/index';
+import styled from '@emotion/styled';
+import { Box, Card, IconButton, Stack, Typography } from '@mui/material';
+
+import { Activity } from '@abstraction/types';
 import { useToggleActivity } from '@hooks/use-toggle-activity/use-toggle-activity';
+import { ActivityType } from '@styles/index';
+import { openUrlInNewTab } from '@utils/index';
 
 export const Container = styled(Card)`
     border-radius: 1em;

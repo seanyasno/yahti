@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { Button, Container } from '@mui/material';
-import { StyledIconButton, ActivityType } from '@styles/index';
+
+import { ActivityType, StyledIconButton } from '@styles/index';
 
 export const StyledContainer = styled(Container)`
     height: -webkit-fill-available;

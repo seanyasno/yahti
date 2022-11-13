@@ -1,19 +1,23 @@
+import React, { ChangeEvent, useState } from 'react';
+
+import Image from 'next/image';
+
+import { Box, Input, InputAdornment, Typography } from '@mui/material';
+import { useMutation } from '@tanstack/react-query';
+import { isEmpty } from 'lodash';
+import ScaleLoader from 'react-spinners/ScaleLoader';
+
+import { Activity } from '@abstraction/types';
+import { useActivityForm } from '@hooks/index';
+import { parseImageToString } from '@utils/index';
+
 import {
-    UploadPhotoContainer,
-    UploadPhotoButton,
     CreateButton,
     CreateButtonContainer,
     StyledDivider,
+    UploadPhotoButton,
+    UploadPhotoContainer,
 } from './styles';
-import React, { ChangeEvent, useState } from 'react';
-import { Box, Input, InputAdornment, Typography } from '@mui/material';
-import { parseImageToString } from '@utils/index';
-import Image from 'next/image';
-import { isEmpty } from 'lodash';
-import { Activity } from '@abstraction/types';
-import { useActivityForm } from '@hooks/index';
-import { useMutation } from '@tanstack/react-query';
-import ScaleLoader from 'react-spinners/ScaleLoader';
 
 type Props = {
     initialActivity?: Activity;

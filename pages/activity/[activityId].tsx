@@ -1,7 +1,21 @@
 import React, { useEffect, useState } from 'react';
+
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
-import { Activity } from '@abstraction/index';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+
+import { GoLinkExternal } from 'react-icons/go';
+import { GrEdit } from 'react-icons/gr';
+import { IoIosArrowBack } from 'react-icons/io';
+import {
+    IoCheckmarkDoneCircleOutline,
+    IoCheckmarkDoneCircleSharp,
+} from 'react-icons/io5';
+import { MdDeleteForever } from 'react-icons/md';
+
 import { auth, storage } from '@config/index';
+import { emojiByActivityType } from '@constants/index';
+import { getDownloadURL, ref } from '@firebase/storage';
 import {
     Dialog,
     DialogContent,
@@ -10,34 +24,24 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
-import { emojiByActivityType } from '@constants/index';
-import { openUrlInNewTab } from '@utils/index';
-import { IoIosArrowBack } from 'react-icons/io';
-import {
-    IoCheckmarkDoneCircleOutline,
-    IoCheckmarkDoneCircleSharp,
-} from 'react-icons/io5';
-import { useRouter } from 'next/router';
-import { getDownloadURL, ref } from '@firebase/storage';
-import Image from 'next/image';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import {
-    DoneButton,
-    StyledBackButton,
-    StyledActivityType,
-    StyledContainer,
-    ImageContainer,
-    Card,
-} from '@styles/activity-page/activity-page-styles';
-import { GrEdit } from 'react-icons/gr';
 import { useMutation } from '@tanstack/react-query';
-import { LoadingScreen, DeleteActivityDialog } from '@components/index';
-import { MdDeleteForever } from 'react-icons/md';
-import { GoLinkExternal } from 'react-icons/go';
+import { useAuthState } from 'react-firebase-hooks/auth';
+
+import { Activity } from '@abstraction/index';
+import { DeleteActivityDialog, LoadingScreen } from '@components/index';
 import {
     fetchActivityById,
     updateActivity,
 } from '@requests/firestore-requests/firestore-requests';
+import {
+    Card,
+    DoneButton,
+    ImageContainer,
+    StyledActivityType,
+    StyledBackButton,
+    StyledContainer,
+} from '@styles/activity-page/activity-page-styles';
+import { openUrlInNewTab } from '@utils/index';
 
 type Props = {
     activity: Activity;

@@ -1,20 +1,24 @@
 import React, { useCallback, useEffect, useState } from 'react';
+
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
-import { fetchActivityById, updateActivity } from '@requests/index';
-import { getDownloadURL, ref, uploadBytes } from '@firebase/storage';
-import { auth, storage } from '@config/index';
-import { Activity } from '@abstraction/types';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { useRouter } from 'next/router';
-import { Container, StyledIconButton } from '@styles/index';
+
 import { IoIosArrowBack } from 'react-icons/io';
+
+import { auth, storage } from '@config/index';
+import { getDownloadURL, ref, uploadBytes } from '@firebase/storage';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { v4 } from 'uuid';
+
+import { Activity } from '@abstraction/types';
 import {
-    LoadingScreen,
     ActivityForm,
     ActivitySelection,
+    LoadingScreen,
 } from '@components/index';
 import { useActivityForm } from '@hooks/index';
-import { v4 } from 'uuid';
+import { fetchActivityById, updateActivity } from '@requests/index';
+import { Container, StyledIconButton } from '@styles/index';
 
 type Props = {
     activity: Activity;

@@ -1,14 +1,15 @@
-import { Activity, UserDetails } from '@abstraction/index';
+import { db } from '@config/index';
 import {
     addDoc,
     collection,
-    getDoc,
-    doc,
-    setDoc,
     deleteDoc,
+    doc,
+    getDoc,
     getDocs,
+    setDoc,
 } from '@firebase/firestore';
-import { db } from '@config/index';
+
+import { Activity, UserDetails } from '@abstraction/index';
 import { userConverter } from '@utils/firebase';
 
 export const fetchActivities = async (): Promise<
