@@ -1,9 +1,9 @@
-import { initializeApp } from 'firebase/app';
-import { getAnalytics } from 'firebase/analytics';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from '@firebase/storage';
 import { getAuth } from '@firebase/auth';
 import { getMessaging } from '@firebase/messaging';
+import { getStorage } from '@firebase/storage';
+import { getAnalytics } from 'firebase/analytics';
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
 
 export const config = {
     firebase: {

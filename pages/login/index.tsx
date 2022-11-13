@@ -1,11 +1,13 @@
 import React, { useEffect, useRef } from 'react';
+
 import { NextPage } from 'next';
-import { Button, Stack, TextField, Typography } from '@mui/material';
-import { signInWithEmailAndPassword } from '@firebase/auth';
-import { auth } from '@config/index';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { useRouter } from 'next/router';
+
+import { auth } from '@config/index';
 import styled from '@emotion/styled';
+import { signInWithEmailAndPassword } from '@firebase/auth';
+import { Button, Stack, TextField, Typography } from '@mui/material';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 const CenteredStack = styled(Stack)`
     height: -webkit-fill-available;

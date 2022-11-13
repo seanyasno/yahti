@@ -1,6 +1,7 @@
+import { useEffect } from 'react';
+
 import { Activity } from '@abstraction/types';
 import { useFormEditing } from '@hooks/index';
-import { useEffect } from 'react';
 
 export const useActivityForm = (initialActivity?: Partial<Activity>) => {
     const initialActivityValues: Activity = {

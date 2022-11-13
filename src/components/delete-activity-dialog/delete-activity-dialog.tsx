@@ -1,4 +1,7 @@
 import React, { useCallback } from 'react';
+
+import { useRouter } from 'next/router';
+
 import {
     Button,
     Dialog,
@@ -7,10 +10,10 @@ import {
     DialogTitle,
     Typography,
 } from '@mui/material';
+
 import { Activity } from '@abstraction/types';
-import { theme } from '@styles/theme/theme';
-import { useRouter } from 'next/router';
 import { deleteActivity } from '@requests/firestore-requests/firestore-requests';
+import { theme } from '@styles/theme/theme';
 
 type Props = {
     open: boolean;

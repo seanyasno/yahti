@@ -1,16 +1,20 @@
 import React, { useCallback, useEffect, useState } from 'react';
+
 import { NextPage } from 'next';
-import { ActivitySelection, ActivityForm } from '@components/index';
-import { IoIosArrowBack } from 'react-icons/io';
-import { Container, StyledIconButton } from '@styles/index';
 import { useRouter } from 'next/router';
-import { useAuthState } from 'react-firebase-hooks/auth';
+
+import { IoIosArrowBack } from 'react-icons/io';
+
 import { auth, storage } from '@config/index';
-import { useActivityForm } from '@hooks/index';
 import { ref, uploadBytes } from '@firebase/storage';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { v4 } from 'uuid';
-import { createActivity } from '@requests/index';
+
 import { Activity } from '@abstraction/types';
+import { ActivityForm, ActivitySelection } from '@components/index';
+import { useActivityForm } from '@hooks/index';
+import { createActivity } from '@requests/index';
+import { Container, StyledIconButton } from '@styles/index';
 
 const CreateActivityPage: NextPage = () => {
     const router = useRouter();

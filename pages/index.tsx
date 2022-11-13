@@ -1,27 +1,38 @@
+import { useEffect, useMemo, useState } from 'react';
+import React from 'react';
+
 import type { NextPage } from 'next';
-import {
-    Container,
-    Stack,
-    Typography,
-    Fab,
-    Tabs,
-    Tab,
-    Box,
-    Input,
-} from '@mui/material';
-import { ActivityItem, LoadingScreen } from '@components/index';
-import { MdAdd } from 'react-icons/md';
 import { useRouter } from 'next/router';
-import { useQuery } from '@tanstack/react-query';
+
+import { BsFillFilterCircleFill, BsFilterCircle } from 'react-icons/bs';
+import { MdAdd } from 'react-icons/md';
+
 import { auth } from '@config/index';
 import styled from '@emotion/styled';
-import { theme } from '@styles/index';
-import { useEffect, useMemo, useState } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import React from 'react';
-import { useUserDetails } from '@hooks/index';
+import {
+    Box,
+    Container,
+    Fab,
+    IconButton,
+    Input,
+    Stack,
+    Tab,
+    Tabs,
+    Typography,
+} from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
 import { isEmpty } from 'lodash';
-import { fetchActivities } from '@requests/firestore-requests/firestore-requests';
+import { useAuthState } from 'react-firebase-hooks/auth';
+
+import { ActivityType } from '@abstraction/enums';
+import {
+    ActivityItem,
+    FilterActivitiesDrawer,
+    LoadingScreen,
+} from '@components/index';
+import { useUserDetails } from '@hooks/index';
+import { fetchActivities } from '@requests/index';
+import { theme } from '@styles/index';
 
 export const StyledTabs = styled(Tabs)`
     margin: 0 0 20px 0;
@@ -49,22 +60,38 @@ const HomePage: NextPage = () => {
     const router = useRouter();
     const [currentTab, setCurrentTab] = useState(0);
     const [activitySearchText, setActivitySearchText] = useState('');
+    const [openFilterDrawer, setOpenFilterDrawer] = useState(false);
+    const [filteredTypes, setFilteredTypes] = useState<ActivityType[]>([]);
     const { data: activities = [], isLoading: loadingActivities } = useQuery({
         queryKey: ['activities'],
         queryFn: async () => fetchActivities(),
     });
 
+    const hasFilter = useMemo(() => {
+        return filteredTypes.length > 0;
+    }, [filteredTypes]);
+
     const filteredActivities = useMemo(() => {
-        if (isEmpty(activitySearchText)) {
-            return activities;
+        let filteredActivitiesByTypes = [];
+
+        if (filteredTypes.length === 0) {
+            filteredActivitiesByTypes = activities;
+        } else {
+            filteredActivitiesByTypes = activities.filter(({ activity }) =>
+                activity.types.some((type) => filteredTypes.includes(type))
+            );
         }
 
-        return activities.filter(({ activity }) =>
+        if (isEmpty(activitySearchText)) {
+            return filteredActivitiesByTypes;
+        }
+
+        return filteredActivitiesByTypes.filter(({ activity }) =>
             activity.title
                 .toLowerCase()
                 .includes(activitySearchText.toLowerCase())
         );
-    }, [activities, activitySearchText]);
+    }, [activities, activitySearchText, filteredTypes]);
 
     const { data: userDetails, isLoading: loadingUserDetails } =
         useUserDetails();
@@ -77,7 +104,7 @@ const HomePage: NextPage = () => {
         () => filteredActivities.filter(({ activity }) => !activity.done),
         [filteredActivities]
     );
-    const [user, loading, error] = useAuthState(auth);
+    const [user, loading] = useAuthState(auth);
 
     const title = 'יואואוו שלום';
     const searchActivityPlaceholder = 'יאללה נחפש פעילות';
@@ -100,11 +127,34 @@ const HomePage: NextPage = () => {
                 {title} {userDetails.name}
             </Typography>
 
-            <Input
-                placeholder={searchActivityPlaceholder}
-                sx={{ mb: '12px' }}
-                onChange={(event) => setActivitySearchText(event.target.value)}
-            />
+            <Stack direction={'row'} mb={'12px'}>
+                <Input
+                    placeholder={searchActivityPlaceholder}
+                    onChange={(event) =>
+                        setActivitySearchText(event.target.value)
+                    }
+                />
+
+                <IconButton
+                    sx={{ padding: 0 }}
+                    onClick={() => setOpenFilterDrawer(true)}
+                >
+                    {hasFilter ? (
+                        <BsFillFilterCircleFill
+                            color={theme.palette.secondary.main}
+                        />
+                    ) : (
+                        <BsFilterCircle color={theme.palette.text.primary} />
+                    )}
+                </IconButton>
+
+                <FilterActivitiesDrawer
+                    open={openFilterDrawer}
+                    onClose={() => setOpenFilterDrawer(false)}
+                    onOpen={() => setOpenFilterDrawer(true)}
+                    onFilter={(types) => setFilteredTypes(types)}
+                />
+            </Stack>
 
             <StyledTabs
                 value={currentTab}
