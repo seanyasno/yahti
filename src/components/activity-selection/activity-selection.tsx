@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import { emojiByActivityType } from '@constants/index';
 import { Divider, Grid, Typography } from '@mui/material';
 
 import { ActivityType } from '@abstraction/index';
+import { useTypeSelection } from '@hooks/index';
 import { theme } from '@styles/index';
 
 import { ContinueButton, EmojiButton } from './styles';
@@ -16,33 +17,13 @@ type Props = {
 
 export const ActivitySelection: React.FC<Props> = (props) => {
     const { initialSelectedTypes = [], onDone } = props;
-    const [selectedTypes, setSelectedTypes] =
-        useState<ActivityType[]>(initialSelectedTypes);
+    const { selectedTypes, setSelectedTypes, onTypeSelected, isTypeSelected } =
+        useTypeSelection(initialSelectedTypes);
 
     const title = 'צריך לבחור פעילות';
     const subtitle = 'אפשר לבחור רק יותר מאחד חיימשלי';
     const buttonTitle = 'היידה נמשיך';
     const buttonTitleDisabled = 'איך נמשיך אם לא בחרת';
-
-    const onTypeSelected = useCallback(
-        (type: ActivityType) => {
-            if (selectedTypes.includes(type)) {
-                setSelectedTypes(
-                    selectedTypes.filter(
-                        (activityType) => activityType !== type
-                    )
-                );
-            } else {
-                setSelectedTypes([...selectedTypes, type]);
-            }
-        },
-        [selectedTypes, setSelectedTypes]
-    );
-
-    const isTypeSelected = useCallback(
-        (type: ActivityType) => selectedTypes.includes(type),
-        [selectedTypes]
-    );
 
     const handleOnDone = useCallback(() => {
         onDone?.(selectedTypes);
