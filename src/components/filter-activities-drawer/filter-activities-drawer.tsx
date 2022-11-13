@@ -1,10 +1,7 @@
 import React, { useCallback } from 'react';
 
 import { emojiByActivityType } from '@constants/index';
-import styled from '@emotion/styled';
 import {
-    Box,
-    Button,
     Divider,
     IconButton,
     Stack,
@@ -13,8 +10,15 @@ import {
 } from '@mui/material';
 
 import { ActivityType } from '@abstraction/enums';
-import { useTypeSelection } from '@hooks/use-type-selection/use-type-selection';
-import { ActivityType as StyledActivityType } from '@styles/index';
+import { useTypeSelection } from '@hooks/index';
+
+import {
+    FilterButton,
+    FilterButtonContainer,
+    OverrideStyledActivityType,
+    ResetButton,
+    TempButton,
+} from './styles';
 
 type Props = {
     open: boolean;
@@ -61,30 +65,21 @@ export const FilterActivitiesDrawer: React.FC<Props> = (props) => {
                     alignItems={'center'}
                     justifyContent={'space-between'}
                 >
-                    <Button
-                        variant={'text'}
-                        sx={{
-                            fontSize: '16px',
-                            padding: 0,
-                            color: 'transparent !important',
-                        }}
-                        disabled
-                    >
+                    <TempButton variant={'text'} disabled>
                         {resetButtonTitle}
-                    </Button>
+                    </TempButton>
 
                     <Typography variant={'h5'} textAlign={'center'}>
                         {filterTitle}
                     </Typography>
 
-                    <Button
+                    <ResetButton
                         variant={'text'}
                         color={'secondary'}
-                        sx={{ fontSize: '16px', padding: 0 }}
                         onClick={onReset}
                     >
                         {resetButtonTitle}
-                    </Button>
+                    </ResetButton>
                 </Stack>
 
                 <Stack spacing={1}>
@@ -109,15 +104,9 @@ export const FilterActivitiesDrawer: React.FC<Props> = (props) => {
                                 }}
                                 onClick={() => onTypeSelected(type)}
                             >
-                                <StyledActivityType
-                                    sx={{
-                                        width: '30px !important',
-                                        height: '30px !important',
-                                        fontSize: '18px !important',
-                                    }}
-                                >
+                                <OverrideStyledActivityType>
                                     {emojiByActivityType[type]}
-                                </StyledActivityType>
+                                </OverrideStyledActivityType>
                             </IconButton>
                         ))}
                     </Stack>
@@ -126,26 +115,15 @@ export const FilterActivitiesDrawer: React.FC<Props> = (props) => {
                 </Stack>
             </Stack>
 
-            <Box
-                sx={{
-                    display: 'flex',
-                    flex: 1,
-                    alignItems: 'flex-end',
-                }}
-            >
-                <Button
+            <FilterButtonContainer>
+                <FilterButton
                     variant={'contained'}
                     color={'secondary'}
-                    sx={{
-                        borderRadius: '.8em',
-                        width: '100%',
-                        height: 'min-content',
-                    }}
                     onClick={handleOnFilter}
                 >
                     {filterButtonTitle}
-                </Button>
-            </Box>
+                </FilterButton>
+            </FilterButtonContainer>
         </SwipeableDrawer>
     );
 };
