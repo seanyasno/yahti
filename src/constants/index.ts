@@ -7,6 +7,8 @@ export const emojiByActivityType: { [key: string]: string } = {
     [ActivityType.SHOPPING]: '🛍️',
     [ActivityType.SPORT]: '🏃‍♂️',
     [ActivityType.LOVING]: '❤️',
+    [ActivityType.CINEMA]: '🍿',
+    [ActivityType.HOME_MOVIE]: '💻',
     [ActivityType.GAMING]: '🎮',
     [ActivityType.ESCAPE_ROOM]: '🔓',
     [ActivityType.OTHER]: '🤷‍♂️',

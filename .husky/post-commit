@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "Congratulations 🥳🥳🥳 You committed something to this project 🎉🎉🎉"
+echo "Thanks for shop 🛍, buy 💰 and support 🧱 this project 🙏🙏🙏"
+echo ""
