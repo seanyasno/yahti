@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import { NextPage } from 'next';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
@@ -24,15 +24,13 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { isEmpty } from 'lodash';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { Activity } from '@abstraction/index';
 import { DeleteActivityDialog, LoadingScreen } from '@components/index';
-import {
-    fetchActivityById,
-    updateActivity,
-} from '@requests/firestore-requests/firestore-requests';
+import { fetchActivityById, updateActivity } from '@requests/index';
 import {
     Card,
     DoneButton,
@@ -43,25 +41,46 @@ import {
 } from '@styles/activity-page/activity-page-styles';
 import { openUrlInNewTab } from '@utils/index';
 
-type Props = {
-    activity: Activity;
-    id: string;
-    imagesUrls: string[];
-};
-
-export const ActivityPage: NextPage<Props> = (props) => {
-    const { id, imagesUrls } = props;
-    const { activity } = props;
+export const ActivityPage: NextPage = () => {
     const router = useRouter();
     const [openFullImageDialog, setOpenFullImageDialog] = useState(false);
     const [user, loading] = useAuthState(auth);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
+    const { data: activity } = useQuery({
+        queryKey: ['activity', router?.query?.activityId],
+        queryFn: async () =>
+            fetchActivityById(router.query.activityId as string),
+        enabled: !isEmpty(router?.query?.activityId),
+    });
+
+    const { data: imagesUrls } = useQuery({
+        queryKey: ['activityImages', router?.query?.activityId],
+        queryFn: async () => {
+            const imagesUrls: string[] = [];
+
+            if (activity.imagesPaths) {
+                for (const imagePath of activity.imagesPaths) {
+                    const url = await getDownloadURL(ref(storage, imagePath));
+                    imagesUrls.push(url);
+                }
+            }
+
+            return imagesUrls;
+        },
+        enabled: !isEmpty(activity),
+    });
+
     const { mutateAsync: toggleActivity } = useMutation({
-        mutationFn: async () => updateActivity(id, { done: !activity.done }),
+        mutationFn: async () =>
+            updateActivity(router.query.activityId as string, {
+                done: !activity.done,
+            }),
         onSuccess: () => (activity.done = !activity.done),
     });
 
-    const onEdit = () => router.push(`/edit-activity/${id}`);
+    const onEdit = () =>
+        router.push(`/edit-activity/${router.query.activityId}`);
 
     useEffect(() => {
         if (!loading && !user) {
@@ -69,7 +88,7 @@ export const ActivityPage: NextPage<Props> = (props) => {
         }
     }, [loading, router, user]);
 
-    if (!activity) {
+    if (!activity || !imagesUrls) {
         return <LoadingScreen />;
     }
 
@@ -218,7 +237,7 @@ export const ActivityPage: NextPage<Props> = (props) => {
             <DeleteActivityDialog
                 open={openDeleteDialog}
                 activity={activity}
-                activityId={id}
+                activityId={router.query.activityId as string}
                 onClose={() => setOpenDeleteDialog(false)}
             />
 
@@ -249,45 +268,6 @@ export const ActivityPage: NextPage<Props> = (props) => {
             </Dialog>
         </StyledContainer>
     );
-};
-
-export const getStaticPaths: GetStaticPaths = () => {
-    return {
-        paths: [],
-        fallback: true,
-    };
-};
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-    try {
-        const activityId = params.activityId as string;
-
-        const activity = await fetchActivityById(activityId);
-        const imagesUrls: string[] = [];
-
-        if (activity.imagesPaths) {
-            for (const imagePath of activity.imagesPaths) {
-                const url = await getDownloadURL(ref(storage, imagePath));
-                imagesUrls.push(url);
-            }
-        }
-
-        return {
-            props: {
-                activity,
-                id: activityId,
-                imagesUrls,
-            },
-            revalidate: true,
-        };
-    } catch (error) {
-        console.error(error);
-        return {
-            props: {
-                activity: null,
-            },
-        };
-    }
 };
 
 export default ActivityPage;
