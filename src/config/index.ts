@@ -1,7 +1,5 @@
 import { getAuth } from '@firebase/auth';
-import { getMessaging } from '@firebase/messaging';
 import { getStorage } from '@firebase/storage';
-import { getAnalytics } from 'firebase/analytics';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 
@@ -20,8 +18,6 @@ export const config = {
 };
 
 export const app = initializeApp(config.firebase);
-// export const analytics = getAnalytics(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const auth = getAuth(app);
-// export const messaging = getMessaging(app);
