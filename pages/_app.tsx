@@ -1,21 +1,29 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import type { AppProps } from 'next/app';
 
-import { app } from '@config/index';
+import { app, auth } from '@config/index';
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
-import { getMessaging, getToken } from '@firebase/messaging';
+import { getMessaging, getToken, onMessage } from '@firebase/messaging';
 import { ThemeProvider } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import firebase from 'firebase/compat';
+import { isSupported } from 'firebase/messaging/sw';
 import { prefixer } from 'stylis';
 import rtlPlugin from 'stylis-plugin-rtl';
 
+import { saveDeviceToken } from '@requests/index';
 import { theme } from '@styles/index';
 
 import '../styles/globals.css';
+
+// const onMessageListener = () =>
+//     new Promise((resolve) => {
+//         onMessage(getMessaging(app), (payload) => {
+//             resolve(payload);
+//         });
+//     });
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -31,31 +39,35 @@ const cacheRtl = createCache({
 });
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
-    // getToken(messaging, {
-    //     vapidKey:
-    //         'BBb2YcgCC2p0WSIjdfw4av-YDo3yGwOvvDZgpPSJPIh5GTKOmzC4hxbTmxQX51G4LiBWQcCV5iATiAzLYcX0VMM',
-    // });
-    //
-    // Notification.requestPermission().then((permission) => {
-    //     console.log(permission);
+    const setUpMessaging = useCallback(async () => {
+        try {
+            if (!(await isSupported())) {
+                return;
+            }
+
+            const messaging = getMessaging(app);
+            if (!messaging) {
+                return;
+            }
+
+            await Notification.requestPermission();
+            const token = await getToken(messaging, {
+                vapidKey:
+                    'BBb2YcgCC2p0WSIjdfw4av-YDo3yGwOvvDZgpPSJPIh5GTKOmzC4hxbTmxQX51G4LiBWQcCV5iATiAzLYcX0VMM',
+            });
+            await saveDeviceToken(auth?.currentUser?.email, token);
+        } catch (error) {
+            console.error(error);
+        }
+    }, [auth?.currentUser, app]);
+
+    // onMessageListener().then((payload) => {
+    //     console.log('Message received. shrek', payload);
     // });
 
-    // const setUpMessaging = async () => {
-    //     try {
-    //         const messaging = getMessaging(app);
-    //         const token = await getToken(messaging, {
-    //             vapidKey:
-    //                 'BBb2YcgCC2p0WSIjdfw4av-YDo3yGwOvvDZgpPSJPIh5GTKOmzC4hxbTmxQX51G4LiBWQcCV5iATiAzLYcX0VMM',
-    //         });
-    //         console.log(token);
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // };
-    //
-    // useEffect(() => {
-    //     setUpMessaging();
-    // }, []);
+    useEffect(() => {
+        setUpMessaging();
+    }, [setUpMessaging]);
 
     return (
         <QueryClientProvider client={queryClient}>
