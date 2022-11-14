@@ -14,6 +14,7 @@ const MyDocument = () => {
                     content="width=device-width,height=device-height initial-scale=1"
                 />
 
+                {/* eslint-disable-next-line @next/next/no-title-in-document-head */}
                 <title>יאחתי</title>
 
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
