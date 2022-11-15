@@ -41,14 +41,15 @@ export const FilterActivitiesDrawer: React.FC<Props> = (props) => {
     const resetButtonTitle = 'לאפס';
     const orderByTitle = 'נקבץ לפי';
 
-    const onReset = useCallback(() => {
-        setSelectedTypes([]);
-        setGroupBy('');
-    }, [setSelectedTypes, setGroupBy]);
-
     const handleOnFilter = useCallback(() => {
         onFilter?.(selectedTypes, groupBy);
     }, [selectedTypes, groupBy, onFilter]);
+
+    const onReset = useCallback(() => {
+        setSelectedTypes([]);
+        setGroupBy('');
+        handleOnFilter();
+    }, [setSelectedTypes, setGroupBy, handleOnFilter]);
 
     return (
         <SwipeableDrawer
@@ -61,6 +62,8 @@ export const FilterActivitiesDrawer: React.FC<Props> = (props) => {
                     borderRadius: '20px 20px 0 0',
                     padding: '20px',
                     height: '50%',
+                    maxWidth: 'sm',
+                    margin: '0 auto',
                 },
             }}
         >
