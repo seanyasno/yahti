@@ -1,9 +1,11 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { emojiByActivityType } from '@constants/index';
 import {
     Divider,
     IconButton,
+    MenuItem,
+    Select,
     Stack,
     SwipeableDrawer,
     Typography,
@@ -24,26 +26,28 @@ type Props = {
     open: boolean;
     onClose: () => void;
     onOpen: () => void;
-    onFilter?: (types: ActivityType[]) => void;
+    onFilter?: (types: ActivityType[], groupBy: string) => void;
 };
 
 export const FilterActivitiesDrawer: React.FC<Props> = (props) => {
     const { open, onClose, onOpen, onFilter } = props;
     const { selectedTypes, setSelectedTypes, isTypeSelected, onTypeSelected } =
         useTypeSelection();
+    const [groupBy, setGroupBy] = useState('');
 
     const filterTitle = 'נסנן כמה דברים';
     const filterActivityTypeTitle = 'סוג הפעילות';
     const filterButtonTitle = 'יאללה נסנן';
     const resetButtonTitle = 'לאפס';
+    const orderByTitle = 'נקבץ לפי';
 
     const onReset = useCallback(() => {
         setSelectedTypes([]);
     }, [setSelectedTypes]);
 
     const handleOnFilter = useCallback(() => {
-        onFilter?.(selectedTypes);
-    }, [selectedTypes, onFilter]);
+        onFilter?.(selectedTypes, groupBy);
+    }, [selectedTypes, groupBy, onFilter]);
 
     return (
         <SwipeableDrawer
@@ -110,6 +114,22 @@ export const FilterActivitiesDrawer: React.FC<Props> = (props) => {
                             </IconButton>
                         ))}
                     </Stack>
+
+                    <Divider />
+
+                    <Typography variant={'h6'}>{orderByTitle}</Typography>
+                    <Select
+                        variant={'standard'}
+                        value={groupBy}
+                        onChange={(event) =>
+                            setGroupBy(event.target.value as string)
+                        }
+                    >
+                        <MenuItem value={''}>
+                            <em>כלום</em>
+                        </MenuItem>
+                        <MenuItem value={'type'}>סוג הפעילות</MenuItem>
+                    </Select>
 
                     <Divider />
                 </Stack>
