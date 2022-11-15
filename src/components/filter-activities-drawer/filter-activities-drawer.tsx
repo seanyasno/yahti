@@ -43,7 +43,8 @@ export const FilterActivitiesDrawer: React.FC<Props> = (props) => {
 
     const onReset = useCallback(() => {
         setSelectedTypes([]);
-    }, [setSelectedTypes]);
+        setGroupBy('');
+    }, [setSelectedTypes, setGroupBy]);
 
     const handleOnFilter = useCallback(() => {
         onFilter?.(selectedTypes, groupBy);
