@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import React from 'react';
 
 import type { NextPage } from 'next';
@@ -25,9 +25,11 @@ import { isEmpty } from 'lodash';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { ActivityType } from '@abstraction/enums';
+import { Activity } from '@abstraction/types';
 import {
     ActivityItem,
     FilterActivitiesDrawer,
+    GroupedActivities,
     LoadingScreen,
 } from '@components/index';
 import { useUserDetails } from '@hooks/index';
@@ -62,10 +64,20 @@ const HomePage: NextPage = () => {
     const [activitySearchText, setActivitySearchText] = useState('');
     const [openFilterDrawer, setOpenFilterDrawer] = useState(false);
     const [filteredTypes, setFilteredTypes] = useState<ActivityType[]>([]);
+    const [groupBy, setGroupBy] = useState('');
     const { data: activities = [], isLoading: loadingActivities } = useQuery({
         queryKey: ['activities'],
         queryFn: async () => fetchActivities(),
     });
+
+    const handleOnFilter = useCallback(
+        (types: ActivityType[], groupBy: string) => {
+            setFilteredTypes(types);
+            setGroupBy(groupBy);
+            setOpenFilterDrawer(false);
+        },
+        []
+    );
 
     const hasFilter = useMemo(() => {
         return filteredTypes.length > 0;
@@ -111,6 +123,43 @@ const HomePage: NextPage = () => {
 
     const onAddActivity = () => router.push('/create-activity');
 
+    const groupedActivities = useCallback(
+        (activities: { activity: Activity; id: string }[]) => {
+            return Object.values(ActivityType).map((type, index) => {
+                return (
+                    <GroupedActivities
+                        activities={activities}
+                        type={type}
+                        key={index}
+                    />
+                );
+            });
+        },
+        [groupBy]
+    );
+
+    const activitiesList = useCallback(
+        (activities: { activity: Activity; id: string }[]) => {
+            return activities.map(({ activity, id }, index) => (
+                <Box onClick={() => router.push(`/activity/${id}`)} key={index}>
+                    <ActivityItem id={id} activity={activity} />
+                </Box>
+            ));
+        },
+        [router, groupBy]
+    );
+
+    const contentByTab = useCallback(
+        (activities: { activity: Activity; id: string }[]) => {
+            if (groupBy) {
+                return groupedActivities(activities);
+            }
+
+            return activitiesList(activities);
+        },
+        [router, groupBy]
+    );
+
     useEffect(() => {
         if (!loading && !user) {
             router.replace('/login');
@@ -152,7 +201,7 @@ const HomePage: NextPage = () => {
                     open={openFilterDrawer}
                     onClose={() => setOpenFilterDrawer(false)}
                     onOpen={() => setOpenFilterDrawer(true)}
-                    onFilter={(types) => setFilteredTypes(types)}
+                    onFilter={handleOnFilter}
                 />
             </Stack>
 
@@ -166,25 +215,8 @@ const HomePage: NextPage = () => {
             </StyledTabs>
 
             <Stack direction={'column'} spacing={2}>
-                {currentTab === 0 &&
-                    notDoneActivities.map(({ activity, id }, index) => (
-                        <Box
-                            onClick={() => router.push(`/activity/${id}`)}
-                            key={index}
-                        >
-                            <ActivityItem id={id} activity={activity} />
-                        </Box>
-                    ))}
-
-                {currentTab === 1 &&
-                    doneActivities.map(({ activity, id }, index) => (
-                        <Box
-                            onClick={() => router.push(`/activity/${id}`)}
-                            key={index}
-                        >
-                            <ActivityItem id={id} activity={activity} />
-                        </Box>
-                    ))}
+                {currentTab === 0 && contentByTab(notDoneActivities)}
+                {currentTab === 1 && contentByTab(doneActivities)}
             </Stack>
 
             <Fab color={'secondary'} aria-label={'add'} onClick={onAddActivity}>
