@@ -80,7 +80,7 @@ const HomePage: NextPage = () => {
     );
 
     const hasFilter = useMemo(() => {
-        return filteredTypes.length > 0;
+        return filteredTypes.length > 0 || groupBy;
     }, [filteredTypes]);
 
     const filteredActivities = useMemo(() => {
