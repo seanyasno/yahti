@@ -28,11 +28,19 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { isEmpty } from 'lodash';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
-import { DeleteActivityDialog, LoadingScreen } from '@components/index';
-import { fetchActivityById, updateActivity } from '@requests/index';
+import {
+    CommentItem,
+    CreateCommentInput,
+    DeleteActivityDialog,
+    LoadingScreen,
+} from '@components/index';
+import {
+    fetchActivityById,
+    fetchCommentsByActivityId,
+    updateActivity,
+} from '@requests/index';
 import {
     Card,
-    DoneButton,
     ImageContainer,
     StyledActivityType,
     StyledBackButton,
@@ -70,6 +78,13 @@ export const ActivityPage: NextPage = () => {
         enabled: !isEmpty(activity),
     });
 
+    const { data: comments } = useQuery({
+        queryKey: ['comments', router?.query?.activityId],
+        queryFn: async () =>
+            fetchCommentsByActivityId(router.query.activityId as string),
+        enabled: !isEmpty(router?.query?.activityId),
+    });
+
     const { mutateAsync: toggleActivity } = useMutation({
         mutationFn: async () =>
             updateActivity(router.query.activityId as string, {
@@ -93,7 +108,6 @@ export const ActivityPage: NextPage = () => {
 
     const { title, link, types, done, description } = activity;
 
-    const doneButtonTitle = 'יאללה נסמן שעשינו?';
     const linkTitle = 'קישור לאתר';
     const descriptionTitle = 'קצת תיאור על ההרפתקה שלנו';
 
@@ -223,15 +237,19 @@ export const ActivityPage: NextPage = () => {
                 )}
             </Card>
 
-            {!done && (
-                <DoneButton
-                    variant={'contained'}
-                    color={'secondary'}
-                    onClick={() => toggleActivity()}
-                >
-                    {doneButtonTitle}
-                </DoneButton>
-            )}
+            <Stack spacing={2} mb={'20px'}>
+                {comments
+                    .sort(
+                        (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+                    )
+                    .map((comment, index) => (
+                        <CommentItem comment={comment} key={index} />
+                    ))}
+
+                <CreateCommentInput
+                    activityId={router.query.activityId as string}
+                />
+            </Stack>
 
             <DeleteActivityDialog
                 open={openDeleteDialog}

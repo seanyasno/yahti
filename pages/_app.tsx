@@ -7,6 +7,8 @@ import { CacheProvider } from '@emotion/react';
 import { ThemeProvider } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import TimeAgo from 'javascript-time-ago';
+import he from 'javascript-time-ago/locale/he';
 import { prefixer } from 'stylis';
 import rtlPlugin from 'stylis-plugin-rtl';
 
@@ -26,6 +28,8 @@ const cacheRtl = createCache({
     key: 'muirtl',
     stylisPlugins: [prefixer, rtlPlugin],
 });
+
+TimeAgo.addDefaultLocale(he);
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
     return (
