@@ -21,6 +21,7 @@
     "@tanstack/react-query": "^4.12.0",
     "firebase": "^9.12.1",
     "is-promise": "^4.0.0",
+    "javascript-time-ago": "^2.5.9",
     "lodash": "^4.17.21",
     "next": "12.3.1",
     "next-pwa": "^5.6.0",

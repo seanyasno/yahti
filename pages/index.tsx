@@ -5,6 +5,7 @@ import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 
 import { BsFillFilterCircleFill, BsFilterCircle } from 'react-icons/bs';
+import { IoMenu } from 'react-icons/io5';
 import { MdAdd } from 'react-icons/md';
 
 import { auth } from '@config/index';
@@ -30,10 +31,12 @@ import {
     ActivityItem,
     FilterActivitiesDrawer,
     GroupedActivities,
+    HomeDrawer,
     LoadingScreen,
 } from '@components/index';
 import { useUserDetails } from '@hooks/index';
 import { fetchActivities } from '@requests/index';
+import { StyledBackButton } from '@styles/activity-page/activity-page-styles';
 import { theme } from '@styles/index';
 
 export const StyledTabs = styled(Tabs)`
@@ -63,6 +66,7 @@ const HomePage: NextPage = () => {
     const [currentTab, setCurrentTab] = useState(0);
     const [activitySearchText, setActivitySearchText] = useState('');
     const [openFilterDrawer, setOpenFilterDrawer] = useState(false);
+    const [openHomeDrawer, setOpenHomeDrawer] = useState(false);
     const [filteredTypes, setFilteredTypes] = useState<ActivityType[]>([]);
     const [groupBy, setGroupBy] = useState('');
     const { data: activities = [], isLoading: loadingActivities } = useQuery({
@@ -172,6 +176,18 @@ const HomePage: NextPage = () => {
 
     return (
         <Container maxWidth={'sm'} sx={{ padding: '30px 20px' }}>
+            <Stack direction={'row'} mb={'12px'}>
+                <StyledBackButton onClick={() => setOpenHomeDrawer(true)}>
+                    <IoMenu color={theme.palette.secondary.main} />
+                </StyledBackButton>
+
+                <HomeDrawer
+                    open={openHomeDrawer}
+                    onClose={() => setOpenHomeDrawer(false)}
+                    onOpen={() => setOpenHomeDrawer(true)}
+                />
+            </Stack>
+
             <Typography variant={'h4'} fontWeight={600} mb={'8px'}>
                 {title} {userDetails.name}
             </Typography>
