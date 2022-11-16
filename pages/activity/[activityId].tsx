@@ -28,8 +28,16 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { isEmpty } from 'lodash';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
-import { DeleteActivityDialog, LoadingScreen } from '@components/index';
-import { fetchActivityById, updateActivity } from '@requests/index';
+import {
+    CommentItem,
+    DeleteActivityDialog,
+    LoadingScreen,
+} from '@components/index';
+import {
+    fetchActivityById,
+    fetchCommentsByActivityId,
+    updateActivity,
+} from '@requests/index';
 import {
     Card,
     DoneButton,
@@ -68,6 +76,13 @@ export const ActivityPage: NextPage = () => {
             return imagesUrls;
         },
         enabled: !isEmpty(activity),
+    });
+
+    const { data: comments } = useQuery({
+        queryKey: ['comments', router?.query?.activityId],
+        queryFn: async () =>
+            fetchCommentsByActivityId(router.query.activityId as string),
+        enabled: !isEmpty(router?.query?.activityId),
     });
 
     const { mutateAsync: toggleActivity } = useMutation({
@@ -222,6 +237,12 @@ export const ActivityPage: NextPage = () => {
                     </React.Fragment>
                 )}
             </Card>
+
+            <Stack spacing={2}>
+                {comments.map((comment, index) => (
+                    <CommentItem comment={comment} key={index} />
+                ))}
+            </Stack>
 
             {!done && (
                 <DoneButton

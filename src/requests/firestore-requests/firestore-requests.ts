@@ -9,8 +9,8 @@ import {
     setDoc,
 } from '@firebase/firestore';
 
-import { Activity, UserDetails } from '@abstraction/index';
-import { userConverter } from '@utils/firebase';
+import { Activity, Comment, UserDetails } from '@abstraction/index';
+import { commentConverter, userConverter } from '@utils/firebase';
 
 export const fetchActivities = async (): Promise<
     { activity: Activity; id: string }[]
@@ -77,5 +77,21 @@ export const deleteActivity = async (id: string) => {
         await deleteDoc(doc(db, 'activities', id));
     } catch (error) {
         console.error(error);
+    }
+};
+
+export const fetchCommentsByActivityId = async (
+    activityId: string
+): Promise<Comment[]> => {
+    try {
+        const querySnapshot = await getDocs(
+            collection(db, 'activities', activityId, 'comments').withConverter(
+                commentConverter
+            )
+        );
+        return querySnapshot.docs.map((doc) => doc.data());
+    } catch (error) {
+        console.error(error);
+        return [];
     }
 };
