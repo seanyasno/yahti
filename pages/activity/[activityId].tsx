@@ -17,7 +17,6 @@ import { auth, storage } from '@config/index';
 import { emojiByActivityType } from '@constants/index';
 import { getDownloadURL, ref } from '@firebase/storage';
 import {
-    Box,
     Dialog,
     DialogContent,
     Divider,
@@ -36,7 +35,6 @@ import {
     LoadingScreen,
 } from '@components/index';
 import {
-    createComment,
     fetchActivityById,
     fetchCommentsByActivityId,
     updateActivity,
@@ -110,7 +108,6 @@ export const ActivityPage: NextPage = () => {
 
     const { title, link, types, done, description } = activity;
 
-    const doneButtonTitle = 'יאללה נסמן שעשינו?';
     const linkTitle = 'קישור לאתר';
     const descriptionTitle = 'קצת תיאור על ההרפתקה שלנו';
 
