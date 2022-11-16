@@ -244,16 +244,6 @@ export const ActivityPage: NextPage = () => {
                 ))}
             </Stack>
 
-            {!done && (
-                <DoneButton
-                    variant={'contained'}
-                    color={'secondary'}
-                    onClick={() => toggleActivity()}
-                >
-                    {doneButtonTitle}
-                </DoneButton>
-            )}
-
             <DeleteActivityDialog
                 open={openDeleteDialog}
                 activity={activity}
