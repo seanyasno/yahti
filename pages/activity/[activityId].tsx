@@ -17,6 +17,7 @@ import { auth, storage } from '@config/index';
 import { emojiByActivityType } from '@constants/index';
 import { getDownloadURL, ref } from '@firebase/storage';
 import {
+    Box,
     Dialog,
     DialogContent,
     Divider,
@@ -30,17 +31,18 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 
 import {
     CommentItem,
+    CreateCommentInput,
     DeleteActivityDialog,
     LoadingScreen,
 } from '@components/index';
 import {
+    createComment,
     fetchActivityById,
     fetchCommentsByActivityId,
     updateActivity,
 } from '@requests/index';
 import {
     Card,
-    DoneButton,
     ImageContainer,
     StyledActivityType,
     StyledBackButton,
@@ -238,10 +240,14 @@ export const ActivityPage: NextPage = () => {
                 )}
             </Card>
 
-            <Stack spacing={2}>
+            <Stack spacing={2} mb={'20px'}>
                 {comments.map((comment, index) => (
                     <CommentItem comment={comment} key={index} />
                 ))}
+
+                <CreateCommentInput
+                    activityId={router.query.activityId as string}
+                />
             </Stack>
 
             <DeleteActivityDialog

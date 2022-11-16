@@ -40,7 +40,7 @@ export const fetchActivityById = async (id: string): Promise<Activity> => {
 
 export const createActivity = async (newActivity: Activity) => {
     try {
-        return await addDoc(collection(db, 'activities'), newActivity);
+        return addDoc(collection(db, 'activities'), newActivity);
     } catch (error) {
         console.error(error);
     }
@@ -93,5 +93,24 @@ export const fetchCommentsByActivityId = async (
     } catch (error) {
         console.error(error);
         return [];
+    }
+};
+
+export const createComment = async (
+    comment: Comment,
+    activityId: string
+): Promise<Comment> => {
+    try {
+        const createdCommentReference = await addDoc(
+            collection(db, 'activities', activityId, 'comments').withConverter(
+                commentConverter
+            ),
+            comment
+        );
+        const createdComment = await getDoc(createdCommentReference);
+        return createdComment.data();
+    } catch (error) {
+        console.error(error);
+        return null;
     }
 };

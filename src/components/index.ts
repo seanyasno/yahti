@@ -1,5 +1,6 @@
 export * from './filter-activities-drawer/filter-activities-drawer';
 export * from './delete-activity-dialog/delete-activity-dialog';
+export * from './create-comment-input/create-comment-input';
 export * from './grouped-activities/grouped-activities';
 export * from './activity-selection/activity-selection';
 export * from './loading-screen/loading-screen';
