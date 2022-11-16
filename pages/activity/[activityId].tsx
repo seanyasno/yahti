@@ -241,9 +241,13 @@ export const ActivityPage: NextPage = () => {
             </Card>
 
             <Stack spacing={2} mb={'20px'}>
-                {comments.map((comment, index) => (
-                    <CommentItem comment={comment} key={index} />
-                ))}
+                {comments
+                    .sort(
+                        (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+                    )
+                    .map((comment, index) => (
+                        <CommentItem comment={comment} key={index} />
+                    ))}
 
                 <CreateCommentInput
                     activityId={router.query.activityId as string}
