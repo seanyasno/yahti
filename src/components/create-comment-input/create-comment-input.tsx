@@ -6,6 +6,7 @@ import { auth } from '@config/index';
 import styled from '@emotion/styled';
 import { IconButton, Input } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { isEmpty } from 'lodash';
 
 import { createComment } from '@requests/index';
 import { theme } from '@styles/index';
@@ -26,27 +27,28 @@ export const CreateCommentInput: React.FC<Props> = (props) => {
     const queryClient = useQueryClient();
     const [content, setContent] = useState('');
 
-    const { mutateAsync: onCreateComment } = useMutation({
-        mutationFn: async () => {
-            const createdComment = await createComment(
-                {
-                    authorId: auth.currentUser.email,
-                    content,
-                    createdAt: new Date(Date.now()),
-                },
-                activityId
-            );
+    const { mutateAsync: onCreateComment, isLoading: isCreatingComment } =
+        useMutation({
+            mutationFn: async () => {
+                const createdComment = await createComment(
+                    {
+                        authorId: auth.currentUser.email,
+                        content,
+                        createdAt: new Date(Date.now()),
+                    },
+                    activityId
+                );
 
-            queryClient.setQueryData(
-                ['comments', activityId],
-                (oldData: Comment[]) => {
-                    return [...oldData, createdComment];
-                }
-            );
+                queryClient.setQueryData(
+                    ['comments', activityId],
+                    (oldData: Comment[]) => {
+                        return [...oldData, createdComment];
+                    }
+                );
 
-            setContent('');
-        },
-    });
+                setContent('');
+            },
+        });
 
     const placeholder = 'יש לך משהו להוסיף?';
 
@@ -56,10 +58,12 @@ export const CreateCommentInput: React.FC<Props> = (props) => {
             onChange={(event) => setContent(event.target.value)}
             placeholder={placeholder}
             multiline
+            disabled={isCreatingComment}
             endAdornment={
                 <IconButton
                     sx={{ padding: 0 }}
                     onClick={() => onCreateComment()}
+                    disabled={isEmpty(content) || isCreatingComment}
                 >
                     {content ? (
                         <IoSend
