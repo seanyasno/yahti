@@ -11,6 +11,7 @@ import { MdAdd } from 'react-icons/md';
 import { auth } from '@config/index';
 import styled from '@emotion/styled';
 import {
+    Avatar,
     Box,
     Container,
     Fab,
@@ -34,7 +35,7 @@ import {
     HomeDrawer,
     LoadingScreen,
 } from '@components/index';
-import { useUserDetails } from '@hooks/index';
+import { useProfilePicture, useUserDetails } from '@hooks/index';
 import { fetchActivities } from '@requests/index';
 import { StyledBackButton } from '@styles/activity-page/activity-page-styles';
 import { theme } from '@styles/index';
@@ -69,6 +70,8 @@ const HomePage: NextPage = () => {
     const [openHomeDrawer, setOpenHomeDrawer] = useState(false);
     const [filteredTypes, setFilteredTypes] = useState<ActivityType[]>([]);
     const [groupBy, setGroupBy] = useState('');
+    const [user, loading] = useAuthState(auth);
+    const { pictureUrl, isLoadingPicture } = useProfilePicture(user?.uid);
     const { data: activities = [], isLoading: loadingActivities } = useQuery({
         queryKey: ['activities'],
         queryFn: async () => fetchActivities(),
@@ -83,9 +86,10 @@ const HomePage: NextPage = () => {
         []
     );
 
-    const hasFilter = useMemo(() => {
-        return filteredTypes.length > 0 || groupBy;
-    }, [filteredTypes]);
+    const hasFilter = useMemo(
+        () => filteredTypes.length > 0 || groupBy,
+        [filteredTypes.length, groupBy]
+    );
 
     const filteredActivities = useMemo(() => {
         let filteredActivitiesByTypes = [];
@@ -120,7 +124,6 @@ const HomePage: NextPage = () => {
         () => filteredActivities.filter(({ activity }) => !activity.done),
         [filteredActivities]
     );
-    const [user, loading] = useAuthState(auth);
 
     const title = 'יואואוו שלום';
     const searchActivityPlaceholder = 'יאללה נחפש פעילות';
@@ -170,16 +173,28 @@ const HomePage: NextPage = () => {
         }
     }, [loading, router, user]);
 
-    if (loading || loadingActivities || loadingUserDetails) {
+    if (
+        loading ||
+        loadingActivities ||
+        loadingUserDetails ||
+        isLoadingPicture
+    ) {
         return <LoadingScreen />;
     }
 
     return (
         <Container maxWidth={'sm'} sx={{ padding: '30px 20px' }}>
-            <Stack direction={'row'} mb={'12px'}>
+            <Stack
+                direction={'row'}
+                mb={'12px'}
+                alignItems={'center'}
+                justifyContent={'space-between'}
+            >
                 <StyledBackButton onClick={() => setOpenHomeDrawer(true)}>
                     <IoMenu color={theme.palette.secondary.main} />
                 </StyledBackButton>
+
+                <Avatar src={pictureUrl} />
 
                 <HomeDrawer
                     open={openHomeDrawer}
