@@ -23,7 +23,6 @@ import {
     Typography,
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
-import { isEmpty } from 'lodash';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { ActivityType } from '@abstraction/enums';
@@ -33,6 +32,7 @@ import {
     ActivityItem,
     FilterActivitiesDrawer,
     GroupedActivities,
+    useFilterActivities,
 } from '@features/activities';
 import { useProfilePicture, useUserDetails } from '@hooks/index';
 import { fetchActivities } from '@requests/index';
@@ -67,14 +67,19 @@ const HomePage: NextPage = () => {
     const [activitySearchText, setActivitySearchText] = useState('');
     const [openFilterDrawer, setOpenFilterDrawer] = useState(false);
     const [openHomeDrawer, setOpenHomeDrawer] = useState(false);
-    const [filteredTypes, setFilteredTypes] = useState<ActivityType[]>([]);
-    const [groupBy, setGroupBy] = useState('');
     const [user, loading] = useAuthState(auth);
     const { pictureUrl, isLoadingPicture } = useProfilePicture(user?.uid);
     const { data: activities = [], isLoading: loadingActivities } = useQuery({
         queryKey: ['activities'],
         queryFn: async () => fetchActivities(),
     });
+    const {
+        groupBy,
+        filteredActivities,
+        hasFilter,
+        setGroupBy,
+        setFilteredTypes,
+    } = useFilterActivities(activities, activitySearchText);
 
     const handleOnFilter = useCallback(
         (types: ActivityType[], groupBy: string) => {
@@ -84,33 +89,6 @@ const HomePage: NextPage = () => {
         },
         []
     );
-
-    const hasFilter = useMemo(
-        () => filteredTypes.length > 0 || groupBy,
-        [filteredTypes.length, groupBy]
-    );
-
-    const filteredActivities = useMemo(() => {
-        let filteredActivitiesByTypes = [];
-
-        if (filteredTypes.length === 0) {
-            filteredActivitiesByTypes = activities;
-        } else {
-            filteredActivitiesByTypes = activities.filter(({ activity }) =>
-                activity.types.some((type) => filteredTypes.includes(type))
-            );
-        }
-
-        if (isEmpty(activitySearchText)) {
-            return filteredActivitiesByTypes;
-        }
-
-        return filteredActivitiesByTypes.filter(({ activity }) =>
-            activity.title
-                .toLowerCase()
-                .includes(activitySearchText.toLowerCase())
-        );
-    }, [activities, activitySearchText, filteredTypes]);
 
     const { data: userDetails, isLoading: loadingUserDetails } =
         useUserDetails();
