@@ -48,8 +48,8 @@ export const FilterActivitiesDrawer: React.FC<Props> = (props) => {
     const onReset = useCallback(() => {
         setSelectedTypes([]);
         setGroupBy('');
-        handleOnFilter();
-    }, [setSelectedTypes, setGroupBy, handleOnFilter]);
+        onFilter?.([], '');
+    }, [setSelectedTypes, setGroupBy, onFilter]);
 
     return (
         <SwipeableDrawer
