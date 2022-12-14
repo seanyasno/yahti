@@ -8,7 +8,7 @@ import { Box, Collapse, IconButton, Stack, Typography } from '@mui/material';
 
 import { ActivityType } from '@abstraction/enums';
 import { Activity } from '@abstraction/types';
-import { ActivityItem } from '@components/activity-item/activity-item';
+import { ActivityItem } from '@features/activities/components/activity-item/activity-item';
 
 type Props = {
     activities: { activity: Activity; id: string }[];

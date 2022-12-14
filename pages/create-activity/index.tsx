@@ -11,8 +11,11 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { v4 } from 'uuid';
 
 import { Activity } from '@abstraction/types';
-import { ActivityForm, ActivitySelection } from '@components/index';
-import { useActivityForm } from '@hooks/index';
+import {
+    ActivityForm,
+    ActivitySelection,
+    useActivityForm,
+} from '@features/activities';
 import { createActivity } from '@requests/index';
 import { Container, StyledIconButton } from '@styles/index';
 

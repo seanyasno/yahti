@@ -11,7 +11,7 @@ import styled from '@emotion/styled';
 import { Box, Card, IconButton, Stack, Typography } from '@mui/material';
 
 import { Activity } from '@abstraction/types';
-import { useToggleActivity } from '@hooks/use-toggle-activity/use-toggle-activity';
+import { useToggleActivity } from '@features/activities';
 import { ActivityType } from '@styles/index';
 import { openUrlInNewTab } from '@utils/index';
 

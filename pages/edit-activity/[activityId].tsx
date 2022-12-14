@@ -11,12 +11,12 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { v4 } from 'uuid';
 
 import { Activity } from '@abstraction/types';
+import { LoadingScreen } from '@components/index';
 import {
     ActivityForm,
     ActivitySelection,
-    LoadingScreen,
-} from '@components/index';
-import { useActivityForm } from '@hooks/index';
+    useActivityForm,
+} from '@features/activities';
 import { fetchActivityById, updateActivity } from '@requests/index';
 import { Container, StyledIconButton } from '@styles/index';
 

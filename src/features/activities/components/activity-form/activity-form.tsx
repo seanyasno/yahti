@@ -8,7 +8,7 @@ import { isEmpty } from 'lodash';
 import ScaleLoader from 'react-spinners/ScaleLoader';
 
 import { Activity } from '@abstraction/types';
-import { useActivityForm } from '@hooks/index';
+import { useActivityForm } from '@features/activities';
 import { parseImageToString } from '@utils/index';
 
 import {

@@ -28,13 +28,12 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { ActivityType } from '@abstraction/enums';
 import { Activity } from '@abstraction/types';
+import { HomeDrawer, LoadingScreen } from '@components/index';
 import {
     ActivityItem,
     FilterActivitiesDrawer,
     GroupedActivities,
-    HomeDrawer,
-    LoadingScreen,
-} from '@components/index';
+} from '@features/activities';
 import { useProfilePicture, useUserDetails } from '@hooks/index';
 import { fetchActivities } from '@requests/index';
 import { StyledBackButton } from '@styles/activity-page/activity-page-styles';
