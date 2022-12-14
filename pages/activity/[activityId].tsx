@@ -28,12 +28,8 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { isEmpty } from 'lodash';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
-import {
-    CommentItem,
-    CreateCommentInput,
-    DeleteActivityDialog,
-    LoadingScreen,
-} from '@components/index';
+import { DeleteActivityDialog, LoadingScreen } from '@components/index';
+import { CommentItem, CreateCommentInput } from '@features/comments';
 import {
     fetchActivityById,
     fetchCommentsByActivityId,

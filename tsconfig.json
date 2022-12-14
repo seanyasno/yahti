@@ -46,7 +46,8 @@
         "src/styles/*"
       ],
       "@constants/*": ["src/constants/*"],
-      "@hoc/*": ["src/hoc/*"]
+      "@hoc/*": ["src/hoc/*"],
+      "@features/*": ["src/features/*"]
     }
   },
   "include": [
