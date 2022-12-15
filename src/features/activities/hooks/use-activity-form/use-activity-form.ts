@@ -1,9 +1,11 @@
-import { useEffect } from 'react';
+import { useFormik } from 'formik';
 
 import { Activity } from '@abstraction/types';
-import { useFormEditing } from '@hooks/index';
 
-export const useActivityForm = (initialActivity?: Partial<Activity>) => {
+export const useActivityForm = (
+    initialActivity?: Partial<Activity>,
+    onSubmit?: (activity: Activity) => Promise<void>
+) => {
     const initialActivityValues: Activity = {
         title: '',
         description: '',
@@ -14,17 +16,13 @@ export const useActivityForm = (initialActivity?: Partial<Activity>) => {
         types: [],
     };
 
-    const {
-        values: activity,
-        setValues: setActivity,
-        handleValuesChange: handleActivityChange,
-    } = useFormEditing(initialActivityValues);
+    const formik = useFormik<Activity>({
+        initialValues: { ...initialActivityValues, ...initialActivity },
+        onSubmit,
+    });
 
-    useEffect(() => {
-        if (initialActivity) {
-            setActivity(initialActivity);
-        }
-    }, [initialActivity, setActivity]);
-
-    return { activity, setActivity, handleActivityChange };
+    return {
+        ...formik,
+        activity: formik.values,
+    };
 };

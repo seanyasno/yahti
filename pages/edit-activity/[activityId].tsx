@@ -29,7 +29,7 @@ type Props = {
 const EditActivityPage: NextPage<Props> = (props) => {
     const { activity: initialActivity, id, imagesUrls } = props;
     const router = useRouter();
-    const { activity, setActivity } = useActivityForm(initialActivity);
+    const { activity, setFieldValue } = useActivityForm(initialActivity);
     const [currentPage, setCurrentPage] = useState(0);
     const [user, loading] = useAuthState(auth);
     const [changedImage, setChangedImage] = useState(false);
@@ -83,7 +83,7 @@ const EditActivityPage: NextPage<Props> = (props) => {
             key={'selection'}
             initialSelectedTypes={activity.types}
             onDone={(selectedTypes) => {
-                setActivity({ types: selectedTypes });
+                setFieldValue('types', selectedTypes);
                 setCurrentPage((currentPage) => currentPage + 1);
             }}
         />,

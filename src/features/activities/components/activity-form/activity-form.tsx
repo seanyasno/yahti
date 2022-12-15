@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import Image from 'next/image';
 
@@ -9,7 +9,7 @@ import ScaleLoader from 'react-spinners/ScaleLoader';
 
 import { Activity } from '@abstraction/types';
 import { useActivityForm } from '@features/activities';
-import { parseImageToString } from '@utils/index';
+import { useImageUpload } from '@hooks/index';
 
 import {
     CreateButton,
@@ -31,14 +31,14 @@ type Props = {
 
 export const ActivityForm: React.FC<Props> = (props) => {
     const { initialActivity, imagesUrls, onDone, setChangedImage } = props;
-    const { activity, handleActivityChange } = useActivityForm(initialActivity);
-    const { mutateAsync: handleOnDone, isLoading } = useMutation({
-        mutationFn: async () => onDone(activity, [imageFile]),
+    const { parsedImage, imageFile, isImageChanged, onFileUpload } =
+        useImageUpload(imagesUrls?.[0]);
+    const { mutateAsync, isLoading } = useMutation({
+        mutationFn: (activity: Activity) => onDone(activity, [imageFile]),
     });
-
-    const [imageFile, setImageFile] = useState<File>();
-    const [parsedImage, setParsedImage] = useState<string | null>(
-        imagesUrls?.[0]
+    const { activity, handleChange, handleSubmit } = useActivityForm(
+        initialActivity,
+        mutateAsync
     );
 
     const titlePlaceholder = 'כותרת גדולה';
@@ -49,120 +49,113 @@ export const ActivityForm: React.FC<Props> = (props) => {
     const linkInputPlaceholder = 'קישור לאיזה אתר או משהו אחר';
     const descriptionInputPlaceholder = 'יאחתי אפשר לפרט פה הכל';
 
-    const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
-        if (!event.target.files) {
-            return;
-        }
-
-        try {
-            const file = event.target.files[0];
-            setImageFile(file);
-            setParsedImage(await parseImageToString(file));
-            setChangedImage?.(true);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
     const componentProps = { component: 'label' };
+
+    useEffect(() => {
+        setChangedImage?.(isImageChanged);
+    }, [isImageChanged, setChangedImage]);
 
     return (
         <React.Fragment>
-            <Typography variant={'h4'} fontWeight={600} mb={'16px'}>
-                {isEmpty(activity.title) ? titlePlaceholder : activity.title}
-            </Typography>
+            <form onSubmit={handleSubmit}>
+                <Typography variant={'h4'} fontWeight={600} mb={'16px'}>
+                    {isEmpty(activity.title)
+                        ? titlePlaceholder
+                        : activity.title}
+                </Typography>
 
-            <Input
-                name={'title'}
-                value={activity.title}
-                onChange={handleActivityChange}
-                disabled={isLoading}
-                multiline
-                startAdornment={
-                    <InputAdornment position={'start'} sx={{}}>
-                        <Typography>{titleInputAdornment}</Typography>
-                    </InputAdornment>
-                }
-            />
-
-            <StyledDivider />
-
-            <UploadPhotoContainer>
-                <Typography>{addPhotoTitle}</Typography>
-                <UploadPhotoButton
-                    {...componentProps}
-                    variant={'text'}
-                    color={'secondary'}
-                >
-                    {addPhotoButtonTitle}
-                    <input
-                        type="file"
-                        accept="image/png,image/jpeg"
-                        hidden
-                        disabled={isLoading}
-                        onChange={handleFileUpload}
-                    />
-                </UploadPhotoButton>
-            </UploadPhotoContainer>
-
-            {parsedImage && (
-                <Box
-                    sx={{
-                        minHeight: '300px',
-                        display: 'flex',
-                        position: 'relative',
-                    }}
-                >
-                    <Image
-                        alt={'activity image'}
-                        src={parsedImage}
-                        layout={'fill'}
-                        objectFit={'cover'}
-                        style={{
-                            borderRadius: '1em',
-                        }}
-                    />
-                </Box>
-            )}
-
-            <StyledDivider />
-
-            <Input
-                name={'link'}
-                value={activity.link}
-                onChange={handleActivityChange}
-                disabled={isLoading}
-                inputMode={'url'}
-                type={'url'}
-                placeholder={linkInputPlaceholder}
-                multiline
-            />
-
-            <StyledDivider />
-
-            <Input
-                name={'description'}
-                value={activity.description}
-                onChange={handleActivityChange}
-                disabled={isLoading}
-                placeholder={descriptionInputPlaceholder}
-                multiline
-            />
-
-            <CreateButtonContainer>
-                <CreateButton
-                    variant={'contained'}
-                    color={'secondary'}
+                <Input
+                    name={'title'}
+                    value={activity.title}
+                    onChange={handleChange}
                     disabled={isLoading}
-                    onClick={() => handleOnDone()}
-                >
-                    {isLoading ? (
-                        <ScaleLoader color={'#fff'} />
-                    ) : (
-                        createButtonTitle
-                    )}
-                </CreateButton>
-            </CreateButtonContainer>
+                    multiline
+                    startAdornment={
+                        <InputAdornment position={'start'} sx={{}}>
+                            <Typography>{titleInputAdornment}</Typography>
+                        </InputAdornment>
+                    }
+                />
+
+                <StyledDivider />
+
+                <UploadPhotoContainer>
+                    <Typography>{addPhotoTitle}</Typography>
+                    <UploadPhotoButton
+                        {...componentProps}
+                        variant={'text'}
+                        color={'secondary'}
+                    >
+                        {addPhotoButtonTitle}
+                        <input
+                            type="file"
+                            accept="image/png,image/jpeg"
+                            hidden
+                            disabled={isLoading}
+                            onChange={onFileUpload}
+                        />
+                    </UploadPhotoButton>
+                </UploadPhotoContainer>
+
+                {parsedImage && (
+                    <Box
+                        sx={{
+                            minHeight: '300px',
+                            display: 'flex',
+                            position: 'relative',
+                        }}
+                    >
+                        <Image
+                            alt={'activity image'}
+                            src={parsedImage}
+                            layout={'fill'}
+                            objectFit={'cover'}
+                            style={{
+                                borderRadius: '1em',
+                            }}
+                        />
+                    </Box>
+                )}
+
+                <StyledDivider />
+
+                <Input
+                    name={'link'}
+                    value={activity.link}
+                    onChange={handleChange}
+                    disabled={isLoading}
+                    inputMode={'url'}
+                    type={'url'}
+                    placeholder={linkInputPlaceholder}
+                    multiline
+                />
+
+                <StyledDivider />
+
+                <Input
+                    name={'description'}
+                    value={activity.description}
+                    onChange={handleChange}
+                    disabled={isLoading}
+                    placeholder={descriptionInputPlaceholder}
+                    multiline
+                />
+
+                <CreateButtonContainer>
+                    <CreateButton
+                        type={'submit'}
+                        variant={'contained'}
+                        color={'secondary'}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? (
+                            <ScaleLoader color={'#fff'} />
+                        ) : (
+                            createButtonTitle
+                        )}
+                    </CreateButton>
+                </CreateButtonContainer>
+            </form>
         </React.Fragment>
     );
 };
