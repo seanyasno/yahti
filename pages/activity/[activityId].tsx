@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 
 import { GoLinkExternal } from 'react-icons/go';
 import { GrEdit } from 'react-icons/gr';
-import { IoIosArrowBack } from 'react-icons/io';
 import {
     IoCheckmarkDoneCircleOutline,
     IoCheckmarkDoneCircleSharp,
@@ -26,7 +25,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { isEmpty } from 'lodash';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
-import { ImageWrapper, LoadingScreen } from '@components/index';
+import { BackButton, ImageWrapper, LoadingScreen } from '@components/index';
 import { DeleteActivityDialog } from '@features/activities';
 import {
     CommentItem,
@@ -92,13 +91,7 @@ export const ActivityPage: NextPage = () => {
                 alignItems={'center'}
                 mb={'16px'}
             >
-                <StyledBackButton
-                    color={'secondary'}
-                    onClick={() => router.push('/')}
-                    sx={{}}
-                >
-                    <IoIosArrowBack size={20} />
-                </StyledBackButton>
+                <BackButton />
 
                 <Stack
                     direction={'row'}
