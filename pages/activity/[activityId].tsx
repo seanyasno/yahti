@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import { NextPage } from 'next';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 import { GoLinkExternal } from 'react-icons/go';
@@ -13,9 +12,8 @@ import {
 } from 'react-icons/io5';
 import { MdDeleteForever } from 'react-icons/md';
 
-import { auth, storage } from '@config/index';
+import { auth } from '@config/index';
 import { emojiByActivityType } from '@constants/index';
-import { getDownloadURL, ref } from '@firebase/storage';
 import {
     Dialog,
     DialogContent,
@@ -28,14 +26,14 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { isEmpty } from 'lodash';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
-import { LoadingScreen } from '@components/index';
+import { ImageWrapper, LoadingScreen } from '@components/index';
 import { DeleteActivityDialog } from '@features/activities';
-import { CommentItem, CreateCommentInput } from '@features/comments';
 import {
-    fetchActivityById,
-    fetchCommentsByActivityId,
-    updateActivity,
-} from '@requests/index';
+    CommentItem,
+    CreateCommentInput,
+    useComments,
+} from '@features/comments';
+import { fetchActivityById, updateActivity } from '@requests/index';
 import {
     Card,
     ImageContainer,
@@ -58,29 +56,7 @@ export const ActivityPage: NextPage = () => {
         enabled: !isEmpty(router?.query?.activityId),
     });
 
-    const { data: imagesUrls } = useQuery({
-        queryKey: ['activityImages', router?.query?.activityId],
-        queryFn: async () => {
-            const imagesUrls: string[] = [];
-
-            if (activity.imagesPaths) {
-                for (const imagePath of activity.imagesPaths) {
-                    const url = await getDownloadURL(ref(storage, imagePath));
-                    imagesUrls.push(url);
-                }
-            }
-
-            return imagesUrls;
-        },
-        enabled: !isEmpty(activity),
-    });
-
-    const { data: comments } = useQuery({
-        queryKey: ['comments', router?.query?.activityId],
-        queryFn: async () =>
-            fetchCommentsByActivityId(router.query.activityId as string),
-        enabled: !isEmpty(router?.query?.activityId),
-    });
+    const { data: comments } = useComments(router.query.activityId as string);
 
     const { mutateAsync: toggleActivity } = useMutation({
         mutationFn: async () =>
@@ -99,7 +75,7 @@ export const ActivityPage: NextPage = () => {
         }
     }, [loading, router, user]);
 
-    if (!activity || !imagesUrls) {
+    if (!activity) {
         return <LoadingScreen />;
     }
 
@@ -170,13 +146,13 @@ export const ActivityPage: NextPage = () => {
                     </Typography>
                 </Stack>
 
-                {imagesUrls && imagesUrls.length > 0 && (
+                {activity.imagesPaths?.length > 0 && (
                     <ImageContainer
                         onClick={() => setOpenFullImageDialog(true)}
                     >
-                        <Image
+                        <ImageWrapper
+                            imageUrl={activity.imagesPaths[0]}
                             alt={'activity image'}
-                            src={imagesUrls[0]}
                             layout={'fill'}
                             objectFit={'cover'}
                             priority
@@ -271,8 +247,8 @@ export const ActivityPage: NextPage = () => {
                 }}
             >
                 <DialogContent>
-                    <Image
-                        src={imagesUrls?.[0]}
+                    <ImageWrapper
+                        imageUrl={activity.imagesPaths[0]}
                         layout={'fill'}
                         objectFit={'contain'}
                         priority
