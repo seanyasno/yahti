@@ -1,4 +1,4 @@
-import { db } from '@config/index';
+import { db, storage } from '@config/index';
 import {
     addDoc,
     collection,
@@ -8,6 +8,7 @@ import {
     getDocs,
     setDoc,
 } from '@firebase/firestore';
+import { listAll, ListResult, ref } from '@firebase/storage';
 
 import { Activity, Comment, UserDetails } from '@abstraction/index';
 import { commentConverter, userConverter } from '@utils/firebase';
@@ -36,6 +37,12 @@ export const fetchActivityById = async (id: string): Promise<Activity> => {
         console.error(error);
         return {} as Activity;
     }
+};
+
+export const fetchImagesByActivityId = async (
+    id: string
+): Promise<ListResult> => {
+    return listAll(ref(storage, `activities/${id}`));
 };
 
 export const createActivity = async (newActivity: Activity) => {

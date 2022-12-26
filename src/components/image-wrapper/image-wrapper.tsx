@@ -2,23 +2,20 @@ import React from 'react';
 
 import Image, { ImageProps } from 'next/image';
 
-import { storage } from '@config/index';
-import { ref } from '@firebase/storage';
+import { StorageReference } from '@firebase/storage';
 import { clone } from 'lodash';
 import { useDownloadURL } from 'react-firebase-hooks/storage';
 
 type Props = Partial<ImageProps> & {
-    imageUrl: string;
+    imageRef: StorageReference;
 };
 
 const ImageWrapper: React.FC<Props> = (props) => {
-    const { imageUrl } = props;
-    const [downloadUrl, loading, error] = useDownloadURL(
-        ref(storage, imageUrl)
-    );
+    const { imageRef } = props;
+    const [downloadUrl, loading, error] = useDownloadURL(imageRef);
 
     const imageProps = clone(props);
-    delete imageProps.imageUrl;
+    delete imageProps.imageRef;
 
     return (
         <React.Fragment>

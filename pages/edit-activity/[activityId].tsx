@@ -6,9 +6,9 @@ import { useRouter } from 'next/router';
 import { IoIosArrowBack } from 'react-icons/io';
 
 import { auth, storage } from '@config/index';
-import { getDownloadURL, ref, uploadBytes } from '@firebase/storage';
+import { getDownloadURL, listAll, ref } from '@firebase/storage';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { v4 } from 'uuid';
+import { useUploadFile } from 'react-firebase-hooks/storage';
 
 import { Activity } from '@abstraction/types';
 import { LoadingScreen } from '@components/index';
@@ -33,6 +33,7 @@ const EditActivityPage: NextPage<Props> = (props) => {
     const [currentPage, setCurrentPage] = useState(0);
     const [user, loading] = useAuthState(auth);
     const [changedImage, setChangedImage] = useState(false);
+    const [uploadFile] = useUploadFile();
 
     const onBack = useCallback(async () => {
         if (currentPage === 0) {
@@ -45,21 +46,23 @@ const EditActivityPage: NextPage<Props> = (props) => {
     const onUpdate = useCallback(
         async (newActivity: Partial<Activity>, imageFiles?: File[]) => {
             try {
-                const imagesPaths: string[] = [];
                 if (changedImage) {
-                    for (const image of imageFiles.filter((file) => file)) {
+                    const filteredFiles = imageFiles.filter((file) => file);
+                    for (let index = 0; index < filteredFiles.length; index++) {
                         const imageRef = ref(
                             storage,
-                            `images/${v4()}---${image.name}`
+                            `activities/${id}/${index}.${filteredFiles[
+                                index
+                            ].name
+                                .split('.')
+                                .pop()}`
                         );
-                        const snapshot = await uploadBytes(imageRef, image);
-                        imagesPaths.push(snapshot.ref.fullPath);
+
+                        await uploadFile(imageRef, filteredFiles[index]);
                     }
-                } else {
-                    imagesPaths.push(...activity.imagesPaths);
                 }
 
-                await updateActivity(id, { ...newActivity, imagesPaths });
+                await updateActivity(id, newActivity);
                 await router.replace(`/activity/${id}`);
             } catch (error) {
                 console.error(error);
@@ -121,12 +124,17 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         const activity = await fetchActivityById(activityId);
         const imagesUrls: string[] = [];
 
-        if (activity.imagesPaths) {
-            for (const imagePath of activity.imagesPaths) {
-                const url = await getDownloadURL(ref(storage, imagePath));
-                imagesUrls.push(url);
-            }
+        const result = await listAll(ref(storage, `activities/${activityId}`));
+        for (const imageReferences of result.items) {
+            const url = await getDownloadURL(imageReferences);
+            imagesUrls.push(url);
         }
+        // if (activity.imagesPaths) {
+        //     for (const imagePath of activity.imagesPaths) {
+        //         const url = await getDownloadURL(ref(storage, imagePath));
+        //         imagesUrls.push(url);
+        //     }
+        // }
 
         return {
             props: {

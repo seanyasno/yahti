@@ -5,7 +5,5 @@ export type Activity = {
     description?: string;
     link?: string;
     done?: boolean;
-    type?: ActivityType;
     types?: ActivityType[];
-    imagesPaths?: string[];
 };

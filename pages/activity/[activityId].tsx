@@ -32,7 +32,11 @@ import {
     CreateCommentInput,
     useComments,
 } from '@features/comments';
-import { fetchActivityById, updateActivity } from '@requests/index';
+import {
+    fetchActivityById,
+    fetchImagesByActivityId,
+    updateActivity,
+} from '@requests/index';
 import {
     Card,
     ImageContainer,
@@ -53,6 +57,18 @@ export const ActivityPage: NextPage = () => {
         queryFn: async () =>
             fetchActivityById(router.query.activityId as string),
         enabled: !isEmpty(router?.query?.activityId),
+    });
+
+    const { data: imagesReferences } = useQuery({
+        queryKey: ['activity-images', router?.query?.activityId],
+        queryFn: async () => {
+            const images = await fetchImagesByActivityId(
+                router.query.activityId as string
+            );
+
+            return images.items;
+        },
+        enabled: !isEmpty(activity),
     });
 
     const { data: comments } = useComments(router.query.activityId as string);
@@ -139,12 +155,12 @@ export const ActivityPage: NextPage = () => {
                     </Typography>
                 </Stack>
 
-                {activity.imagesPaths?.length > 0 && (
+                {imagesReferences?.length > 0 && (
                     <ImageContainer
                         onClick={() => setOpenFullImageDialog(true)}
                     >
                         <ImageWrapper
-                            imageUrl={activity.imagesPaths[0]}
+                            imageRef={imagesReferences[0]}
                             alt={'activity image'}
                             layout={'fill'}
                             objectFit={'cover'}
@@ -205,10 +221,10 @@ export const ActivityPage: NextPage = () => {
 
             <Stack spacing={2} mb={'20px'}>
                 {comments
-                    .sort(
+                    ?.sort(
                         (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
                     )
-                    .map((comment, index) => (
+                    ?.map((comment, index) => (
                         <CommentItem comment={comment} key={index} />
                     ))}
 
@@ -241,7 +257,7 @@ export const ActivityPage: NextPage = () => {
             >
                 <DialogContent>
                     <ImageWrapper
-                        imageUrl={activity.imagesPaths[0]}
+                        imageRef={imagesReferences?.[0]}
                         layout={'fill'}
                         objectFit={'contain'}
                         priority
