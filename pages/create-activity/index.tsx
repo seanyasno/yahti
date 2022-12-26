@@ -11,14 +11,17 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { v4 } from 'uuid';
 
 import { Activity } from '@abstraction/types';
-import { ActivityForm, ActivitySelection } from '@components/index';
-import { useActivityForm } from '@hooks/index';
+import {
+    ActivityForm,
+    ActivitySelection,
+    useActivityForm,
+} from '@features/activities';
 import { createActivity } from '@requests/index';
 import { Container, StyledIconButton } from '@styles/index';
 
 const CreateActivityPage: NextPage = () => {
     const router = useRouter();
-    const { activity, setActivity } = useActivityForm();
+    const { activity, setFieldValue } = useActivityForm();
     const [currentPage, setCurrentPage] = useState(0);
     const [user, loading] = useAuthState(auth);
 
@@ -64,7 +67,7 @@ const CreateActivityPage: NextPage = () => {
             key={'selection'}
             initialSelectedTypes={activity?.types}
             onDone={(selectedTypes) => {
-                setActivity({ types: selectedTypes });
+                setFieldValue('types', selectedTypes);
                 setCurrentPage((currentPage) => currentPage + 1);
             }}
         />,
