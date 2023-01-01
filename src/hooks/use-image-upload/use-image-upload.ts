@@ -10,6 +10,12 @@ export const useImageUpload = (initialParsedImage?: string) => {
     );
 
     const onFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+        if (!event) {
+            setImageFile(undefined);
+            setParsedImage(undefined);
+            return;
+        }
+
         if (!event.target.files) {
             return;
         }
