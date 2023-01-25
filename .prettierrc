@@ -7,7 +7,7 @@
         "aws-amplify",
         "^react-icons",
         "<THIRD_PARTY_MODULES>",
-        "^@abstraction|@components|@consts|@contexts|@hooks|@models|@requests|@theme|@styles|@utils|@mocks|@icons",
+        "^@abstraction|@components|@consts|@contexts|@hooks|@models|@requests|@theme|@styles|@utils|@mocks|@icons|@features",
         "^[./]"
     ],
     "importOrderSeparation": true,

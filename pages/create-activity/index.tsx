@@ -6,21 +6,25 @@ import { useRouter } from 'next/router';
 import { IoIosArrowBack } from 'react-icons/io';
 
 import { auth, storage } from '@config/index';
-import { ref, uploadBytes } from '@firebase/storage';
+import { ref } from '@firebase/storage';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { v4 } from 'uuid';
+import { useUploadFile } from 'react-firebase-hooks/storage';
 
 import { Activity } from '@abstraction/types';
-import { ActivityForm, ActivitySelection } from '@components/index';
-import { useActivityForm } from '@hooks/index';
+import {
+    ActivityForm,
+    ActivitySelection,
+    useActivityForm,
+} from '@features/activities';
 import { createActivity } from '@requests/index';
 import { Container, StyledIconButton } from '@styles/index';
 
 const CreateActivityPage: NextPage = () => {
     const router = useRouter();
-    const { activity, setActivity } = useActivityForm();
+    const { activity, setFieldValue } = useActivityForm();
     const [currentPage, setCurrentPage] = useState(0);
     const [user, loading] = useAuthState(auth);
+    const [uploadFile] = useUploadFile();
 
     const onBack = useCallback(async () => {
         if (currentPage === 0) {
@@ -33,19 +37,23 @@ const CreateActivityPage: NextPage = () => {
     const onCreate = useCallback(
         async (activity: Activity, imageFiles?: File[]) => {
             try {
-                const imagesPaths: string[] = [];
+                const createdActivityReference = await createActivity(activity);
+                const filteredFiles = imageFiles.filter((file) => file);
 
-                for (const image of imageFiles.filter((file) => file)) {
+                for (let index = 0; index < filteredFiles.length; index++) {
                     const imageRef = ref(
                         storage,
-                        `images/${v4()}---${image.name}`
+                        `activities/${
+                            createdActivityReference.id
+                        }/${index}.${filteredFiles[index].name
+                            .split('.')
+                            .pop()}`
                     );
-                    const snapshot = await uploadBytes(imageRef, image);
-                    imagesPaths.push(snapshot.ref.fullPath);
+
+                    await uploadFile(imageRef, filteredFiles[index]);
                 }
 
-                await createActivity({ ...activity, imagesPaths });
-                router.replace('/');
+                await router.replace('/');
             } catch (error) {
                 console.error(error);
             }
@@ -64,7 +72,7 @@ const CreateActivityPage: NextPage = () => {
             key={'selection'}
             initialSelectedTypes={activity?.types}
             onDone={(selectedTypes) => {
-                setActivity({ types: selectedTypes });
+                setFieldValue('types', selectedTypes);
                 setCurrentPage((currentPage) => currentPage + 1);
             }}
         />,

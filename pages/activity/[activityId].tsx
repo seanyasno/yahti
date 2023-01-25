@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from 'react';
 
 import { NextPage } from 'next';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 import { GoLinkExternal } from 'react-icons/go';
 import { GrEdit } from 'react-icons/gr';
-import { IoIosArrowBack } from 'react-icons/io';
 import {
     IoCheckmarkDoneCircleOutline,
     IoCheckmarkDoneCircleSharp,
 } from 'react-icons/io5';
 import { MdDeleteForever } from 'react-icons/md';
 
-import { auth, storage } from '@config/index';
+import { auth } from '@config/index';
 import { emojiByActivityType } from '@constants/index';
-import { getDownloadURL, ref } from '@firebase/storage';
 import {
     Dialog,
     DialogContent,
@@ -28,15 +25,16 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { isEmpty } from 'lodash';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
+import { BackButton, ImageWrapper, LoadingScreen } from '@components/index';
+import { DeleteActivityDialog } from '@features/activities';
 import {
     CommentItem,
     CreateCommentInput,
-    DeleteActivityDialog,
-    LoadingScreen,
-} from '@components/index';
+    useComments,
+} from '@features/comments';
 import {
     fetchActivityById,
-    fetchCommentsByActivityId,
+    fetchImagesByActivityId,
     updateActivity,
 } from '@requests/index';
 import {
@@ -61,29 +59,19 @@ export const ActivityPage: NextPage = () => {
         enabled: !isEmpty(router?.query?.activityId),
     });
 
-    const { data: imagesUrls } = useQuery({
-        queryKey: ['activityImages', router?.query?.activityId],
+    const { data: imagesReferences } = useQuery({
+        queryKey: ['activity-images', router?.query?.activityId],
         queryFn: async () => {
-            const imagesUrls: string[] = [];
+            const images = await fetchImagesByActivityId(
+                router.query.activityId as string
+            );
 
-            if (activity.imagesPaths) {
-                for (const imagePath of activity.imagesPaths) {
-                    const url = await getDownloadURL(ref(storage, imagePath));
-                    imagesUrls.push(url);
-                }
-            }
-
-            return imagesUrls;
+            return images.items;
         },
         enabled: !isEmpty(activity),
     });
 
-    const { data: comments } = useQuery({
-        queryKey: ['comments', router?.query?.activityId],
-        queryFn: async () =>
-            fetchCommentsByActivityId(router.query.activityId as string),
-        enabled: !isEmpty(router?.query?.activityId),
-    });
+    const { data: comments } = useComments(router.query.activityId as string);
 
     const { mutateAsync: toggleActivity } = useMutation({
         mutationFn: async () =>
@@ -102,7 +90,7 @@ export const ActivityPage: NextPage = () => {
         }
     }, [loading, router, user]);
 
-    if (!activity || !imagesUrls) {
+    if (!activity) {
         return <LoadingScreen />;
     }
 
@@ -119,13 +107,7 @@ export const ActivityPage: NextPage = () => {
                 alignItems={'center'}
                 mb={'16px'}
             >
-                <StyledBackButton
-                    color={'secondary'}
-                    onClick={() => router.push('/')}
-                    sx={{}}
-                >
-                    <IoIosArrowBack size={20} />
-                </StyledBackButton>
+                <BackButton />
 
                 <Stack
                     direction={'row'}
@@ -173,13 +155,13 @@ export const ActivityPage: NextPage = () => {
                     </Typography>
                 </Stack>
 
-                {imagesUrls && imagesUrls.length > 0 && (
+                {imagesReferences?.length > 0 && (
                     <ImageContainer
                         onClick={() => setOpenFullImageDialog(true)}
                     >
-                        <Image
+                        <ImageWrapper
+                            imageRef={imagesReferences[0]}
                             alt={'activity image'}
-                            src={imagesUrls[0]}
                             layout={'fill'}
                             objectFit={'cover'}
                             priority
@@ -239,10 +221,10 @@ export const ActivityPage: NextPage = () => {
 
             <Stack spacing={2} mb={'20px'}>
                 {comments
-                    .sort(
+                    ?.sort(
                         (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
                     )
-                    .map((comment, index) => (
+                    ?.map((comment, index) => (
                         <CommentItem comment={comment} key={index} />
                     ))}
 
@@ -274,8 +256,8 @@ export const ActivityPage: NextPage = () => {
                 }}
             >
                 <DialogContent>
-                    <Image
-                        src={imagesUrls?.[0]}
+                    <ImageWrapper
+                        imageRef={imagesReferences?.[0]}
                         layout={'fill'}
                         objectFit={'contain'}
                         priority

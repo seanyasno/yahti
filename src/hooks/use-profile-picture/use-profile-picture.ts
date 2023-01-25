@@ -4,7 +4,7 @@ import { useDownloadURL } from 'react-firebase-hooks/storage';
 
 export const useProfilePicture = (uid: string) => {
     const [pictureUrl, isLoadingPicture, error] = useDownloadURL(
-        ref(storage, `profile_pictures/${uid}.jpg`)
+        uid && ref(storage, `profile_pictures/${uid}.jpg`)
     );
 
     return { pictureUrl, isLoadingPicture, error };

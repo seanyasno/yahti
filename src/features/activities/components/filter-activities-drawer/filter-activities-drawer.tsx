@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 
 import { ActivityType } from '@abstraction/enums';
-import { useTypeSelection } from '@hooks/index';
+import { useTypeSelection } from '@features/activities';
 
 import {
     FilterButton,

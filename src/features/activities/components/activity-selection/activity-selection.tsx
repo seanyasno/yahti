@@ -4,7 +4,7 @@ import { emojiByActivityType } from '@constants/index';
 import { Divider, Grid, Typography } from '@mui/material';
 
 import { ActivityType } from '@abstraction/index';
-import { useTypeSelection } from '@hooks/index';
+import { useTypeSelection } from '@features/activities';
 import { theme } from '@styles/index';
 
 import { ContinueButton, EmojiButton } from './styles';
