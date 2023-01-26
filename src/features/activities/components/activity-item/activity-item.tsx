@@ -11,6 +11,7 @@ import styled from '@emotion/styled';
 import { Box, Card, IconButton, Stack, Typography } from '@mui/material';
 
 import { Activity } from '@abstraction/types';
+import { PriorityItem } from '@components/priority-item/priority-item';
 import { useToggleActivity } from '@features/activities';
 import { ActivityType } from '@styles/index';
 import { openUrlInNewTab } from '@utils/index';
@@ -80,6 +81,8 @@ export const ActivityItem: React.FC<Props> = (props) => {
                             {emojiByActivityType[type]}
                         </ActivityType>
                     ))}
+
+                    <PriorityItem priority={activity.priority} />
                 </Box>
 
                 {activity.link && (

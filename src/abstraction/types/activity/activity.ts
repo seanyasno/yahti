@@ -1,4 +1,4 @@
-import { ActivityType } from '@abstraction/index';
+import { ActivityType, Priority } from '@abstraction/index';
 
 export type Activity = {
     title: string;
@@ -6,4 +6,5 @@ export type Activity = {
     link?: string;
     done?: boolean;
     types?: ActivityType[];
+    priority?: Priority;
 };
