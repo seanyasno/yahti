@@ -65,6 +65,10 @@ export const ActivityForm: React.FC<Props> = (props) => {
     const addPhotoButtonTitle = 'קדימה ללחוץ עלי';
     const linkInputPlaceholder = 'קישור לאיזה אתר או משהו אחר';
     const descriptionInputPlaceholder = 'יאחתי אפשר לפרט פה הכל';
+    const noPriority = 'ללא עדיפות';
+    const lowPriority = 'עדיפות נמוכה';
+    const mediumPriority = 'עדיפות בינונית';
+    const highPriority = 'עדיפות גבוהה';
 
     const componentProps = { component: 'label' };
 
@@ -104,11 +108,11 @@ export const ActivityForm: React.FC<Props> = (props) => {
                     onChange={handleChange}
                 >
                     <MenuItem value={0}>
-                        <em>ללא עדיפות</em>
+                        <em>{noPriority}</em>
                     </MenuItem>
-                    <MenuItem value={1}>עדיפות נמוכה</MenuItem>
-                    <MenuItem value={2}>עדיפות בינונית</MenuItem>
-                    <MenuItem value={3}>עדיפות גבוהה</MenuItem>
+                    <MenuItem value={1}>{lowPriority}</MenuItem>
+                    <MenuItem value={2}>{mediumPriority}</MenuItem>
+                    <MenuItem value={3}>{highPriority}</MenuItem>
                 </Select>
 
                 <StyledDivider />
