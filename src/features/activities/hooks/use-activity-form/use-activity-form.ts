@@ -9,9 +9,7 @@ export const useActivityForm = (
     const initialActivityValues: Activity = {
         title: '',
         description: '',
-        imagesPaths: [],
         done: false,
-        type: null,
         link: '',
         types: [],
     };

@@ -2,7 +2,17 @@ import React, { useEffect } from 'react';
 
 import Image from 'next/image';
 
-import { Box, Input, InputAdornment, Typography } from '@mui/material';
+import { AiFillMinusCircle } from 'react-icons/ai';
+
+import {
+    Box,
+    IconButton,
+    Input,
+    InputAdornment,
+    MenuItem,
+    Select,
+    Typography,
+} from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { isEmpty } from 'lodash';
 import ScaleLoader from 'react-spinners/ScaleLoader';
@@ -27,10 +37,17 @@ type Props = {
         imageFiles?: File[]
     ) => Promise<void>;
     setChangedImage?: (changedImages: boolean) => void;
+    setDeletedImages?: (deletedImages: boolean) => void;
 };
 
 export const ActivityForm: React.FC<Props> = (props) => {
-    const { initialActivity, imagesUrls, onDone, setChangedImage } = props;
+    const {
+        initialActivity,
+        imagesUrls,
+        onDone,
+        setChangedImage,
+        setDeletedImages,
+    } = props;
     const { parsedImage, imageFile, isImageChanged, onFileUpload } =
         useImageUpload(imagesUrls?.[0]);
     const { mutateAsync, isLoading } = useMutation({
@@ -48,6 +65,10 @@ export const ActivityForm: React.FC<Props> = (props) => {
     const addPhotoButtonTitle = 'קדימה ללחוץ עלי';
     const linkInputPlaceholder = 'קישור לאיזה אתר או משהו אחר';
     const descriptionInputPlaceholder = 'יאחתי אפשר לפרט פה הכל';
+    const noPriority = 'ללא עדיפות';
+    const lowPriority = 'עדיפות נמוכה';
+    const mediumPriority = 'עדיפות בינונית';
+    const highPriority = 'עדיפות גבוהה';
 
     const componentProps = { component: 'label' };
 
@@ -79,6 +100,23 @@ export const ActivityForm: React.FC<Props> = (props) => {
 
                 <StyledDivider />
 
+                <Select
+                    name={'priority'}
+                    variant={'standard'}
+                    placeholder={'עדיפות'}
+                    value={activity.priority}
+                    onChange={handleChange}
+                >
+                    <MenuItem value={0}>
+                        <em>{noPriority}</em>
+                    </MenuItem>
+                    <MenuItem value={1}>{lowPriority}</MenuItem>
+                    <MenuItem value={2}>{mediumPriority}</MenuItem>
+                    <MenuItem value={3}>{highPriority}</MenuItem>
+                </Select>
+
+                <StyledDivider />
+
                 <UploadPhotoContainer>
                     <Typography>{addPhotoTitle}</Typography>
                     <UploadPhotoButton
@@ -98,23 +136,38 @@ export const ActivityForm: React.FC<Props> = (props) => {
                 </UploadPhotoContainer>
 
                 {parsedImage && (
-                    <Box
-                        sx={{
-                            minHeight: '300px',
-                            display: 'flex',
-                            position: 'relative',
-                        }}
-                    >
-                        <Image
-                            alt={'activity image'}
-                            src={parsedImage}
-                            layout={'fill'}
-                            objectFit={'cover'}
-                            style={{
-                                borderRadius: '1em',
+                    <React.Fragment>
+                        <IconButton
+                            sx={{
+                                position: 'absolute',
+                                left: 20,
+                                zIndex: 1,
                             }}
-                        />
-                    </Box>
+                            onClick={async () => {
+                                await onFileUpload(null);
+                                setDeletedImages?.(true);
+                            }}
+                        >
+                            <AiFillMinusCircle color={'#EF233B'} />
+                        </IconButton>
+                        <Box
+                            sx={{
+                                minHeight: '300px',
+                                display: 'flex',
+                                position: 'relative',
+                            }}
+                        >
+                            <Image
+                                alt={'activity image'}
+                                src={parsedImage}
+                                layout={'fill'}
+                                objectFit={'cover'}
+                                style={{
+                                    borderRadius: '1em',
+                                }}
+                            />
+                        </Box>
+                    </React.Fragment>
                 )}
 
                 <StyledDivider />
