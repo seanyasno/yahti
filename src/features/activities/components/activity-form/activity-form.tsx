@@ -9,6 +9,8 @@ import {
     IconButton,
     Input,
     InputAdornment,
+    MenuItem,
+    Select,
     Typography,
 } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
@@ -91,6 +93,23 @@ export const ActivityForm: React.FC<Props> = (props) => {
                         </InputAdornment>
                     }
                 />
+
+                <StyledDivider />
+
+                <Select
+                    name={'priority'}
+                    variant={'standard'}
+                    placeholder={'עדיפות'}
+                    value={activity.priority}
+                    onChange={handleChange}
+                >
+                    <MenuItem value={0}>
+                        <em>ללא עדיפות</em>
+                    </MenuItem>
+                    <MenuItem value={1}>עדיפות נמוכה</MenuItem>
+                    <MenuItem value={2}>עדיפות בינונית</MenuItem>
+                    <MenuItem value={3}>עדיפות גבוהה</MenuItem>
+                </Select>
 
                 <StyledDivider />
 
