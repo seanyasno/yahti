@@ -124,11 +124,21 @@ const HomePage: NextPage = () => {
 
     const activitiesList = useCallback(
         (activities: { activity: Activity; id: string }[]) => {
-            return activities.map(({ activity, id }, index) => (
-                <Box onClick={() => router.push(`/activity/${id}`)} key={index}>
-                    <ActivityItem id={id} activity={activity} />
-                </Box>
-            ));
+            return activities
+                .sort((firstItem, secondItem) => {
+                    return (
+                        (secondItem.activity.priority ?? 0) -
+                        (firstItem.activity.priority ?? 0)
+                    );
+                })
+                .map(({ activity, id }, index) => (
+                    <Box
+                        onClick={() => router.push(`/activity/${id}`)}
+                        key={index}
+                    >
+                        <ActivityItem id={id} activity={activity} />
+                    </Box>
+                ));
         },
         [router, groupBy]
     );
