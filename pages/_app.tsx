@@ -73,7 +73,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
             <CacheProvider value={cacheRtl}>
                 <ThemeProvider theme={theme}>
                     <CssBaseline />
-                    <div>{window?.Notification?.permission}</div>
                     <Component {...pageProps} />
                 </ThemeProvider>
             </CacheProvider>
