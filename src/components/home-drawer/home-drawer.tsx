@@ -16,6 +16,16 @@ export const HomeDrawer: React.FC<Props> = (props) => {
 
     const signOutButtonTitle = 'להתנתק';
 
+    const onEnableNotifications = useCallback(() => {
+        Notification.requestPermission().then((permission) => {
+            if (permission === 'granted') {
+                alert('עכשיו אפשר לקבל התראות');
+            } else {
+                alert('לא ניתן לקבל התראות');
+            }
+        });
+    }, []);
+
     const onSignOut = useCallback(async () => {
         try {
             await auth.signOut();
@@ -36,18 +46,7 @@ export const HomeDrawer: React.FC<Props> = (props) => {
                 },
             }}
         >
-            <Button
-                variant={'contained'}
-                onClick={() => {
-                    Notification.requestPermission().then((permission) => {
-                        if (permission === 'granted') {
-                            alert('עכשיו אפשר לקבל התראות');
-                        } else {
-                            alert('לא ניתן לקבל התראות');
-                        }
-                    });
-                }}
-            >
+            <Button color={'secondary'} onClick={onEnableNotifications}>
                 אפשר התראות
             </Button>
             <Button color={'secondary'} onClick={onSignOut}>
