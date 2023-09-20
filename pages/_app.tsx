@@ -35,38 +35,7 @@ const cacheRtl = createCache({
 TimeAgo.addDefaultLocale(he);
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
-    const setUpMessaging = useCallback(async () => {
-        try {
-            if (!(await isSupported())) {
-                // console.log('Messaging not supported');
-                return;
-            }
-
-            const messaging = getMessaging(app);
-            if (!messaging) {
-                // console.log('messaging is empty');
-                return;
-            }
-
-            // console.log('messaging', messaging);
-
-            await Notification.requestPermission();
-            const token = await getToken(messaging, {
-                vapidKey:
-                    'BBb2YcgCC2p0WSIjdfw4av-YDo3yGwOvvDZgpPSJPIh5GTKOmzC4hxbTmxQX51G4LiBWQcCV5iATiAzLYcX0VMM',
-            });
-
-            // console.log({token});
-
-            await saveDeviceToken(auth?.currentUser?.email, token);
-        } catch (error) {
-            console.error(error);
-        }
-    }, [auth?.currentUser, app]);
-
-    useEffect(() => {
-        setUpMessaging();
-    }, []);
+    useMessagingSetup();
 
     return (
         <QueryClientProvider client={queryClient}>
@@ -81,3 +50,37 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 };
 
 export default MyApp;
+
+function useMessagingSetup() {
+    const setUpMessaging = useCallback(async () => {
+        try {
+            const isMessagingSupported = await isSupported();
+            if (!isMessagingSupported) {
+                return;
+            }
+
+            const messaging = getMessaging(app);
+            if (!messaging) {
+                return;
+            }
+
+            const permission = await Notification.requestPermission();
+            if (permission !== 'granted') {
+                return;
+            }
+
+            const token = await getToken(messaging, {
+                vapidKey:
+                    'BBb2YcgCC2p0WSIjdfw4av-YDo3yGwOvvDZgpPSJPIh5GTKOmzC4hxbTmxQX51G4LiBWQcCV5iATiAzLYcX0VMM',
+            });
+
+            await saveDeviceToken(auth?.currentUser?.email, token);
+        } catch (error) {
+            console.error(error);
+        }
+    }, [auth?.currentUser, app]);
+
+    useEffect(() => {
+        setUpMessaging();
+    }, []);
+}
