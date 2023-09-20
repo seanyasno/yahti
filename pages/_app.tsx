@@ -1,9 +1,11 @@
-import React, {useCallback, useEffect} from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import type { AppProps } from 'next/app';
 
+import { app, auth } from '@config/index';
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
+import { getMessaging, getToken, isSupported } from '@firebase/messaging';
 import { ThemeProvider } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -12,12 +14,10 @@ import he from 'javascript-time-ago/locale/he';
 import { prefixer } from 'stylis';
 import rtlPlugin from 'stylis-plugin-rtl';
 
+import { saveDeviceToken } from '@requests/firestore-requests/firestore-requests';
 import { theme } from '@styles/index';
 
 import '../styles/globals.css';
-import {getMessaging, getToken, isSupported} from '@firebase/messaging';
-import {app, auth} from '@config/index';
-import {saveDeviceToken} from '@requests/firestore-requests/firestore-requests';
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -38,25 +38,25 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     const setUpMessaging = useCallback(async () => {
         try {
             if (!(await isSupported())) {
-                console.log('Messaging not supported');
+                // console.log('Messaging not supported');
                 return;
             }
 
             const messaging = getMessaging(app);
             if (!messaging) {
-                console.log('messaging is empty');
+                // console.log('messaging is empty');
                 return;
             }
 
-            console.log('messaging', messaging);
+            // console.log('messaging', messaging);
 
             await Notification.requestPermission();
             const token = await getToken(messaging, {
                 vapidKey:
-                  'BBb2YcgCC2p0WSIjdfw4av-YDo3yGwOvvDZgpPSJPIh5GTKOmzC4hxbTmxQX51G4LiBWQcCV5iATiAzLYcX0VMM',
+                    'BBb2YcgCC2p0WSIjdfw4av-YDo3yGwOvvDZgpPSJPIh5GTKOmzC4hxbTmxQX51G4LiBWQcCV5iATiAzLYcX0VMM',
             });
 
-            console.log({token});
+            // console.log({token});
 
             await saveDeviceToken(auth?.currentUser?.email, token);
         } catch (error) {

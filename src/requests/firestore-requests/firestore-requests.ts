@@ -132,4 +132,4 @@ export const saveDeviceToken = async (email: string, token: string) => {
     } catch (error) {
         console.error(error);
     }
-}
+};
