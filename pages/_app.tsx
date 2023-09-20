@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback, useEffect} from 'react';
 
 import type { AppProps } from 'next/app';
 
@@ -15,6 +15,9 @@ import rtlPlugin from 'stylis-plugin-rtl';
 import { theme } from '@styles/index';
 
 import '../styles/globals.css';
+import {getMessaging, getToken, isSupported} from '@firebase/messaging';
+import {app, auth} from '@config/index';
+import {saveDeviceToken} from '@requests/firestore-requests/firestore-requests';
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -32,11 +35,45 @@ const cacheRtl = createCache({
 TimeAgo.addDefaultLocale(he);
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
+    const setUpMessaging = useCallback(async () => {
+        try {
+            if (!(await isSupported())) {
+                console.log('Messaging not supported');
+                return;
+            }
+
+            const messaging = getMessaging(app);
+            if (!messaging) {
+                console.log('messaging is empty');
+                return;
+            }
+
+            console.log('messaging', messaging);
+
+            await Notification.requestPermission();
+            const token = await getToken(messaging, {
+                vapidKey:
+                  'BBb2YcgCC2p0WSIjdfw4av-YDo3yGwOvvDZgpPSJPIh5GTKOmzC4hxbTmxQX51G4LiBWQcCV5iATiAzLYcX0VMM',
+            });
+
+            console.log({token});
+
+            await saveDeviceToken(auth?.currentUser?.email, token);
+        } catch (error) {
+            console.error(error);
+        }
+    }, [auth?.currentUser, app]);
+
+    useEffect(() => {
+        setUpMessaging();
+    }, []);
+
     return (
         <QueryClientProvider client={queryClient}>
             <CacheProvider value={cacheRtl}>
                 <ThemeProvider theme={theme}>
                     <CssBaseline />
+                    <div>{window?.Notification?.permission}</div>
                     <Component {...pageProps} />
                 </ThemeProvider>
             </CacheProvider>

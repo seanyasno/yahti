@@ -121,3 +121,15 @@ export const createComment = async (
         return null;
     }
 };
+
+export const saveDeviceToken = async (email: string, token: string) => {
+    try {
+        if (!email || !token) {
+            return;
+        }
+
+        await setDoc(doc(db, 'users', email), { token }, { merge: true });
+    } catch (error) {
+        console.error(error);
+    }
+}
