@@ -13,6 +13,7 @@ import styled from '@emotion/styled';
 import {
     Avatar,
     Box,
+    Button,
     Container,
     Fab,
     IconButton,
@@ -171,6 +172,23 @@ const HomePage: NextPage = () => {
 
     return (
         <Container maxWidth={'sm'} sx={{ padding: '30px 20px' }}>
+            <Button
+                variant={'contained'}
+                onClick={() => {
+                    Notification.requestPermission().then((permission) => {
+                        if (permission === 'granted') {
+                            alert('yay');
+                            // console.log('Notification permission granted.');
+                        } else {
+                            alert('oof');
+                            // console.log('Unable to get permission to notify.');
+                        }
+                    });
+                }}
+            >
+                Enable notification
+            </Button>
+
             <Stack
                 direction={'row'}
                 mb={'12px'}
