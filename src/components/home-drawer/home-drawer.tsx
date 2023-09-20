@@ -2,8 +2,11 @@ import React, { useCallback } from 'react';
 
 import { FiLogOut } from 'react-icons/fi';
 
-import { auth } from '@config/index';
+import { app, auth } from '@config/index';
+import { getMessaging, getToken } from '@firebase/messaging';
 import { Button, SwipeableDrawer } from '@mui/material';
+
+import { saveDeviceToken } from '@requests/firestore-requests/firestore-requests';
 
 type Props = {
     open: boolean;
@@ -19,12 +22,22 @@ export const HomeDrawer: React.FC<Props> = (props) => {
     const onEnableNotifications = useCallback(() => {
         Notification.requestPermission().then((permission) => {
             if (permission === 'granted') {
-                alert('עכשיו אפשר לקבל התראות');
+                const messaging = getMessaging(app);
+                getToken(messaging, {
+                    vapidKey:
+                        'BBb2YcgCC2p0WSIjdfw4av-YDo3yGwOvvDZgpPSJPIh5GTKOmzC4hxbTmxQX51G4LiBWQcCV5iATiAzLYcX0VMM',
+                }).then((token) => {
+                    saveDeviceToken(auth?.currentUser?.email, token).then(
+                        () => {
+                            alert('עכשיו אפשר לקבל התראות');
+                        }
+                    );
+                });
             } else {
                 alert('לא ניתן לקבל התראות');
             }
         });
-    }, []);
+    }, [auth?.currentUser]);
 
     const onSignOut = useCallback(async () => {
         try {
