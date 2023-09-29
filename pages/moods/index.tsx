@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 import { NextPage } from 'next';
 import Image from 'next/image';
 
-import { Box, Button, Container, Stack } from '@mui/material';
+import {Box, Button, Container, Snackbar, Stack} from '@mui/material';
 import axios from 'axios';
 
 import { useMoods } from '@features/activities/hooks/use-moods/use-moods';
@@ -40,50 +40,64 @@ export type MoodType = typeof MOOD_TYPES[keyof typeof MOOD_TYPES];
 const MoodItem: React.FC<{ moodType: MoodType }> = ({ moodType }) => {
     const { data: moods } = useMoods();
     const {data: userDetails} = useUserDetails();
+    const [sendMoodMessage, setSendMoodMessage] = useState('');
 
     const onClick = async () => {
         try {
             const mood = moods.find((mood) => mood.moodType === moodType);
 
-            const response = await axios.post('/api/notification', {
+            await axios.post('/api/notification', {
                 notification: {
                     title: mood.title,
                     body: mood.description,
                 },
                 token: userDetails.otherToken,
             });
+            setSendMoodMessage(mood.description);
         } catch (error) {
             console.error(error);
         }
     };
 
     return (
-        <Button
-            sx={{
-                display: 'flex',
-                flex: 1,
-                backgroundColor: '#fff',
-                borderRadius: '1em',
-                boxShadow: '0px 0px 6px 0px rgba(0,0,0,0.25)',
-            }}
-            onClick={() => onClick()}
-        >
-            <Box
-                sx={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
+        <>
+            <Snackbar
+                autoHideDuration={3000}
+                open={!!sendMoodMessage}
+                message={sendMoodMessage}
+                onClose={() => setSendMoodMessage('')}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
                 }}
+            />
+            <Button
+                sx={{
+                    display: 'flex',
+                    flex: 1,
+                    backgroundColor: '#fff',
+                    borderRadius: '1em',
+                    boxShadow: '0px 0px 6px 0px rgba(0,0,0,0.25)',
+                }}
+                onClick={() => onClick()}
             >
-                <Image
-                    src={`/svgs/${moodType}.svg`}
-                    alt={moodType}
-                    layout={'fill'}
-                />
-            </Box>
-        </Button>
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                    }}
+                >
+                    <Image
+                        src={`/svgs/${moodType}.svg`}
+                        alt={moodType}
+                        layout={'fill'}
+                    />
+                </Box>
+            </Button>
+        </>
     );
 };
 

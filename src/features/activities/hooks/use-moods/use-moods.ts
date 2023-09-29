@@ -1,5 +1,9 @@
-import {QueryOptions, useQuery} from '@tanstack/react-query';
-import {fetchMoods, Mood} from '@requests/firestore-requests/firestore-requests';
+import { QueryOptions, useQuery } from '@tanstack/react-query';
+
+import {
+    fetchMoods,
+    Mood,
+} from '@requests/firestore-requests/firestore-requests';
 
 export function useMoods(options?: QueryOptions<Mood[]>) {
     return useQuery({
