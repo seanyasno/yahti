@@ -13,6 +13,24 @@ import { listAll, ListResult, ref } from '@firebase/storage';
 import { Activity, Comment, UserDetails } from '@abstraction/index';
 import { commentConverter, userConverter } from '@utils/firebase';
 
+import { MoodType } from '../../../pages/moods';
+
+export type Mood = {
+    description: string;
+    moodType: MoodType;
+    title: string;
+};
+
+export const fetchMoods = async (): Promise<Mood[]> => {
+    try {
+        const querySnapshot = await getDocs(collection(db, 'moods'));
+        return querySnapshot.docs.map((doc) => doc.data()) as Mood[];
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+};
+
 export const fetchActivities = async (): Promise<
     { activity: Activity; id: string }[]
 > => {

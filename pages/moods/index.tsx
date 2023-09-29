@@ -4,6 +4,14 @@ import { NextPage } from 'next';
 import Image from 'next/image';
 
 import { Box, Button, Container, Stack } from '@mui/material';
+import axios from 'axios';
+
+import { useMoods } from '@features/activities/hooks/use-moods/use-moods';
+import {LoadingScreen} from '@components/loading-screen/loading-screen';
+import {useUserDetails} from '@hooks/use-user-details/use-user-details';
+import {IoIosArrowBack} from 'react-icons/io';
+import {StyledIconButton} from '@styles/create-activity/create-activity-styles';
+import {useRouter} from 'next/router';
 
 /*
 זהווו מספיק😇💪🏻
@@ -27,9 +35,28 @@ const MOOD_TYPES = {
     Shock: 'shock',
     SuperLove: 'superLove',
 } as const;
-type MoodType = typeof MOOD_TYPES[keyof typeof MOOD_TYPES];
+export type MoodType = typeof MOOD_TYPES[keyof typeof MOOD_TYPES];
 
 const MoodItem: React.FC<{ moodType: MoodType }> = ({ moodType }) => {
+    const { data: moods } = useMoods();
+    const {data: userDetails} = useUserDetails();
+
+    const onClick = async () => {
+        try {
+            const mood = moods.find((mood) => mood.moodType === moodType);
+
+            const response = await axios.post('/api/notification', {
+                notification: {
+                    title: mood.title,
+                    body: mood.description,
+                },
+                token: userDetails.otherToken,
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     return (
         <Button
             sx={{
@@ -39,7 +66,7 @@ const MoodItem: React.FC<{ moodType: MoodType }> = ({ moodType }) => {
                 borderRadius: '1em',
                 boxShadow: '0px 0px 6px 0px rgba(0,0,0,0.25)',
             }}
-            onClick={() => alert(moodType)}
+            onClick={() => onClick()}
         >
             <Box
                 sx={{
@@ -61,6 +88,13 @@ const MoodItem: React.FC<{ moodType: MoodType }> = ({ moodType }) => {
 };
 
 const MoodsPage: NextPage = () => {
+    const { data: moods, isLoading } = useMoods();
+    const router = useRouter();
+
+    if (isLoading) {
+        return <LoadingScreen/>;
+    }
+
     return (
         <Container
             maxWidth={'sm'}
@@ -72,6 +106,12 @@ const MoodsPage: NextPage = () => {
                 gap: '12px',
             }}
         >
+            <StyledIconButton color={'secondary'} onClick={() => router.back()} sx={{
+                width: 'fit-content',
+            }}>
+                <IoIosArrowBack size={20} />
+            </StyledIconButton>
+
             <Stack direction={'row'} height={'100%'} gap={'12px'}>
                 <Stack
                     direction={'column'}

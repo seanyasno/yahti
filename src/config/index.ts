@@ -17,7 +17,7 @@ export const config = {
     },
 };
 
-export const app = initializeApp(config.firebase);
+export const app = initializeApp(config.firebase, 'client');
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const auth = getAuth(app);
