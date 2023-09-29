@@ -7,6 +7,7 @@ import { getMessaging, getToken } from '@firebase/messaging';
 import { Button, SwipeableDrawer } from '@mui/material';
 
 import { saveDeviceToken } from '@requests/firestore-requests/firestore-requests';
+import Link from 'next/link';
 
 type Props = {
     open: boolean;
@@ -59,6 +60,11 @@ export const HomeDrawer: React.FC<Props> = (props) => {
                 },
             }}
         >
+            <Button color={'secondary'}>
+                <Link href={'/moods'}>
+                    שליחת הרתאות
+                </Link>
+            </Button>
             <Button color={'secondary'} onClick={onEnableNotifications}>
                 אפשר התראות
             </Button>

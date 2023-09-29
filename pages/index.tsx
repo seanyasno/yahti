@@ -13,7 +13,6 @@ import styled from '@emotion/styled';
 import {
     Avatar,
     Box,
-    Button,
     Container,
     Fab,
     IconButton,
@@ -23,7 +22,7 @@ import {
     Tabs,
     Typography,
 } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
+import { QueryOptions, useQuery } from '@tanstack/react-query';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { ActivityType } from '@abstraction/enums';
@@ -33,6 +32,7 @@ import {
     ActivityItem,
     FilterActivitiesDrawer,
     GroupedActivities,
+    useActivities,
     useFilterActivities,
 } from '@features/activities';
 import { useProfilePicture, useUserDetails } from '@hooks/index';
@@ -70,10 +70,8 @@ const HomePage: NextPage = () => {
     const [openHomeDrawer, setOpenHomeDrawer] = useState(false);
     const [user, loading] = useAuthState(auth);
     const { pictureUrl, isLoadingPicture } = useProfilePicture(user?.uid);
-    const { data: activities = [], isLoading: loadingActivities } = useQuery({
-        queryKey: ['activities'],
-        queryFn: async () => fetchActivities(),
-    });
+    const { data: activities = [], isLoading: loadingActivities } =
+        useActivities();
     const {
         groupBy,
         filteredActivities,
@@ -123,7 +121,7 @@ const HomePage: NextPage = () => {
         [groupBy]
     );
 
-    const activitiesList = useCallback(
+    const getActivitiesList = useCallback(
         (activities: { activity: Activity; id: string }[]) => {
             return activities
                 .sort((firstItem, secondItem) => {
@@ -144,13 +142,13 @@ const HomePage: NextPage = () => {
         [router, groupBy]
     );
 
-    const contentByTab = useCallback(
+    const getContentByTab = useCallback(
         (activities: { activity: Activity; id: string }[]) => {
             if (groupBy) {
                 return groupedActivities(activities);
             }
 
-            return activitiesList(activities);
+            return getActivitiesList(activities);
         },
         [router, groupBy]
     );
@@ -234,8 +232,8 @@ const HomePage: NextPage = () => {
             </StyledTabs>
 
             <Stack direction={'column'} spacing={2}>
-                {currentTab === 0 && contentByTab(notDoneActivities)}
-                {currentTab === 1 && contentByTab(doneActivities)}
+                {currentTab === 0 && getContentByTab(notDoneActivities)}
+                {currentTab === 1 && getContentByTab(doneActivities)}
             </Stack>
 
             <Fab color={'secondary'} aria-label={'add'} onClick={onAddActivity}>

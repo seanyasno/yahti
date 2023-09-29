@@ -19,7 +19,9 @@
     "@emotion/styled": "^11.10.4",
     "@mui/material": "^5.10.9",
     "@tanstack/react-query": "^4.12.0",
+    "axios": "^1.5.1",
     "firebase": "^9.12.1",
+    "firebase-admin": "^11.11.0",
     "is-promise": "^4.0.0",
     "javascript-time-ago": "^2.5.9",
     "lodash": "^4.17.21",
@@ -28,12 +30,14 @@
     "prettier": "^2.7.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-error-boundary": "^4.0.11",
     "react-firebase-hooks": "^5.0.3",
     "react-icons": "^4.6.0",
     "react-spinners": "^0.13.6",
     "stylis": "^4.1.2",
     "stylis-plugin-rtl": "^2.1.1",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "zod": "^3.22.2"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^13.0.1",
