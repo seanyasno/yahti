@@ -12,86 +12,82 @@ import { useUploadFile } from 'react-firebase-hooks/storage';
 
 import { Activity } from '@abstraction/types';
 import {
-    ActivityForm,
-    ActivitySelection,
-    useActivityForm,
+  ActivityForm,
+  ActivitySelection,
+  useActivityForm,
 } from '@features/activities';
 import { createActivity } from '@requests/index';
 import { Container, StyledIconButton } from '@styles/index';
 
 const CreateActivityPage: NextPage = () => {
-    const router = useRouter();
-    const { activity, setFieldValue } = useActivityForm();
-    const [currentPage, setCurrentPage] = useState(0);
-    const [user, loading] = useAuthState(auth);
-    const [uploadFile] = useUploadFile();
+  const router = useRouter();
+  const { activity, setFieldValue } = useActivityForm();
+  const [currentPage, setCurrentPage] = useState(0);
+  const [user, loading] = useAuthState(auth);
+  const [uploadFile] = useUploadFile();
 
-    const onBack = useCallback(async () => {
-        if (currentPage === 0) {
-            await router.replace('/');
-        } else {
-            setCurrentPage((currentPage) => currentPage - 1);
+  const onBack = useCallback(async () => {
+    if (currentPage === 0) {
+      await router.replace('/');
+    } else {
+      setCurrentPage((currentPage) => currentPage - 1);
+    }
+  }, [currentPage, router]);
+
+  const onCreate = useCallback(
+    async (activity: Activity, imageFiles?: File[]) => {
+      try {
+        const createdActivityReference = await createActivity(activity);
+        const filteredFiles = imageFiles.filter((file) => file);
+
+        for (let index = 0; index < filteredFiles.length; index++) {
+          const imageRef = ref(
+            storage,
+            `activities/${createdActivityReference.id}/${index}.${filteredFiles[
+              index
+            ].name
+              .split('.')
+              .pop()}`
+          );
+
+          await uploadFile(imageRef, filteredFiles[index]);
         }
-    }, [currentPage, router]);
 
-    const onCreate = useCallback(
-        async (activity: Activity, imageFiles?: File[]) => {
-            try {
-                const createdActivityReference = await createActivity(activity);
-                const filteredFiles = imageFiles.filter((file) => file);
+        await router.replace('/');
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [router]
+  );
 
-                for (let index = 0; index < filteredFiles.length; index++) {
-                    const imageRef = ref(
-                        storage,
-                        `activities/${
-                            createdActivityReference.id
-                        }/${index}.${filteredFiles[index].name
-                            .split('.')
-                            .pop()}`
-                    );
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace('/login');
+    }
+  }, [loading, router, user]);
 
-                    await uploadFile(imageRef, filteredFiles[index]);
-                }
+  const pages = [
+    <ActivitySelection
+      key={'selection'}
+      initialSelectedTypes={activity?.types}
+      onDone={(selectedTypes) => {
+        setFieldValue('types', selectedTypes);
+        setCurrentPage((currentPage) => currentPage + 1);
+      }}
+    />,
+    <ActivityForm key={'form'} initialActivity={activity} onDone={onCreate} />,
+  ];
 
-                await router.replace('/');
-            } catch (error) {
-                console.error(error);
-            }
-        },
-        [router]
-    );
+  return (
+    <Container>
+      <StyledIconButton color={'secondary'} onClick={onBack}>
+        <IoIosArrowBack size={20} />
+      </StyledIconButton>
 
-    useEffect(() => {
-        if (!loading && !user) {
-            router.replace('/login');
-        }
-    }, [loading, router, user]);
-
-    const pages = [
-        <ActivitySelection
-            key={'selection'}
-            initialSelectedTypes={activity?.types}
-            onDone={(selectedTypes) => {
-                setFieldValue('types', selectedTypes);
-                setCurrentPage((currentPage) => currentPage + 1);
-            }}
-        />,
-        <ActivityForm
-            key={'form'}
-            initialActivity={activity}
-            onDone={onCreate}
-        />,
-    ];
-
-    return (
-        <Container>
-            <StyledIconButton color={'secondary'} onClick={onBack}>
-                <IoIosArrowBack size={20} />
-            </StyledIconButton>
-
-            {pages[currentPage]}
-        </Container>
-    );
+      {pages[currentPage]}
+    </Container>
+  );
 };
 
 export default CreateActivityPage;

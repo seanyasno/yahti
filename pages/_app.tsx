@@ -20,67 +20,67 @@ import { theme } from '@styles/index';
 import '../styles/globals.css';
 
 const queryClient = new QueryClient({
-    defaultOptions: {
-        queries: {
-            refetchOnWindowFocus: false,
-        },
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
     },
+  },
 });
 
 const cacheRtl = createCache({
-    key: 'muirtl',
-    stylisPlugins: [prefixer, rtlPlugin],
+  key: 'muirtl',
+  stylisPlugins: [prefixer, rtlPlugin],
 });
 
 TimeAgo.addDefaultLocale(he);
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
-    useMessagingSetup();
+  useMessagingSetup();
 
-    return (
-        <QueryClientProvider client={queryClient}>
-            <CacheProvider value={cacheRtl}>
-                <ThemeProvider theme={theme}>
-                    <CssBaseline />
-                    <Component {...pageProps} />
-                </ThemeProvider>
-            </CacheProvider>
-        </QueryClientProvider>
-    );
+  return (
+    <QueryClientProvider client={queryClient}>
+      <CacheProvider value={cacheRtl}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Component {...pageProps} />
+        </ThemeProvider>
+      </CacheProvider>
+    </QueryClientProvider>
+  );
 };
 
 export default MyApp;
 
 function useMessagingSetup() {
-    const setUpMessaging = useCallback(async () => {
-        try {
-            const isMessagingSupported = await isSupported();
-            if (!isMessagingSupported) {
-                return;
-            }
+  const setUpMessaging = useCallback(async () => {
+    try {
+      const isMessagingSupported = await isSupported();
+      if (!isMessagingSupported) {
+        return;
+      }
 
-            const messaging = getMessaging(app);
-            if (!messaging) {
-                return;
-            }
+      const messaging = getMessaging(app);
+      if (!messaging) {
+        return;
+      }
 
-            const permission = await Notification.requestPermission();
-            if (permission !== 'granted') {
-                return;
-            }
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') {
+        return;
+      }
 
-            const token = await getToken(messaging, {
-                vapidKey:
-                    'BBb2YcgCC2p0WSIjdfw4av-YDo3yGwOvvDZgpPSJPIh5GTKOmzC4hxbTmxQX51G4LiBWQcCV5iATiAzLYcX0VMM',
-            });
+      const token = await getToken(messaging, {
+        vapidKey:
+          'BBb2YcgCC2p0WSIjdfw4av-YDo3yGwOvvDZgpPSJPIh5GTKOmzC4hxbTmxQX51G4LiBWQcCV5iATiAzLYcX0VMM',
+      });
 
-            await saveDeviceToken(auth?.currentUser?.email, token);
-        } catch (error) {
-            console.error(error);
-        }
-    }, [auth?.currentUser, app]);
+      await saveDeviceToken(auth?.currentUser?.email, token);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [auth?.currentUser, app]);
 
-    useEffect(() => {
-        setUpMessaging();
-    }, []);
+  useEffect(() => {
+    setUpMessaging();
+  }, []);
 }

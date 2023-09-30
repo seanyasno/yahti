@@ -5,13 +5,13 @@ import { Comment } from '@abstraction/types';
 import { fetchCommentsByActivityId } from '@requests/index';
 
 export const useComments = (
-    activityId: string,
-    options?: UseQueryOptions<Comment[]>
+  activityId: string,
+  options?: UseQueryOptions<Comment[]>
 ) => {
-    return useQuery<Comment[]>({
-        queryKey: ['comments', activityId],
-        queryFn: () => fetchCommentsByActivityId(activityId),
-        enabled: !isEmpty(activityId),
-        ...options,
-    });
+  return useQuery<Comment[]>({
+    queryKey: ['comments', activityId],
+    queryFn: () => fetchCommentsByActivityId(activityId),
+    enabled: !isEmpty(activityId),
+    ...options,
+  });
 };

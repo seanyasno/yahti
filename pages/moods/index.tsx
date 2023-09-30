@@ -1,17 +1,16 @@
-import React, {useState} from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { NextPage } from 'next';
-import Image from 'next/image';
+import { useRouter } from 'next/router';
 
-import {Box, Button, Container, Snackbar, Stack} from '@mui/material';
-import axios from 'axios';
+import { IoIosArrowBack } from 'react-icons/io';
 
-import { useMoods } from '@features/activities/hooks/use-moods/use-moods';
-import {LoadingScreen} from '@components/loading-screen/loading-screen';
-import {useUserDetails} from '@hooks/use-user-details/use-user-details';
-import {IoIosArrowBack} from 'react-icons/io';
-import {StyledIconButton} from '@styles/create-activity/create-activity-styles';
-import {useRouter} from 'next/router';
+import { Alert, Container, Snackbar, Stack } from '@mui/material';
+
+import { Mood, MOOD_TYPES, MoodType } from '@abstraction/types';
+import { LoadingScreen } from '@components/index';
+import { MoodItem, useMoods, useSendMoodNotification } from '@features/moods';
+import { StyledIconButton } from '@styles/create-activity/create-activity-styles';
 
 /*
 זהווו מספיק😇💪🏻
@@ -25,142 +24,119 @@ import {useRouter} from 'next/router';
 ישר👉🏻👉🏻
  */
 
-const MOOD_TYPES = {
-    Happy: 'happy',
-    Hug: 'hug',
-    Hungry: 'hungry',
-    Love: 'love',
-    Oof: 'oof',
-    Sad: 'sad',
-    Shock: 'shock',
-    SuperLove: 'superLove',
-} as const;
-export type MoodType = typeof MOOD_TYPES[keyof typeof MOOD_TYPES];
-
-const MoodItem: React.FC<{ moodType: MoodType }> = ({ moodType }) => {
-    const { data: moods } = useMoods();
-    const {data: userDetails} = useUserDetails();
-    const [sendMoodMessage, setSendMoodMessage] = useState('');
-
-    const onClick = async () => {
-        try {
-            const mood = moods.find((mood) => mood.moodType === moodType);
-
-            await axios.post('/api/notification', {
-                notification: {
-                    title: mood.title,
-                    body: mood.description,
-                },
-                token: userDetails.otherToken,
-            });
-            setSendMoodMessage(mood.description);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    return (
-        <>
-            <Snackbar
-                autoHideDuration={3000}
-                open={!!sendMoodMessage}
-                message={sendMoodMessage}
-                onClose={() => setSendMoodMessage('')}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                }}
-            />
-            <Button
-                sx={{
-                    display: 'flex',
-                    flex: 1,
-                    backgroundColor: '#fff',
-                    borderRadius: '1em',
-                    boxShadow: '0px 0px 6px 0px rgba(0,0,0,0.25)',
-                }}
-                onClick={() => onClick()}
-            >
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                    }}
-                >
-                    <Image
-                        src={`/svgs/${moodType}.svg`}
-                        alt={moodType}
-                        layout={'fill'}
-                    />
-                </Box>
-            </Button>
-        </>
-    );
-};
-
 const MoodsPage: NextPage = () => {
-    const { data: moods, isLoading } = useMoods();
-    const router = useRouter();
+  const { data: moods, isLoading } = useMoods();
+  const router = useRouter();
+  const [sendMoodMessage, setSendMoodMessage] = useState('');
 
-    if (isLoading) {
-        return <LoadingScreen/>;
-    }
+  const { mutate: sendMoodNotification } = useSendMoodNotification({
+    onSuccess: (mood) => {
+      setSendMoodMessage(mood.title);
+    },
+  });
 
-    return (
-        <Container
-            maxWidth={'sm'}
-            sx={{
-                padding: '30px 20px',
-                height: '100vh',
-                display: 'flex',
-                flexFlow: 'column',
-                gap: '12px',
-            }}
-        >
-            <StyledIconButton color={'secondary'} onClick={() => router.back()} sx={{
-                width: 'fit-content',
-            }}>
-                <IoIosArrowBack size={20} />
-            </StyledIconButton>
+  const gettingMoodByType = useCallback(
+    (moodType: MoodType) => getMoodByType(moods, moodType),
+    [moods]
+  );
 
-            <Stack direction={'row'} height={'100%'} gap={'12px'}>
-                <Stack
-                    direction={'column'}
-                    height={'100%'}
-                    flex={1}
-                    gap={'12px'}
-                >
-                    <MoodItem moodType={MOOD_TYPES.Hungry} />
-                </Stack>
-                <Stack
-                    direction={'column'}
-                    height={'100%'}
-                    flex={1}
-                    gap={'12px'}
-                >
-                    <MoodItem moodType={MOOD_TYPES.Sad} />
-                    <MoodItem moodType={MOOD_TYPES.Oof} />
-                </Stack>
-            </Stack>
+  const sendingNotification = (moodType: MoodType) => () => {
+    const mood = gettingMoodByType(moodType);
+    sendMoodNotification(mood);
+  };
 
-            <Stack direction={'row'} height={'100%'} gap={'12px'}>
-                <MoodItem moodType={MOOD_TYPES.Happy} />
-                <MoodItem moodType={MOOD_TYPES.Shock} />
-            </Stack>
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
-            <Stack direction={'row'} height={'100%'} gap={'12px'}>
-                <MoodItem moodType={MOOD_TYPES.Hug} />
-                <MoodItem moodType={MOOD_TYPES.SuperLove} />
-            </Stack>
+  return (
+    <Container
+      maxWidth={'sm'}
+      sx={{
+        padding: '30px 20px',
+        height: '100vh',
+        display: 'flex',
+        flexFlow: 'column',
+        gap: '12px',
+      }}
+    >
+      <Snackbar
+        autoHideDuration={3000}
+        open={!!sendMoodMessage}
+        onClose={() => setSendMoodMessage('')}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+      >
+        <Alert onClose={() => setSendMoodMessage('')} severity={'success'}>
+          {sendMoodMessage}
+        </Alert>
+      </Snackbar>
 
-            <Stack direction={'row'} height={'100%'} gap={'12px'}>
-                <MoodItem moodType={MOOD_TYPES.Love} />
-            </Stack>
-        </Container>
-    );
+      <StyledIconButton
+        color={'secondary'}
+        onClick={() => router.back()}
+        sx={{
+          width: 'fit-content',
+        }}
+      >
+        <IoIosArrowBack size={20} />
+      </StyledIconButton>
+
+      <Stack direction={'row'} height={'100%'} gap={'12px'}>
+        <Stack direction={'column'} height={'100%'} flex={1} gap={'12px'}>
+          <MoodItem
+            mood={gettingMoodByType(MOOD_TYPES.Hungry)}
+            onClick={sendingNotification(MOOD_TYPES.Hungry)}
+          />
+        </Stack>
+        <Stack direction={'column'} height={'100%'} flex={1} gap={'12px'}>
+          <MoodItem
+            mood={gettingMoodByType(MOOD_TYPES.Sad)}
+            onClick={sendingNotification(MOOD_TYPES.Sad)}
+          />
+          <MoodItem
+            mood={gettingMoodByType(MOOD_TYPES.Oof)}
+            onClick={sendingNotification(MOOD_TYPES.Oof)}
+          />
+        </Stack>
+      </Stack>
+
+      <Stack direction={'row'} height={'100%'} gap={'12px'}>
+        <MoodItem
+          mood={gettingMoodByType(MOOD_TYPES.Happy)}
+          onClick={sendingNotification(MOOD_TYPES.Happy)}
+        />
+        <MoodItem
+          mood={gettingMoodByType(MOOD_TYPES.Shock)}
+          onClick={sendingNotification(MOOD_TYPES.Shock)}
+        />
+      </Stack>
+
+      <Stack direction={'row'} height={'100%'} gap={'12px'}>
+        <MoodItem
+          mood={gettingMoodByType(MOOD_TYPES.Hug)}
+          onClick={sendingNotification(MOOD_TYPES.Hug)}
+        />
+        <MoodItem
+          mood={gettingMoodByType(MOOD_TYPES.SuperLove)}
+          onClick={sendingNotification(MOOD_TYPES.SuperLove)}
+        />
+      </Stack>
+
+      <Stack direction={'row'} height={'100%'} gap={'12px'}>
+        <MoodItem
+          mood={gettingMoodByType(MOOD_TYPES.Love)}
+          onClick={sendingNotification(MOOD_TYPES.Love)}
+        />
+      </Stack>
+    </Container>
+  );
 };
 
 export default MoodsPage;
+
+function getMoodByType(moods: Mood[], moodType: MoodType) {
+  return moods.find((mood) => moodType === mood.moodType);
+}

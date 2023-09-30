@@ -2,152 +2,142 @@ import React, { useCallback, useState } from 'react';
 
 import { emojiByActivityType } from '@constants/index';
 import {
-    Divider,
-    IconButton,
-    MenuItem,
-    Select,
-    Stack,
-    SwipeableDrawer,
-    Typography,
+  Divider,
+  IconButton,
+  MenuItem,
+  Select,
+  Stack,
+  SwipeableDrawer,
+  Typography,
 } from '@mui/material';
 
 import { ActivityType } from '@abstraction/enums';
 import { useTypeSelection } from '@features/activities';
 
 import {
-    FilterButton,
-    FilterButtonContainer,
-    OverrideStyledActivityType,
-    ResetButton,
-    TempButton,
+  FilterButton,
+  FilterButtonContainer,
+  OverrideStyledActivityType,
+  ResetButton,
+  TempButton,
 } from './styles';
 
 type Props = {
-    open: boolean;
-    onClose: () => void;
-    onOpen: () => void;
-    onFilter?: (types: ActivityType[], groupBy: string) => void;
+  open: boolean;
+  onClose: () => void;
+  onOpen: () => void;
+  onFilter?: (types: ActivityType[], groupBy: string) => void;
 };
 
 export const FilterActivitiesDrawer: React.FC<Props> = (props) => {
-    const { open, onClose, onOpen, onFilter } = props;
-    const { selectedTypes, setSelectedTypes, isTypeSelected, onTypeSelected } =
-        useTypeSelection();
-    const [groupBy, setGroupBy] = useState('');
+  const { open, onClose, onOpen, onFilter } = props;
+  const { selectedTypes, setSelectedTypes, isTypeSelected, onTypeSelected } =
+    useTypeSelection();
+  const [groupBy, setGroupBy] = useState('');
 
-    const filterTitle = 'נסנן כמה דברים';
-    const filterActivityTypeTitle = 'סוג הפעילות';
-    const filterButtonTitle = 'יאללה נסנן';
-    const resetButtonTitle = 'לאפס';
-    const orderByTitle = 'נקבץ לפי';
+  const filterTitle = 'נסנן כמה דברים';
+  const filterActivityTypeTitle = 'סוג הפעילות';
+  const filterButtonTitle = 'יאללה נסנן';
+  const resetButtonTitle = 'לאפס';
+  const orderByTitle = 'נקבץ לפי';
 
-    const handleOnFilter = useCallback(() => {
-        onFilter?.(selectedTypes, groupBy);
-    }, [selectedTypes, groupBy, onFilter]);
+  const handleOnFilter = useCallback(() => {
+    onFilter?.(selectedTypes, groupBy);
+  }, [selectedTypes, groupBy, onFilter]);
 
-    const onReset = useCallback(() => {
-        setSelectedTypes([]);
-        setGroupBy('');
-        onFilter?.([], '');
-    }, [setSelectedTypes, setGroupBy, onFilter]);
+  const onReset = useCallback(() => {
+    setSelectedTypes([]);
+    setGroupBy('');
+    onFilter?.([], '');
+  }, [setSelectedTypes, setGroupBy, onFilter]);
 
-    return (
-        <SwipeableDrawer
-            anchor={'bottom'}
-            open={open}
-            onClose={onClose}
-            onOpen={onOpen}
-            PaperProps={{
-                sx: {
-                    borderRadius: '20px 20px 0 0',
-                    padding: '20px',
-                    height: '50%',
-                    maxWidth: 'sm',
-                    margin: '0 auto',
-                },
-            }}
+  return (
+    <SwipeableDrawer
+      anchor={'bottom'}
+      open={open}
+      onClose={onClose}
+      onOpen={onOpen}
+      PaperProps={{
+        sx: {
+          borderRadius: '20px 20px 0 0',
+          padding: '20px',
+          height: '50%',
+          maxWidth: 'sm',
+          margin: '0 auto',
+        },
+      }}
+    >
+      <Stack>
+        <Stack
+          direction={'row'}
+          alignItems={'center'}
+          justifyContent={'space-between'}
         >
-            <Stack>
-                <Stack
-                    direction={'row'}
-                    alignItems={'center'}
-                    justifyContent={'space-between'}
-                >
-                    <TempButton variant={'text'} disabled>
-                        {resetButtonTitle}
-                    </TempButton>
+          <TempButton variant={'text'} disabled>
+            {resetButtonTitle}
+          </TempButton>
 
-                    <Typography variant={'h5'} textAlign={'center'}>
-                        {filterTitle}
-                    </Typography>
+          <Typography variant={'h5'} textAlign={'center'}>
+            {filterTitle}
+          </Typography>
 
-                    <ResetButton
-                        variant={'text'}
-                        color={'secondary'}
-                        onClick={onReset}
-                    >
-                        {resetButtonTitle}
-                    </ResetButton>
-                </Stack>
+          <ResetButton variant={'text'} color={'secondary'} onClick={onReset}>
+            {resetButtonTitle}
+          </ResetButton>
+        </Stack>
 
-                <Stack spacing={1}>
-                    <Typography variant={'h6'}>
-                        {filterActivityTypeTitle}
-                    </Typography>
+        <Stack spacing={1}>
+          <Typography variant={'h6'}>{filterActivityTypeTitle}</Typography>
 
-                    <Stack
-                        direction={'row'}
-                        spacing={2}
-                        overflow={'auto'}
-                        padding={'0 0 20px 0'}
-                    >
-                        {Object.values(ActivityType).map((type, index) => (
-                            <IconButton
-                                key={index}
-                                sx={{
-                                    padding: '0',
-                                    border: isTypeSelected(type)
-                                        ? '1px solid black'
-                                        : 'none',
-                                }}
-                                onClick={() => onTypeSelected(type)}
-                            >
-                                <OverrideStyledActivityType>
-                                    {emojiByActivityType[type]}
-                                </OverrideStyledActivityType>
-                            </IconButton>
-                        ))}
-                    </Stack>
+          <Stack
+            direction={'row'}
+            spacing={2}
+            overflow={'auto'}
+            padding={'0 0 20px 0'}
+          >
+            {Object.values(ActivityType).map((type, index) => (
+              <IconButton
+                key={index}
+                sx={{
+                  padding: '0',
+                  border: isTypeSelected(type) ? '1px solid black' : 'none',
+                }}
+                onClick={() => onTypeSelected(type)}
+              >
+                <OverrideStyledActivityType>
+                  {emojiByActivityType[type]}
+                </OverrideStyledActivityType>
+              </IconButton>
+            ))}
+          </Stack>
 
-                    <Divider />
+          <Divider />
 
-                    <Typography variant={'h6'}>{orderByTitle}</Typography>
-                    <Select
-                        variant={'standard'}
-                        value={groupBy}
-                        onChange={(event) =>
-                            setGroupBy(event.target.value as string)
-                        }
-                    >
-                        <MenuItem value={''}>
-                            <em>כלום</em>
-                        </MenuItem>
-                        <MenuItem value={'type'}>סוג הפעילות</MenuItem>
-                    </Select>
+          <Typography variant={'h6'}>{orderByTitle}</Typography>
+          <Select
+            variant={'standard'}
+            value={groupBy}
+            onChange={(event) => setGroupBy(event.target.value as string)}
+          >
+            <MenuItem value={''}>
+              <em>כלום</em>
+            </MenuItem>
+            <MenuItem value={'type'}>סוג הפעילות</MenuItem>
+          </Select>
 
-                    <Divider />
-                </Stack>
-            </Stack>
+          <Divider />
+        </Stack>
+      </Stack>
 
-            <FilterButtonContainer>
-                <FilterButton
-                    variant={'contained'}
-                    color={'secondary'}
-                    onClick={handleOnFilter}
-                >
-                    {filterButtonTitle}
-                </FilterButton>
-            </FilterButtonContainer>
-        </SwipeableDrawer>
-    );
+      <FilterButtonContainer>
+        <FilterButton
+          variant={'contained'}
+          color={'secondary'}
+          onClick={handleOnFilter}
+        >
+          {filterButtonTitle}
+        </FilterButton>
+      </FilterButtonContainer>
+    </SwipeableDrawer>
+  );
 };

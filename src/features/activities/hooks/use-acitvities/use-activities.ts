@@ -4,11 +4,11 @@ import { Activity } from '@abstraction/types';
 import { fetchActivities } from '@requests/firestore-requests/firestore-requests';
 
 export function useActivities(
-    options?: QueryOptions<{ activity: Activity; id: string }[]>
+  options?: QueryOptions<{ activity: Activity; id: string }[]>
 ) {
-    return useQuery({
-        queryKey: ['activities'],
-        queryFn: async () => fetchActivities(),
-        ...options,
-    });
+  return useQuery({
+    queryKey: ['activities'],
+    queryFn: async () => fetchActivities(),
+    ...options,
+  });
 }
