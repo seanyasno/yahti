@@ -22,11 +22,11 @@ import {
   Tabs,
   Typography,
 } from '@mui/material';
-import { QueryOptions, useQuery } from '@tanstack/react-query';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { ActivityType } from '@abstraction/enums';
 import { Activity } from '@abstraction/types';
+import { BottomNavigationBar } from '@components/bottom-navigation-bar/bottom-navigation-bar';
 import { HomeDrawer, LoadingScreen } from '@components/index';
 import {
   ActivityItem,
@@ -36,7 +36,6 @@ import {
   useFilterActivities,
 } from '@features/activities';
 import { useProfilePicture, useUserDetails } from '@hooks/index';
-import { fetchActivities } from '@requests/index';
 import { StyledBackButton } from '@styles/activity-page/activity-page-styles';
 import { theme } from '@styles/index';
 
@@ -156,7 +155,15 @@ const HomePage: NextPage = () => {
   }
 
   return (
-    <Container maxWidth={'sm'} sx={{ padding: '30px 20px' }}>
+    <Container
+      maxWidth={'sm'}
+      sx={{
+        padding: '30px 20px',
+        height: '100vh',
+        display: 'flex',
+        flexFlow: 'column',
+      }}
+    >
       <Stack
         direction={'row'}
         mb={'12px'}
@@ -214,10 +221,19 @@ const HomePage: NextPage = () => {
         <StyledTab label={'מה עשינו'} value={1} />
       </StyledTabs>
 
-      <Stack direction={'column'} spacing={2}>
+      <Stack
+        direction={'column'}
+        spacing={2}
+        overflow={'scroll'}
+        display={'flex'}
+        marginBottom={'10px'}
+        borderRadius={'12px'}
+      >
         {currentTab === 0 && getContentByTab(notDoneActivities)}
         {currentTab === 1 && getContentByTab(doneActivities)}
       </Stack>
+
+      <BottomNavigationBar />
 
       <Fab color={'secondary'} aria-label={'add'} onClick={onAddActivity}>
         <MdAdd size={26} />

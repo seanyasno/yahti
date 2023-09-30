@@ -5,9 +5,15 @@ import { useRouter } from 'next/router';
 
 import { IoIosArrowBack } from 'react-icons/io';
 
-import { Alert, Container, Snackbar, Stack } from '@mui/material';
+import {
+  Alert,
+  Container,
+  Snackbar,
+  Stack,
+} from '@mui/material';
 
 import { Mood, MOOD_TYPES, MoodType } from '@abstraction/types';
+import { BottomNavigationBar } from '@components/bottom-navigation-bar/bottom-navigation-bar';
 import { LoadingScreen } from '@components/index';
 import { MoodItem, useMoods, useSendMoodNotification } from '@features/moods';
 import { StyledIconButton } from '@styles/create-activity/create-activity-styles';
@@ -74,16 +80,6 @@ const MoodsPage: NextPage = () => {
         </Alert>
       </Snackbar>
 
-      <StyledIconButton
-        color={'secondary'}
-        onClick={() => router.back()}
-        sx={{
-          width: 'fit-content',
-        }}
-      >
-        <IoIosArrowBack size={20} />
-      </StyledIconButton>
-
       <Stack direction={'row'} height={'100%'} gap={'12px'}>
         <Stack direction={'column'} height={'100%'} flex={1} gap={'12px'}>
           <MoodItem
@@ -131,6 +127,8 @@ const MoodsPage: NextPage = () => {
           onClick={sendingNotification(MOOD_TYPES.Love)}
         />
       </Stack>
+
+      <BottomNavigationBar />
     </Container>
   );
 };
