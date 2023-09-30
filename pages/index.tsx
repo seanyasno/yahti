@@ -235,7 +235,12 @@ const HomePage: NextPage = () => {
 
       <BottomNavigationBar />
 
-      <Fab color={'secondary'} aria-label={'add'} onClick={onAddActivity}>
+      <Fab
+        color={'secondary'}
+        aria-label={'add'}
+        onClick={onAddActivity}
+        sx={{ marginBlock: '80px' }}
+      >
         <MdAdd size={26} />
       </Fab>
     </Container>
