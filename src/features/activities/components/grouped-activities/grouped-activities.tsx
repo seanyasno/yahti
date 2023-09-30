@@ -29,7 +29,7 @@ export const GroupedActivities: React.FC<Props> = (props) => {
   }
 
   return (
-    <React.Fragment>
+    <Stack direction={'column'} display={'flex'}>
       <Stack direction={'row'} alignItems={'center'}>
         <Typography variant={'h6'}>{type}</Typography>
         <IconButton onClick={() => setOpen((current) => !current)}>
@@ -46,6 +46,6 @@ export const GroupedActivities: React.FC<Props> = (props) => {
           ))}
         </Stack>
       </Collapse>
-    </React.Fragment>
+    </Stack>
   );
 };
