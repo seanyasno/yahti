@@ -7,6 +7,7 @@ export const MOOD_TYPES = {
   Sad: 'sad',
   Shock: 'shock',
   SuperLove: 'superLove',
+  Joy: 'joy',
 } as const;
 
 export type MoodType = typeof MOOD_TYPES[keyof typeof MOOD_TYPES];

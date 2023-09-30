@@ -5,12 +5,7 @@ import { useRouter } from 'next/router';
 
 import { IoIosArrowBack } from 'react-icons/io';
 
-import {
-  Alert,
-  Container,
-  Snackbar,
-  Stack,
-} from '@mui/material';
+import { Alert, Container, Snackbar, Stack } from '@mui/material';
 
 import { Mood, MOOD_TYPES, MoodType } from '@abstraction/types';
 import { BottomNavigationBar } from '@components/bottom-navigation-bar/bottom-navigation-bar';
@@ -83,31 +78,40 @@ const MoodsPage: NextPage = () => {
       <Stack direction={'row'} height={'100%'} gap={'12px'}>
         <Stack direction={'column'} height={'100%'} flex={1} gap={'12px'}>
           <MoodItem
-            mood={gettingMoodByType(MOOD_TYPES.Hungry)}
-            onClick={sendingNotification(MOOD_TYPES.Hungry)}
+            mood={gettingMoodByType(MOOD_TYPES.Joy)}
+            onClick={sendingNotification(MOOD_TYPES.Joy)}
           />
         </Stack>
         <Stack direction={'column'} height={'100%'} flex={1} gap={'12px'}>
           <MoodItem
-            mood={gettingMoodByType(MOOD_TYPES.Sad)}
-            onClick={sendingNotification(MOOD_TYPES.Sad)}
-          />
-          <MoodItem
             mood={gettingMoodByType(MOOD_TYPES.Oof)}
             onClick={sendingNotification(MOOD_TYPES.Oof)}
+          />
+          <MoodItem
+            mood={gettingMoodByType(MOOD_TYPES.Hungry)}
+            onClick={sendingNotification(MOOD_TYPES.Hungry)}
           />
         </Stack>
       </Stack>
 
-      <Stack direction={'row'} height={'100%'} gap={'12px'}>
-        <MoodItem
-          mood={gettingMoodByType(MOOD_TYPES.Happy)}
-          onClick={sendingNotification(MOOD_TYPES.Happy)}
-        />
-        <MoodItem
-          mood={gettingMoodByType(MOOD_TYPES.Shock)}
-          onClick={sendingNotification(MOOD_TYPES.Shock)}
-        />
+      <Stack direction={'row'} height={'100%'} width={'100%'} gap={'12px'}>
+        <Stack direction={'column'} height={'100%'} width={'100%'} gap={'12px'}>
+          <MoodItem
+            mood={gettingMoodByType(MOOD_TYPES.Happy)}
+            onClick={sendingNotification(MOOD_TYPES.Happy)}
+          />
+        </Stack>
+
+        <Stack direction={'row'} width={'100%'} gap={'12px'}>
+          <MoodItem
+            mood={gettingMoodByType(MOOD_TYPES.Shock)}
+            onClick={sendingNotification(MOOD_TYPES.Shock)}
+          />
+          <MoodItem
+            mood={gettingMoodByType(MOOD_TYPES.Sad)}
+            onClick={sendingNotification(MOOD_TYPES.Sad)}
+          />
+        </Stack>
       </Stack>
 
       <Stack direction={'row'} height={'100%'} gap={'12px'}>
