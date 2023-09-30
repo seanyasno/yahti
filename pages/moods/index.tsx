@@ -3,15 +3,12 @@ import React, { useCallback, useState } from 'react';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 
-import { IoIosArrowBack } from 'react-icons/io';
-
 import { Alert, Container, Snackbar, Stack } from '@mui/material';
 
 import { Mood, MOOD_TYPES, MoodType } from '@abstraction/types';
 import { BottomNavigationBar } from '@components/bottom-navigation-bar/bottom-navigation-bar';
 import { LoadingScreen } from '@components/index';
 import { MoodItem, useMoods, useSendMoodNotification } from '@features/moods';
-import { StyledIconButton } from '@styles/create-activity/create-activity-styles';
 
 /*
 זהווו מספיק😇💪🏻
